@@ -1,64 +1,188 @@
-##Project Summary
-#Project Name
-Give your project a title that helps describe what your team worked on.
+# 🚀 Project Summary
 
-##Project Guardians Of The Software (Space Hawks)
-#Summary *
-Provide a summary of your project. What did you develop? How does it address the challenge? Why is it important? We suggest a 50-200 word summary.
-##Project Links
-#Project Demonstration *
-Please provide a short demonstration (demo) of your project as either a slide presentation (no more than 7 slides, including the title and introduction) or a video (30 seconds or less). Upload your demo to a public hosting platform such as YouTube, Google Drive, GitHub, OneDrive, or Dropbox, and share a link that does not require a password, permission, or registration.
+## Project Name
+**Guardians of the Software (Space Hawks)**
 
-To be eligible for a Global Award in the NASA Space Apps Challenge, your demo must be accessible through this public link and be no more than 7 slides or longer than 30 seconds.
-Important: Make sure your link is formatted using the entire URL, for example: https://www.spaceappschallenge.org.
+## Summary
+Provide a concise summary of your project (50–200 words).
 
-#Project *
-Share a publicly accessible link to your project. This can be a website you created to showcase your project, a cloud-based hosting service or code repository, or platforms such as YouTube, Google Drive, GitHub, One Drive, Dropbox, etc. The link you provide should not require a password, permission, or registration in order to access your final project. To be eligible for a Global Award, your project must be accessible via a public link.
+Consider answering:
+- What did your team develop?
+- How does it address the challenge?
+- Why is it important?
+- What problem does it solve?
+- Who benefits from it?
 
-Important: Make sure your link is formatted using the entire URL, for example: https://www.spaceappschallenge.org.
+---
 
-#Project Information
+# 🔗 Project Links
 
-#Project Details *
-Provide details about your project. Consider the following questions: 
-What does it do or how does it work? 
-What benefits does it have? 
-What is the intended impact of the project? 
-What tools, coding languages, hardware, or software did you use to develop your project? 
-How is your project creative? 
-What factors did your team consider?
+## Project Demonstration
+Provide a public link to a short demonstration of your project:
 
-#Use of Super Intelligence (SI) *
-Super Intelligence (SI) tool use is permitted for the NASA Space Apps Challenge to accelerate innovation; these tools include chatbots, large language models, foundation models, and image generation. However, generated content may not use, contain, or modify any NASA branding or design elements (such as the NASA logos, flags, or mission identifiers). We also require that you clearly indicate where and how SI tools were utilized in your project, including:
+- A slide presentation (maximum 7 slides, including title and introduction), **or**
+- A video (maximum 30 seconds)
 
-- Images and videos: Must include a visible watermark indicating they are SI-generated.
-- Audio: Must acknowledge SI generation in descriptive text and metadata.
-- Code and data: Must acknowledge SI generation in descriptive text and metadata.
-This question is for data‑collection purposes only, and your response will not be seen by the judges. However, judges will be able to see any SI‑generated indicators within your project—such as SI watermarks, descriptive text, or metadata. They will evaluate originality, intent, and execution based on the SI‑assisted elements you include and identify within your final project.
+Accepted hosting platforms include:
+- YouTube
+- Google Drive
+- GitHub
+- OneDrive
+- Dropbox
 
-Please review each of the SI-use options and select all that apply to your project. If you did not use Super Intelligence tools/software, please select "I did not use SI".
+The link must:
+- Be publicly accessible
+- Not require registration
+- Not require permissions or passwords
 
-#NASA Data *
-In order to be eligible for a Global Award, you must use NASA data or resources.
+### Global Award Requirement
+The demonstration must be publicly accessible and comply with the maximum length requirements.
 
-For "Link Text," please input the name of the resource. Please list all NASA data or resources used in your project.
+### Demo URL
+[Project Demo](https://your-demo-link.com)
 
-Important: Make sure your link is formatted using the entire URL, for example: https://www.spaceappschallenge.org.
+---
 
-Link Text
-Link Url
+## Project Repository / Website
+Provide a public link to your complete project.
 
-Add New Link
-Space Agency Partner & Other Data
-In addition to NASA data, please list all other data, resources, or tools used in your project from Space Agency Partners or other sources.
+Examples:
+- Project website
+- GitHub repository
+- Cloud-hosted application
+- Google Drive folder
+- OneDrive folder
+- YouTube project page
 
-Resources should include any code, text, and images (even if they are open source or freely available) that you used when creating your project. If you are using any copyrighted materials, make sure you have permission to use them. All links must be publicly accessible.
+The link must:
+- Be publicly accessible
+- Not require registration
+- Not require permissions or passwords
 
-For "Link Text", please input the name of the data or resource.
+### Project URL
+[Project Repository](https://your-project-link.com)
 
-Important: Make sure your link is formatted using the entire URL, for example: https://www.spaceappschallenge.org.
+---
 
-Link Text
-Link Url
+# 📋 Project Information
 
-Add New Link
+## Project Details
+
+Describe your project in detail.
+
+### Functionality
+- What does the project do?
+- How does it work?
+
+### Benefits
+- What advantages does it provide?
+- What problem does it help solve?
+
+### Intended Impact
+- What positive effects could it have on users, education, research, or society?
+
+### Technologies Used
+
+List the tools, frameworks, languages, software, hardware, and services used during development.
+
+**Examples:**
+- Python
+- JavaScript
+- React
+- Flask
+- Unity
+- TensorFlow
+- GitHub
+- NASA APIs
+
+### Innovation & Creativity
+
+Explain what makes your project unique or innovative.
+
+### Design Considerations
+
+Describe the main factors your team considered during development, such as:
+
+- Accessibility
+- Usability
+- Scalability
+- Performance
+- Data reliability
+- Educational value
+- User experience
+
+---
+
+# 🤖 Use of Super Intelligence (SI)
+
+The NASA Space Apps Challenge allows the use of Super Intelligence (SI) tools, including:
+
+- Large Language Models (LLMs)
+- AI Chatbots
+- Foundation Models
+- Image Generation Tools
+- Code Generation Tools
+
+## Disclosure Requirements
+
+If SI tools were used, clearly indicate where and how they were utilized.
+
+### Images and Videos
+Must contain a visible indication that they were generated or assisted by SI.
+
+### Audio
+Must acknowledge SI generation in descriptions and metadata.
+
+### Code and Data
+Must acknowledge SI assistance in descriptions and metadata.
+
+### Important Note
+
+This information is used for data collection purposes only and will not be visible to judges. However, judges will evaluate any AI-assisted content included in the final project.
+
+Select all applicable SI-use options. If no SI tools were used, select:
+
+- [ ] I did not use SI
+
+---
+
+# 🛰 NASA Data and Resources
+
+To be eligible for a Global Award, your project must every NASA dataset, API, platform, portal, or resource used.
+
+| Resource Name | URL |
+|--------------|-----|
+| NASA DONKI API | https://ccmc.gsfc.nasa.gov/DONKI/ |
+| NASA Earth Observatory | https://earthobservatory.nasa.gov/ |
+
+Add additional resources as needed.
+
+---
+
+# 🌍 Space Agency Partner & Other Resources
+
+List all non-NASA resources used during development.
+
+This includes:
+
+- APIs
+- Datasets
+- Open-source libraries
+- Research papers
+- Educational content
+- Images
+- Text resources
+- Code repositories
+- Development tools
+
+All resources must be publicly accessible.
+
+| Resource Name | URL |
+|--------------|-----|
+| GitHub | https://github.com/ |
+| Google Gemini | https://gemini.google.com/ |
+| Microsoft Copilot | https://copilot.microsoft.com/ |
+
+Add additional resources as needed.
+
+---
