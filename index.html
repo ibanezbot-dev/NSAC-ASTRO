@@ -428,6 +428,9 @@ body.trying #topbar,body.trying #actionbar,body.trying #meters,body.trying #tags
 .gauge.good .gbar i{background:var(--ok)}.gauge.mid .gbar i{background:var(--sun)}.gauge.bad .gbar i{background:var(--dose)}
 .modelnote{font-size:.78rem;margin-top:4px}
 @media (max-width:640px){.gauges{grid-template-columns:1fr}}
+.langsw{display:inline-flex;border:3px solid var(--line);border-radius:999px;overflow:hidden;background:var(--panel2)}
+.langsw button{min-height:46px;padding:4px 14px;font-weight:800;font-size:.95rem}
+.langsw button[aria-pressed="true"]{background:#2f6bff;color:#fff}
 </style>
 </head>
 <body>
@@ -438,6 +441,7 @@ body.trying #topbar,body.trying #actionbar,body.trying #meters,body.trying #tags
   <div class="topbar">
     <span></span>
     <div class="tools">
+      <span class="langsw" role="group" aria-label="Idioma / Language"><button data-lang="es" lang="es">Español</button><button data-lang="en" lang="en">English</button></span>
       <button class="pill" data-toggle="voice" aria-pressed="true"><span aria-hidden="true">🗣️</span><span class="lb">Voz</span><span class="stt">sí</span></button>
       <button class="pill" data-toggle="sound" aria-pressed="true"><span aria-hidden="true">🎵</span><span class="lb">Efectos</span><span class="stt">sí</span></button>
     </div>
@@ -71776,6 +71780,10 @@ saludCultivos: limitarPorcentaje(cultivosRaw)
 </script>
 
 <script>
+function bootES() {
+const LANG = 'es';
+/*STATIC*/
+
 /* ---------- íconos propios: en pantalla no queda ningún emoji ---------- */
 const ICONS = {"bolt": "<path d=\"M13 2 4 14h6l-1 8 9-12h-6z\" fill=\"currentColor\"/>", "air": "<circle cx=\"8\" cy=\"15\" r=\"5\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"/><circle cx=\"16.5\" cy=\"7.5\" r=\"3.5\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"/><circle cx=\"18\" cy=\"17.5\" r=\"2\" fill=\"currentColor\" stroke=\"none\" stroke-width=\"2\"/>", "rad": "<circle cx=\"12\" cy=\"12\" r=\"11\" fill=\"#ffd166\" stroke=\"none\" stroke-width=\"2\"/><g transform=\"rotate(0 12 12)\"><path d=\"M12 2a10 10 0 0 1 8.66 5l-5.2 3A4 4 0 0 0 12 8z\" fill=\"#0b1026\"/></g><g transform=\"rotate(120 12 12)\"><path d=\"M12 2a10 10 0 0 1 8.66 5l-5.2 3A4 4 0 0 0 12 8z\" fill=\"#0b1026\"/></g><g transform=\"rotate(240 12 12)\"><path d=\"M12 2a10 10 0 0 1 8.66 5l-5.2 3A4 4 0 0 0 12 8z\" fill=\"#0b1026\"/></g><circle cx=\"12\" cy=\"12\" r=\"2\" fill=\"#0b1026\" stroke=\"none\" stroke-width=\"2\"/>", "star": "<path d=\"M12 2l3 7 7.5.6-5.7 5 1.8 7.4L12 18l-6.6 4 1.8-7.4-5.7-5L9 9z\" fill=\"currentColor\"/>", "staro": "<path d=\"M12 2l3 7 7.5.6-5.7 5 1.8 7.4L12 18l-6.6 4 1.8-7.4-5.7-5L9 9z\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>", "battery": "<rect x=\"7\" y=\"5\" width=\"10\" height=\"17\" rx=\"2\" fill=\"currentColor\"/><rect x=\"10\" y=\"2\" width=\"4\" height=\"3\" fill=\"currentColor\"/><path d=\"M12.6 8 9 14h2.6l-.4 5 3.8-6.5h-2.6z\" fill=\"#0b1026\"/>", "lab": "<path d=\"M9 2h6v2h-1v5l5.3 9.4A2 2 0 0 1 17.5 22h-11a2 2 0 0 1-1.8-3.6L10 9V4H9z\" fill=\"currentColor\"/><path d=\"M8.2 16h7.6l1.6 3H6.6z\" fill=\"#0b1026\"/>", "scale": "<path d=\"M12 3v18M7 21h10M4 7h16M4 7l-3 7a3 3 0 0 0 6 0zM20 7l-3 7a3 3 0 0 0 6 0z\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>", "plant": "<path d=\"M12 22v-9\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M12 13C12 8 8 6 3 6c0 5 3 7 9 7zM12 11c0-4 3-7 9-7 0 5-3 7-9 7z\" fill=\"currentColor\"/>", "bed": "<path d=\"M2 19V6M2 15h20v4M22 15v-3a3 3 0 0 0-3-3h-8v6\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><circle cx=\"6.5\" cy=\"11.5\" r=\"2\" fill=\"currentColor\" stroke=\"none\" stroke-width=\"2\"/>", "antenna": "<path d=\"M12 22V10M7.5 13a6.5 6.5 0 0 1 0-10M16.5 3a6.5 6.5 0 0 1 0 10\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><circle cx=\"12\" cy=\"8\" r=\"2.2\" fill=\"currentColor\" stroke=\"none\" stroke-width=\"2\"/>", "robot": "<rect x=\"4\" y=\"8\" width=\"16\" height=\"12\" rx=\"3\" fill=\"currentColor\"/><path d=\"M12 8V4\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><circle cx=\"12\" cy=\"3.2\" r=\"1.6\" fill=\"currentColor\" stroke=\"none\" stroke-width=\"2\"/><circle cx=\"9\" cy=\"13\" r=\"1.7\" fill=\"#0b1026\" stroke=\"none\" stroke-width=\"2\"/><circle cx=\"15\" cy=\"13\" r=\"1.7\" fill=\"#0b1026\" stroke=\"none\" stroke-width=\"2\"/><path d=\"M9 16.5h6v1.5H9z\" fill=\"#0b1026\"/>", "rocket": "<path d=\"M12 1.5c4 3 5.2 8.5 4 13.5H8c-1.2-5 0-10.5 4-13.5zM8 15l-3.5 4.5H9zM16 15l3.5 4.5H15zM10.8 19h2.4v3.5h-2.4z\" fill=\"currentColor\"/><circle cx=\"12\" cy=\"8.5\" r=\"2\" fill=\"#0b1026\" stroke=\"none\" stroke-width=\"2\"/>", "sun": "<circle cx=\"12\" cy=\"12\" r=\"5\" fill=\"currentColor\" stroke=\"none\" stroke-width=\"2\"/><path d=\"M12 1.5v3M12 19.5v3M1.5 12h3M19.5 12h3M4.6 4.6l2.1 2.1M17.3 17.3l2.1 2.1M4.6 19.4l2.1-2.1M17.3 6.7l2.1-2.1\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>", "moon": "<path d=\"M20.5 14.5A9 9 0 1 1 9.5 3.5a7 7 0 0 0 11 11z\" fill=\"currentColor\"/>", "sunset": "<path d=\"M2 18h20M12 3v5M9.5 5.8 12 8.3l2.5-2.5M4.5 11l1.8 1.8M19.5 11l-1.8 1.8\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M6 18a6 6 0 0 1 12 0z\" fill=\"currentColor\"/>", "sunrise": "<path d=\"M2 18h20M12 8V3M9.5 5.5 12 3l2.5 2.5M4.5 11l1.8 1.8M19.5 11l-1.8 1.8\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M6 18a6 6 0 0 1 12 0z\" fill=\"currentColor\"/>", "warn": "<path d=\"M12 2.5 1.5 21h21z\" fill=\"currentColor\"/><path d=\"M11 9h2v6.5h-2zM11 17h2v2h-2z\" fill=\"#0b1026\"/>", "home": "<path d=\"M2.5 11.5 12 3l9.5 8.5V21h-6.5v-6H9v6H2.5z\" fill=\"currentColor\"/>", "gear": "<circle cx=\"12\" cy=\"12\" r=\"7.5\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"4.5\" stroke-dasharray=\"3.4 2.490\"/><circle cx=\"12\" cy=\"12\" r=\"5.5\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\"/>", "help": "<circle cx=\"12\" cy=\"12\" r=\"10\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"/><path d=\"M9 9.5a3 3 0 1 1 4.6 2.5c-1 .7-1.6 1.2-1.6 2.5\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><circle cx=\"12\" cy=\"17.6\" r=\"1.2\" fill=\"currentColor\" stroke=\"none\" stroke-width=\"2\"/>", "book": "<path d=\"M3 4.5h7a2 2 0 0 1 2 2 2 2 0 0 1 2-2h7v14.5h-7a2 2 0 0 0-2 1.5 2 2 0 0 0-2-1.5H3zM12 6.5V20.5\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>", "voice": "<path d=\"M3 9v6h4l5 4V5L7 9z\" fill=\"currentColor\"/><path d=\"M15.5 9a4 4 0 0 1 0 6M18 6.5a8 8 0 0 1 0 11\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>", "note": "<path d=\"M9 18V5l11-2v13\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><circle cx=\"6.5\" cy=\"18\" r=\"2.5\" fill=\"currentColor\" stroke=\"none\" stroke-width=\"2\"/><circle cx=\"17.5\" cy=\"16\" r=\"2.5\" fill=\"currentColor\" stroke=\"none\" stroke-width=\"2\"/>", "cap": "<path d=\"M12 4 1 9l11 5 9-4.1V16h2V9zM5 12.8V17c2 2 4.5 3 7 3s5-1 7-3v-4.2l-7 3.2z\" fill=\"currentColor\"/>", "bulb": "<path d=\"M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2zM9 18.5h6V21H9z\" fill=\"currentColor\"/>", "search": "<circle cx=\"10.5\" cy=\"10.5\" r=\"6.5\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\"/><path d=\"M15.5 15.5 21 21\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>", "sat": "<path d=\"M3 13a8 8 0 0 0 8 8M3 9a12 12 0 0 0 12 12\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><circle cx=\"16\" cy=\"8\" r=\"4.5\" fill=\"currentColor\" stroke=\"none\" stroke-width=\"2\"/><circle cx=\"5\" cy=\"19\" r=\"1.5\" fill=\"currentColor\" stroke=\"none\" stroke-width=\"2\"/>", "calendar": "<rect x=\"3\" y=\"5\" width=\"18\" height=\"16\" rx=\"2\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"/><path d=\"M3 10h18M8 3v4M16 3v4\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>", "chart": "<path d=\"M3 20.5h18M4 16l5-5 4 3 7-8\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>", "box": "<path d=\"M3 7.5 12 3l9 4.5v9L12 21l-9-4.5zM3 7.5l9 4.5 9-4.5M12 12v9\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>", "drop": "<path d=\"M12 2c4 6 7 9 7 13a7 7 0 0 1-14 0c0-4 3-7 7-13z\" fill=\"currentColor\"/>", "hourglass": "<path d=\"M6 2h12v4l-5 6 5 6v4H6v-4l5-6-5-6z\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>", "tap": "<circle cx=\"12\" cy=\"12\" r=\"3.5\" fill=\"currentColor\" stroke=\"none\" stroke-width=\"2\"/><circle cx=\"12\" cy=\"12\" r=\"8.5\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"/>", "right": "<path d=\"M4 12h15M13 5.5l6.5 6.5-6.5 6.5\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>", "up": "<path d=\"M12 20V5M5.5 11.5 12 5l6.5 6.5\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>", "down": "<path d=\"M12 4v15M5.5 12.5 12 19l6.5-6.5\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>", "replay": "<path d=\"M4 12a8 8 0 1 0 2.6-5.9M4 3.5V9h5.5\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>", "rewind": "<path d=\"M11.5 5.5 3 12l8.5 6.5zM21 5.5 12.5 12l8.5 6.5z\" fill=\"currentColor\"/>", "eye": "<path d=\"M1.5 12s4-7 10.5-7 10.5 7 10.5 7-4 7-10.5 7S1.5 12 1.5 12z\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><circle cx=\"12\" cy=\"12\" r=\"3.2\" fill=\"currentColor\" stroke=\"none\" stroke-width=\"2\"/>", "clip": "<rect x=\"5\" y=\"4\" width=\"14\" height=\"17\" rx=\"2\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"/><rect x=\"9\" y=\"2\" width=\"6\" height=\"4\" rx=\"1\" fill=\"currentColor\"/><path d=\"M8.5 11h7M8.5 15h7\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>", "no": "<circle cx=\"12\" cy=\"12\" r=\"9.5\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\"/><path d=\"M5.5 5.5l13 13\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>", "target": "<circle cx=\"12\" cy=\"12\" r=\"9.5\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"/><circle cx=\"12\" cy=\"12\" r=\"5.5\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"/><circle cx=\"12\" cy=\"12\" r=\"1.8\" fill=\"currentColor\" stroke=\"none\" stroke-width=\"2\"/>", "check": "<path d=\"M4 12.5l5 5L20 6.5\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"3.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>", "cross": "<path d=\"M5.5 5.5l13 13M18.5 5.5l-13 13\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"3.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>", "stop": "<rect x=\"5\" y=\"5\" width=\"14\" height=\"14\" rx=\"2.5\" fill=\"currentColor\"/>", "play": "<path d=\"M6 3.5 20 12 6 20.5z\" fill=\"currentColor\"/>", "back": "<path d=\"M18 3.5 4 12l14 8.5z\" fill=\"currentColor\"/>", "dot": "<circle cx=\"12\" cy=\"12\" r=\"8\" fill=\"currentColor\" stroke=\"none\" stroke-width=\"2\"/>", "boxo": "<rect x=\"4\" y=\"4\" width=\"16\" height=\"16\" rx=\"3\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"/>", "happy": "<circle cx=\"12\" cy=\"12\" r=\"11\" fill=\"#ffd166\" stroke=\"none\" stroke-width=\"2\"/><circle cx=\"8.5\" cy=\"10\" r=\"1.5\" fill=\"#0b1026\" stroke=\"none\" stroke-width=\"2\"/><circle cx=\"15.5\" cy=\"10\" r=\"1.5\" fill=\"#0b1026\" stroke=\"none\" stroke-width=\"2\"/><path d=\"M7.5 14a5 5 0 0 0 9 0\" fill=\"none\" stroke=\"#0b1026\" stroke-width=\"2\" stroke-linecap=\"round\"/>", "worried": "<circle cx=\"12\" cy=\"12\" r=\"11\" fill=\"#ffb35c\" stroke=\"none\" stroke-width=\"2\"/><circle cx=\"8.5\" cy=\"10.5\" r=\"1.5\" fill=\"#0b1026\" stroke=\"none\" stroke-width=\"2\"/><circle cx=\"15.5\" cy=\"10.5\" r=\"1.5\" fill=\"#0b1026\" stroke=\"none\" stroke-width=\"2\"/><path d=\"M8 17a4.5 4.5 0 0 1 8 0M6.5 7.5l3 1M17.5 7.5l-3 1\" fill=\"none\" stroke=\"#0b1026\" stroke-width=\"2\" stroke-linecap=\"round\"/>", "wow": "<circle cx=\"12\" cy=\"12\" r=\"11\" fill=\"#ffd166\" stroke=\"none\" stroke-width=\"2\"/><circle cx=\"8.5\" cy=\"9.5\" r=\"1.5\" fill=\"#0b1026\" stroke=\"none\" stroke-width=\"2\"/><circle cx=\"15.5\" cy=\"9.5\" r=\"1.5\" fill=\"#0b1026\" stroke=\"none\" stroke-width=\"2\"/><ellipse cx=\"12\" cy=\"16\" rx=\"2.5\" ry=\"3\" fill=\"#0b1026\"/>"};
 const EMO = {"⚡": "bolt", "🫧": "air", "☢": "rad", "⭐": "star", "☆": "staro", "🔋": "battery", "🔬": "lab", "⚖": "scale", "🌱": "plant", "🥬": "plant", "🛏": "bed", "📡": "antenna", "🤖": "robot", "🚀": "rocket", "🌅": "sunset", "🌙": "moon", "🌄": "sunrise", "☀": "sun", "⚠": "warn", "🏠": "home", "⚙": "gear", "❓": "help", "📖": "book", "🗣": "voice", "🎵": "note", "🎓": "cap", "💡": "bulb", "🔍": "search", "🛰": "sat", "🧠": "bulb", "🗓": "calendar", "📈": "chart", "📦": "box", "💧": "drop", "🤔": "help", "⏳": "hourglass", "⌛": "hourglass", "👆": "tap", "👉": "right", "🔁": "replay", "⏪": "rewind", "👀": "eye", "📋": "clip", "📒": "clip", "🚫": "no", "🎯": "target", "✅": "check", "✔": "check", "✓": "check", "✖": "cross", "⬜": "boxo", "⬆": "up", "⬇": "down", "➡": "right", "▶": "play", "■": "stop", "◀": "back", "🟢": "dot g", "🟡": "dot y", "🔴": "dot r", "😊": "happy", "😟": "worried", "😮": "wow", "🧑": "helmet", "👩": "helmet", "🧊": "drop", "↩": "replay"};
@@ -71837,6 +71845,37 @@ const store = {
 const esc = (t) => String(t).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 const LAST_DAY = 4;
 
+const W_NO = LANG === 'en' ? 'off' : 'no';
+const CHIP_EN = [[/ciencia/, 'science'], [/celdas/, 'cells'], [/\(si llegan partículas\)/, '(if particles arrive)'], [/las plantas crecen/, 'plants grow'], [/sabes si llegan partículas/, 'you learn if particles arrive']];
+const EC = (x) => (LANG === 'en' ? CHIP_EN.reduce((t, [a, b]) => t.replace(a, b), String(x)) : x);
+if (LANG === 'en') (function () {
+  const O = {
+    charge: ['Charge the battery', ['More energy for the night'], ['Less science today']],
+    sample: ['Finish the sample', ['Lots of science'], ['The battery ends up almost empty']],
+    half: ['Half and half'],
+    air: ['All cells to air', ['The air holds steady'], ['The plants do not grow']],
+    plants: ['One cell for the plants', ['The plants grow'], ['Less air is made']],
+    lab: ['Two cells to the workshop'],
+    shelter: ['Everyone to the shelter', ['The body gets little radiation'], ['No science today']],
+    work: ['Keep working', ['More science'], ['More radiation if particles arrive']],
+    detector: ['Check the particle detector'],
+    eva1: ['1 astronaut goes out', ['Some science'], ['Uses a little air']],
+    eva2: ['2 astronauts go out', ['Lots of science'], ['Uses more air', 'More radiation']],
+    robot: ['Send the robot'],
+  };
+  const KL = { 1: 'the battery at the end of the day', 2: 'the air (O₂)', 3: 'the radiation dose', 4: 'the air (O₂)' };
+  Object.entries(SCENES).forEach(([d, sc]) => { sc.keyLabel = KL[d]; sc.opts.forEach((o) => { const e = O[o.id]; if (!e) return; o.t = e[0]; if (e[1]) o.g7 = e[1]; if (e[2]) o.c7 = e[2]; }); });
+  ['Sunset', 'Night', 'Alert', 'Dawn', 'Return'].forEach((l, i) => (DAYS[i].label = l));
+  const SN = {
+    bvad: ['NASA BVAD, NASA/TP-2015-218570 Rev2 (2022), tables 3-23 and 4-70', 'Project PDF (BVAD_2.15.22-final.pdf)'],
+    zhang: ["Zhang et al. 2020, Science Advances (Chang'e-4)"], donki: ['NASA DONKI (space weather database)'],
+    limits: ['NASA-STD-3001, radiation protection technical brief (OCHMO)'], ascend: ['NASA ASCEND 2025, Simonsen: dose per solar event on the lunar surface'],
+    earth: ['Space.com with NASA data: yearly dose on Earth'], radin2: ['Radi-N2, Canadian Space Agency: ISS zones', 'Project document'],
+    veggie: ['Khodadad et al. 2020, Veggie lettuce (Frontiers)'], game: ['Game value (tuned so the mission fits in a few days; not a measured figure)'],
+    modelo: ['Bioastronautics model (scikit-learn exported with m2cgen), with reference data from NASA DONKI and NASA OSDR/RadLab', 'file modelo_simulacion_espacial.js'],
+  };
+  Object.entries(SN).forEach(([k2, v]) => { if (SOURCES[k2]) { SOURCES[k2].name = v[0]; if (v[1]) SOURCES[k2].note = v[1]; } });
+})();
 const CREW = [
   { id: 'X', name: 'Ximena', c: '#ffd166', role: 'la comandante', skin: '#e9b48a' },
   { id: 'T', name: 'Tomás', c: '#5ec8ff', role: 'el ingeniero', skin: '#c68a5c' },
@@ -71951,9 +71990,10 @@ const voiceIsOn = () => voiceOn ?? (mode === 7);
 /* Voz: los navegadores no traen voces de niño; se elige una voz en español (de preferencia femenina, de México) y se sube el tono. */
 let speakBtn = null, speakTimer = 0;
 function pickVoice() {
-  const vs = speechSynthesis.getVoices().filter((x) => x.lang?.toLowerCase().startsWith('es'));
-  const fem = /paulina|sabina|dalia|m[oó]nica|helena|elvira|laura|marisol|paloma|female|mujer|google espa/i;
-  return vs.find((x) => /mx|419|us/i.test(x.lang) && fem.test(x.name)) || vs.find((x) => fem.test(x.name)) || vs.find((x) => /mx/i.test(x.lang)) || vs[0];
+  const vs = speechSynthesis.getVoices().filter((x) => x.lang?.toLowerCase().startsWith(LANG));
+  const fem = LANG === 'en' ? /samantha|zira|aria|jenny|ava|susan|karen|female|google us english/i : /paulina|sabina|dalia|m[oó]nica|helena|elvira|laura|marisol|paloma|female|mujer|google espa/i;
+  const reg = LANG === 'en' ? /us|gb/i : /mx|419|us/i;
+  return vs.find((x) => reg.test(x.lang) && fem.test(x.name)) || vs.find((x) => fem.test(x.name)) || vs.find((x) => reg.test(x.lang)) || vs[0];
 }
 function setBtnState(btn, on) {
   if (!btn || !btn.isConnected) return;
@@ -71966,30 +72006,41 @@ function stopSpeak() {
   try { speechSynthesis.cancel(); } catch {}
   if (speakBtn) { setBtnState(speakBtn, false); speakBtn = null; }
 }
+/* Entonación: el texto se dice frase por frase. Las preguntas suben de tono y van un poco más despacio,
+   las exclamaciones van más agudas y rápidas, y las frases normales alternan ligeramente el tono para no sonar planas. */
 function speak(text, force = false, btn = null) {
   if ((!voiceIsOn() && !force) || !('speechSynthesis' in window)) return;
   const clean = String(text).replace(/<[^>]+>/g, '').replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE0F}\u{200D}]/gu, ' ').replace(/O₂/g, 'oxígeno').replace(/mSv/g, 'milisieverts').replace(/\s+/g, ' ').trim();
   try {
     stopSpeak();
-    const u = new SpeechSynthesisUtterance(clean);
-    u.lang = 'es-MX'; u.pitch = 1.7; u.rate = mode === 7 ? 1.0 : 1.06;
     const v = pickVoice();
-    if (v) u.voice = v;
+    const base = mode === 7 ? 1.0 : 1.06;
+    const parts = clean.replace(/([.!?…:;])\s+/g, '$1\u0001').split('\u0001').map((p) => p.trim()).filter(Boolean);
+    const us = parts.map((p, i) => {
+      const u = new SpeechSynthesisUtterance(p);
+      const q = /\?$/.test(p), ex = /!$/.test(p), intro = /[:;]$/.test(p);
+      u.lang = LANG === 'en' ? 'en-US' : 'es-MX';
+      u.pitch = Math.min(2, 1.6 + (q ? 0.25 : ex ? 0.16 : intro ? 0.08 : i % 2 ? -0.07 : 0.03));
+      u.rate = base * (ex ? 1.08 : q ? 0.96 : intro ? 0.98 : i === parts.length - 1 ? 0.97 : 1);
+      if (v) u.voice = v;
+      return u;
+    });
+    if (!us.length) return;
     if (btn) {
       speakBtn = btn; setBtnState(btn, true);
       const done = () => { if (speakBtn === btn) { clearTimeout(speakTimer); setBtnState(btn, false); speakBtn = null; } };
-      u.onend = done; u.onerror = done;
-      speakTimer = setTimeout(done, Math.max(3000, clean.length * 95));   // por si el navegador no avisa que terminó
+      us.at(-1).onend = done; us.forEach((u) => (u.onerror = done));
+      speakTimer = setTimeout(done, Math.max(3000, clean.length * 95 + us.length * 250));   // por si el navegador no avisa que terminó
     }
-    speechSynthesis.speak(u);
+    us.forEach((u) => speechSynthesis.speak(u));
   } catch {}
 }
 /* un solo botón: si está sonando, para; si no, lee */
 function listenClick(btn, text) { if (btn.dataset.playing === '1') stopSpeak(); else speak(text, true, btn); }
 function announce(t) { $('#live').textContent = ''; setTimeout(() => ($('#live').textContent = String(t).replace(/<[^>]+>/g, '')), 30); }
 function syncToggles() {
-  $$('[data-toggle="sound"]').forEach((b) => { b.setAttribute('aria-pressed', soundOn); b.setAttribute('aria-label', `Efectos de sonido: ${soundOn ? 'sí' : 'no'}`); $('.stt', b).textContent = soundOn ? 'sí' : 'no'; });
-  $$('[data-toggle="voice"]').forEach((b) => { b.setAttribute('aria-pressed', voiceIsOn()); b.setAttribute('aria-label', `Voz que lee: ${voiceIsOn() ? 'sí' : 'no'}`); $('.stt', b).textContent = voiceIsOn() ? 'sí' : 'no'; });
+  $$('[data-toggle="sound"]').forEach((b) => { b.setAttribute('aria-pressed', soundOn); b.setAttribute('aria-label', `Efectos de sonido: ${soundOn ? 'sí' : W_NO}`); $('.stt', b).textContent = soundOn ? 'sí' : W_NO; });
+  $$('[data-toggle="voice"]').forEach((b) => { b.setAttribute('aria-pressed', voiceIsOn()); b.setAttribute('aria-label', `Voz que lee: ${voiceIsOn() ? 'sí' : W_NO}`); $('.stt', b).textContent = voiceIsOn() ? 'sí' : W_NO; });
 }
 
 /* ---------- navegación ---------- */
@@ -72158,14 +72209,14 @@ function computeCommon() {
   const all = optsFor(S.day).map((o) => { const p = chipsFor(o, true); return [...p.g.map((x) => 'g' + x), ...p.c.map((x) => 'c' + x)]; });
   all[0].forEach((k) => { if (all.every((a) => a.includes(k))) commonChips.add(k); });
   if (!commonChips.size) return '';
-  return `<div class="common"><span class="muted">En todas las opciones:</span>${[...commonChips].map((k) => `<span class="chip ${k[0] === 'g' ? 'gain' : 'cost'}">${k.slice(1)}</span>`).join('')}</div>`;
+  return `<div class="common"><span class="muted">En todas las opciones:</span>${[...commonChips].map((k) => `<span class="chip ${k[0] === 'g' ? 'gain' : 'cost'}">${EC(k.slice(1))}</span>`).join('')}</div>`;
 }
 function optHTML(o) {
   const p0 = chipsFor(o, mode === 10 && !predicted);
   const p = { ...p0, g: p0.g.filter((x) => !commonChips.has('g' + x)), c: p0.c.filter((x) => !commonChips.has('c' + x)) };
   return `<button class="opt" data-opt="${o.id}" aria-pressed="false">
     <span class="t"><span class="e" aria-hidden="true">${o.e}</span>${o.t}</span>
-    <span class="chips">${p.g.map((x) => `<span class="chip gain">${x}</span>`).join('')}${p.c.map((x) => `<span class="chip cost">${x}</span>`).join('')}${p.hidden ? `<span class="chip hide">❓ ${p.hidden} ¿?</span>` : ''}</span>
+    <span class="chips">${p.g.map((x) => `<span class="chip gain">${EC(x)}</span>`).join('')}${p.c.map((x) => `<span class="chip cost">${EC(x)}</span>`).join('')}${p.hidden ? `<span class="chip hide">❓ ${p.hidden} ¿?</span>` : ''}</span>
   </button>`;
 }
 function renderScene(quiet = false) {
@@ -72709,8 +72760,9 @@ function helpHTML() {
 }
 function settingsHTML() {
   return `<div class="row" style="justify-content:space-between"><h2 id="se-t">⚙️ Ajustes</h2><button class="icon-btn" data-close aria-label="Cerrar">✕</button></div>
-    <div class="setrow"><span>🗣️ Voz que lee los textos</span><button class="pill" data-toggle="voice" aria-pressed="true"><span class="lb">Voz</span><span class="st">sí</span></button></div>
-    <div class="setrow"><span>🎵 Efectos de sonido</span><button class="pill" data-toggle="sound" aria-pressed="true"><span class="lb">Efectos</span><span class="st">sí</span></button></div>
+    <div class="setrow"><span>🗣️ Voz que lee los textos</span><button class="pill" data-toggle="voice" aria-pressed="true"><span class="lb">Voz</span><span class="stt">sí</span></button></div>
+    <div class="setrow"><span>Idioma</span><span class="langsw" role="group" aria-label="Idioma / Language"><button data-lang="es" lang="es">Español</button><button data-lang="en" lang="en">English</button></span></div>
+    <div class="setrow"><span>🎵 Efectos de sonido</span><button class="pill" data-toggle="sound" aria-pressed="true"><span class="lb">Efectos</span><span class="stt">sí</span></button></div>
     <div class="setrow"><span>👀 Ver otra vez cómo se juega</span><button class="btn small" id="help-tour">Ver</button></div>
     <div class="setrow"><span>🎓 Para docentes y familias</span><button class="btn small" data-open="teacher">Abrir guía</button></div>`;
 }
@@ -72771,7 +72823,7 @@ function bindModal(k) {
   const m = $('#m-' + k);
   $$('[data-close]', m).forEach((x) => (x.onclick = () => closeModal('m-' + k)));
   $$('[data-speak]', m).forEach((x) => (x.onclick = () => listenClick(x, x.dataset.speak)));
-  bindToggles(m); syncToggles(); bindOpeners(m);
+  bindToggles(m); syncToggles(); bindOpeners(m); bindLang(m);
   const ht = $('#help-tour', m);
   if (ht) ht.onclick = () => { m.classList.remove('on'); startCoach(false); };
   const ex = $('#export', m);
@@ -72970,9 +73022,1277 @@ $('#play').onclick = () => {
   store.del('save');
   startMission(true);
 };
+function bindLang(root = document) {
+  $$('[data-lang]', root).forEach((b) => {
+    b.setAttribute('aria-pressed', b.dataset.lang === LANG);
+    b.onclick = () => { if (b.dataset.lang === LANG) return; stopSpeak(); if (S && !S.done) saveGame(); store.set('lang', b.dataset.lang); location.reload(); };
+  });
+}
+bindLang();
 bindToggles(); bindOpeners();
 setMode(mode);
 goStart();
+}
+function bootEN() {
+const LANG = 'en';
+(function () { const M = {"Cerrar": "Close", "Máquina de aire": "Air machine", "▶ Seguir mi misión": "▶ Continue my mission", "Plantas": "Plants", "Beto, el médico": "Beto, the doctor", "Refugio": "Shelter", "Ayuda: cómo se juega y palabras": "Help: how to play and words", "Tomás, el ingeniero": "Tomás, the engineer", "Base lunar": "Lunar base", "Astronauta de ASTRO": "ASTRO astronaut", "Apodo (opcional, no tu nombre real)": "Nickname (optional, not your real name)", "Días de la misión": "Mission days", "Efectos": "Effects", "Ximena, la comandante": "Ximena, the commander", "La base lunar. Toca una máquina para saber qué hace.": "The lunar base. Tap a machine to learn what it does.", "Comida": "Food", "Detector": "Detector", "Cómo se juega": "How to play", "Taller de rocas": "Rock workshop", "Tanque de agua": "Water tank", "7 a 9 años · dibujos y voz": "Ages 7 to 9 · pictures and voice", "Salir al inicio": "Exit to home", "Voz": "Voice", "¡Hola! Soy Ximena. Ayúdame a cuidar una base en la Luna. 🌙": "Hi! I am Ximena. Help me look after a base on the Moon. 🌙", "Tu decisión": "Your decision", "Ingenieros": "Engineers", "¡Despegar! 🚀": "Lift off! 🚀", "Para docentes y familias": "For teachers and families", "Ej. Estrella": "E.g. Star", "sí": "on", "ASTRO · Base Lunar": "ASTRO · Lunar Base", "No guardamos datos fuera de este dispositivo.": "We store no data outside this device.", "📱 Gira el dispositivo para ver la base más grande": "📱 Rotate the device to see the base larger", "Ajustes": "Settings", "Exploradores": "Explorers", "Batería": "Battery", "Lu, la científica": "Lu, the scientist", "10 a 12 años · números de la NASA": "Ages 10 to 12 · NASA numbers", "Robot": "Robot", "Ayuda": "Help", "Salida a la superficie": "Exit to the surface", "¿Qué misión quieres?": "Which mission do you want?"}; const w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT); const ns = []; while (w.nextNode()) ns.push(w.currentNode); ns.forEach((n) => { if (n.parentElement.closest('script,style')) return; const t = n.nodeValue.trim(); if (t && Object.prototype.hasOwnProperty.call(M, t)) n.nodeValue = n.nodeValue.replace(t, M[t]); }); document.querySelectorAll('[aria-label],[placeholder],[title]').forEach((e) => ['aria-label', 'placeholder', 'title'].forEach((a) => { const v = e.getAttribute(a); if (v && Object.prototype.hasOwnProperty.call(M, v.trim())) e.setAttribute(a, M[v.trim()]); })); })();
+
+/* ---------- íconos propios: en pantalla no queda ningún emoji ---------- */
+const ICONS = {"bolt": "<path d=\"M13 2 4 14h6l-1 8 9-12h-6z\" fill=\"currentColor\"/>", "air": "<circle cx=\"8\" cy=\"15\" r=\"5\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"/><circle cx=\"16.5\" cy=\"7.5\" r=\"3.5\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"/><circle cx=\"18\" cy=\"17.5\" r=\"2\" fill=\"currentColor\" stroke=\"none\" stroke-width=\"2\"/>", "rad": "<circle cx=\"12\" cy=\"12\" r=\"11\" fill=\"#ffd166\" stroke=\"none\" stroke-width=\"2\"/><g transform=\"rotate(0 12 12)\"><path d=\"M12 2a10 10 0 0 1 8.66 5l-5.2 3A4 4 0 0 0 12 8z\" fill=\"#0b1026\"/></g><g transform=\"rotate(120 12 12)\"><path d=\"M12 2a10 10 0 0 1 8.66 5l-5.2 3A4 4 0 0 0 12 8z\" fill=\"#0b1026\"/></g><g transform=\"rotate(240 12 12)\"><path d=\"M12 2a10 10 0 0 1 8.66 5l-5.2 3A4 4 0 0 0 12 8z\" fill=\"#0b1026\"/></g><circle cx=\"12\" cy=\"12\" r=\"2\" fill=\"#0b1026\" stroke=\"none\" stroke-width=\"2\"/>", "star": "<path d=\"M12 2l3 7 7.5.6-5.7 5 1.8 7.4L12 18l-6.6 4 1.8-7.4-5.7-5L9 9z\" fill=\"currentColor\"/>", "staro": "<path d=\"M12 2l3 7 7.5.6-5.7 5 1.8 7.4L12 18l-6.6 4 1.8-7.4-5.7-5L9 9z\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>", "battery": "<rect x=\"7\" y=\"5\" width=\"10\" height=\"17\" rx=\"2\" fill=\"currentColor\"/><rect x=\"10\" y=\"2\" width=\"4\" height=\"3\" fill=\"currentColor\"/><path d=\"M12.6 8 9 14h2.6l-.4 5 3.8-6.5h-2.6z\" fill=\"#0b1026\"/>", "lab": "<path d=\"M9 2h6v2h-1v5l5.3 9.4A2 2 0 0 1 17.5 22h-11a2 2 0 0 1-1.8-3.6L10 9V4H9z\" fill=\"currentColor\"/><path d=\"M8.2 16h7.6l1.6 3H6.6z\" fill=\"#0b1026\"/>", "scale": "<path d=\"M12 3v18M7 21h10M4 7h16M4 7l-3 7a3 3 0 0 0 6 0zM20 7l-3 7a3 3 0 0 0 6 0z\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>", "plant": "<path d=\"M12 22v-9\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M12 13C12 8 8 6 3 6c0 5 3 7 9 7zM12 11c0-4 3-7 9-7 0 5-3 7-9 7z\" fill=\"currentColor\"/>", "bed": "<path d=\"M2 19V6M2 15h20v4M22 15v-3a3 3 0 0 0-3-3h-8v6\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><circle cx=\"6.5\" cy=\"11.5\" r=\"2\" fill=\"currentColor\" stroke=\"none\" stroke-width=\"2\"/>", "antenna": "<path d=\"M12 22V10M7.5 13a6.5 6.5 0 0 1 0-10M16.5 3a6.5 6.5 0 0 1 0 10\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><circle cx=\"12\" cy=\"8\" r=\"2.2\" fill=\"currentColor\" stroke=\"none\" stroke-width=\"2\"/>", "robot": "<rect x=\"4\" y=\"8\" width=\"16\" height=\"12\" rx=\"3\" fill=\"currentColor\"/><path d=\"M12 8V4\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><circle cx=\"12\" cy=\"3.2\" r=\"1.6\" fill=\"currentColor\" stroke=\"none\" stroke-width=\"2\"/><circle cx=\"9\" cy=\"13\" r=\"1.7\" fill=\"#0b1026\" stroke=\"none\" stroke-width=\"2\"/><circle cx=\"15\" cy=\"13\" r=\"1.7\" fill=\"#0b1026\" stroke=\"none\" stroke-width=\"2\"/><path d=\"M9 16.5h6v1.5H9z\" fill=\"#0b1026\"/>", "rocket": "<path d=\"M12 1.5c4 3 5.2 8.5 4 13.5H8c-1.2-5 0-10.5 4-13.5zM8 15l-3.5 4.5H9zM16 15l3.5 4.5H15zM10.8 19h2.4v3.5h-2.4z\" fill=\"currentColor\"/><circle cx=\"12\" cy=\"8.5\" r=\"2\" fill=\"#0b1026\" stroke=\"none\" stroke-width=\"2\"/>", "sun": "<circle cx=\"12\" cy=\"12\" r=\"5\" fill=\"currentColor\" stroke=\"none\" stroke-width=\"2\"/><path d=\"M12 1.5v3M12 19.5v3M1.5 12h3M19.5 12h3M4.6 4.6l2.1 2.1M17.3 17.3l2.1 2.1M4.6 19.4l2.1-2.1M17.3 6.7l2.1-2.1\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>", "moon": "<path d=\"M20.5 14.5A9 9 0 1 1 9.5 3.5a7 7 0 0 0 11 11z\" fill=\"currentColor\"/>", "sunset": "<path d=\"M2 18h20M12 3v5M9.5 5.8 12 8.3l2.5-2.5M4.5 11l1.8 1.8M19.5 11l-1.8 1.8\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M6 18a6 6 0 0 1 12 0z\" fill=\"currentColor\"/>", "sunrise": "<path d=\"M2 18h20M12 8V3M9.5 5.5 12 3l2.5 2.5M4.5 11l1.8 1.8M19.5 11l-1.8 1.8\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M6 18a6 6 0 0 1 12 0z\" fill=\"currentColor\"/>", "warn": "<path d=\"M12 2.5 1.5 21h21z\" fill=\"currentColor\"/><path d=\"M11 9h2v6.5h-2zM11 17h2v2h-2z\" fill=\"#0b1026\"/>", "home": "<path d=\"M2.5 11.5 12 3l9.5 8.5V21h-6.5v-6H9v6H2.5z\" fill=\"currentColor\"/>", "gear": "<circle cx=\"12\" cy=\"12\" r=\"7.5\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"4.5\" stroke-dasharray=\"3.4 2.490\"/><circle cx=\"12\" cy=\"12\" r=\"5.5\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\"/>", "help": "<circle cx=\"12\" cy=\"12\" r=\"10\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"/><path d=\"M9 9.5a3 3 0 1 1 4.6 2.5c-1 .7-1.6 1.2-1.6 2.5\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><circle cx=\"12\" cy=\"17.6\" r=\"1.2\" fill=\"currentColor\" stroke=\"none\" stroke-width=\"2\"/>", "book": "<path d=\"M3 4.5h7a2 2 0 0 1 2 2 2 2 0 0 1 2-2h7v14.5h-7a2 2 0 0 0-2 1.5 2 2 0 0 0-2-1.5H3zM12 6.5V20.5\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>", "voice": "<path d=\"M3 9v6h4l5 4V5L7 9z\" fill=\"currentColor\"/><path d=\"M15.5 9a4 4 0 0 1 0 6M18 6.5a8 8 0 0 1 0 11\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>", "note": "<path d=\"M9 18V5l11-2v13\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><circle cx=\"6.5\" cy=\"18\" r=\"2.5\" fill=\"currentColor\" stroke=\"none\" stroke-width=\"2\"/><circle cx=\"17.5\" cy=\"16\" r=\"2.5\" fill=\"currentColor\" stroke=\"none\" stroke-width=\"2\"/>", "cap": "<path d=\"M12 4 1 9l11 5 9-4.1V16h2V9zM5 12.8V17c2 2 4.5 3 7 3s5-1 7-3v-4.2l-7 3.2z\" fill=\"currentColor\"/>", "bulb": "<path d=\"M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2zM9 18.5h6V21H9z\" fill=\"currentColor\"/>", "search": "<circle cx=\"10.5\" cy=\"10.5\" r=\"6.5\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\"/><path d=\"M15.5 15.5 21 21\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>", "sat": "<path d=\"M3 13a8 8 0 0 0 8 8M3 9a12 12 0 0 0 12 12\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><circle cx=\"16\" cy=\"8\" r=\"4.5\" fill=\"currentColor\" stroke=\"none\" stroke-width=\"2\"/><circle cx=\"5\" cy=\"19\" r=\"1.5\" fill=\"currentColor\" stroke=\"none\" stroke-width=\"2\"/>", "calendar": "<rect x=\"3\" y=\"5\" width=\"18\" height=\"16\" rx=\"2\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"/><path d=\"M3 10h18M8 3v4M16 3v4\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>", "chart": "<path d=\"M3 20.5h18M4 16l5-5 4 3 7-8\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>", "box": "<path d=\"M3 7.5 12 3l9 4.5v9L12 21l-9-4.5zM3 7.5l9 4.5 9-4.5M12 12v9\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>", "drop": "<path d=\"M12 2c4 6 7 9 7 13a7 7 0 0 1-14 0c0-4 3-7 7-13z\" fill=\"currentColor\"/>", "hourglass": "<path d=\"M6 2h12v4l-5 6 5 6v4H6v-4l5-6-5-6z\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>", "tap": "<circle cx=\"12\" cy=\"12\" r=\"3.5\" fill=\"currentColor\" stroke=\"none\" stroke-width=\"2\"/><circle cx=\"12\" cy=\"12\" r=\"8.5\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"/>", "right": "<path d=\"M4 12h15M13 5.5l6.5 6.5-6.5 6.5\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>", "up": "<path d=\"M12 20V5M5.5 11.5 12 5l6.5 6.5\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>", "down": "<path d=\"M12 4v15M5.5 12.5 12 19l6.5-6.5\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>", "replay": "<path d=\"M4 12a8 8 0 1 0 2.6-5.9M4 3.5V9h5.5\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>", "rewind": "<path d=\"M11.5 5.5 3 12l8.5 6.5zM21 5.5 12.5 12l8.5 6.5z\" fill=\"currentColor\"/>", "eye": "<path d=\"M1.5 12s4-7 10.5-7 10.5 7 10.5 7-4 7-10.5 7S1.5 12 1.5 12z\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><circle cx=\"12\" cy=\"12\" r=\"3.2\" fill=\"currentColor\" stroke=\"none\" stroke-width=\"2\"/>", "clip": "<rect x=\"5\" y=\"4\" width=\"14\" height=\"17\" rx=\"2\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"/><rect x=\"9\" y=\"2\" width=\"6\" height=\"4\" rx=\"1\" fill=\"currentColor\"/><path d=\"M8.5 11h7M8.5 15h7\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>", "no": "<circle cx=\"12\" cy=\"12\" r=\"9.5\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\"/><path d=\"M5.5 5.5l13 13\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>", "target": "<circle cx=\"12\" cy=\"12\" r=\"9.5\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"/><circle cx=\"12\" cy=\"12\" r=\"5.5\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"/><circle cx=\"12\" cy=\"12\" r=\"1.8\" fill=\"currentColor\" stroke=\"none\" stroke-width=\"2\"/>", "check": "<path d=\"M4 12.5l5 5L20 6.5\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"3.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>", "cross": "<path d=\"M5.5 5.5l13 13M18.5 5.5l-13 13\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"3.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>", "stop": "<rect x=\"5\" y=\"5\" width=\"14\" height=\"14\" rx=\"2.5\" fill=\"currentColor\"/>", "play": "<path d=\"M6 3.5 20 12 6 20.5z\" fill=\"currentColor\"/>", "back": "<path d=\"M18 3.5 4 12l14 8.5z\" fill=\"currentColor\"/>", "dot": "<circle cx=\"12\" cy=\"12\" r=\"8\" fill=\"currentColor\" stroke=\"none\" stroke-width=\"2\"/>", "boxo": "<rect x=\"4\" y=\"4\" width=\"16\" height=\"16\" rx=\"3\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"/>", "happy": "<circle cx=\"12\" cy=\"12\" r=\"11\" fill=\"#ffd166\" stroke=\"none\" stroke-width=\"2\"/><circle cx=\"8.5\" cy=\"10\" r=\"1.5\" fill=\"#0b1026\" stroke=\"none\" stroke-width=\"2\"/><circle cx=\"15.5\" cy=\"10\" r=\"1.5\" fill=\"#0b1026\" stroke=\"none\" stroke-width=\"2\"/><path d=\"M7.5 14a5 5 0 0 0 9 0\" fill=\"none\" stroke=\"#0b1026\" stroke-width=\"2\" stroke-linecap=\"round\"/>", "worried": "<circle cx=\"12\" cy=\"12\" r=\"11\" fill=\"#ffb35c\" stroke=\"none\" stroke-width=\"2\"/><circle cx=\"8.5\" cy=\"10.5\" r=\"1.5\" fill=\"#0b1026\" stroke=\"none\" stroke-width=\"2\"/><circle cx=\"15.5\" cy=\"10.5\" r=\"1.5\" fill=\"#0b1026\" stroke=\"none\" stroke-width=\"2\"/><path d=\"M8 17a4.5 4.5 0 0 1 8 0M6.5 7.5l3 1M17.5 7.5l-3 1\" fill=\"none\" stroke=\"#0b1026\" stroke-width=\"2\" stroke-linecap=\"round\"/>", "wow": "<circle cx=\"12\" cy=\"12\" r=\"11\" fill=\"#ffd166\" stroke=\"none\" stroke-width=\"2\"/><circle cx=\"8.5\" cy=\"9.5\" r=\"1.5\" fill=\"#0b1026\" stroke=\"none\" stroke-width=\"2\"/><circle cx=\"15.5\" cy=\"9.5\" r=\"1.5\" fill=\"#0b1026\" stroke=\"none\" stroke-width=\"2\"/><ellipse cx=\"12\" cy=\"16\" rx=\"2.5\" ry=\"3\" fill=\"#0b1026\"/>"};
+const EMO = {"⚡": "bolt", "🫧": "air", "☢": "rad", "⭐": "star", "☆": "staro", "🔋": "battery", "🔬": "lab", "⚖": "scale", "🌱": "plant", "🥬": "plant", "🛏": "bed", "📡": "antenna", "🤖": "robot", "🚀": "rocket", "🌅": "sunset", "🌙": "moon", "🌄": "sunrise", "☀": "sun", "⚠": "warn", "🏠": "home", "⚙": "gear", "❓": "help", "📖": "book", "🗣": "voice", "🎵": "note", "🎓": "cap", "💡": "bulb", "🔍": "search", "🛰": "sat", "🧠": "bulb", "🗓": "calendar", "📈": "chart", "📦": "box", "💧": "drop", "🤔": "help", "⏳": "hourglass", "⌛": "hourglass", "👆": "tap", "👉": "right", "🔁": "replay", "⏪": "rewind", "👀": "eye", "📋": "clip", "📒": "clip", "🚫": "no", "🎯": "target", "✅": "check", "✔": "check", "✓": "check", "✖": "cross", "⬜": "boxo", "⬆": "up", "⬇": "down", "➡": "right", "▶": "play", "■": "stop", "◀": "back", "🟢": "dot g", "🟡": "dot y", "🔴": "dot r", "😊": "happy", "😟": "worried", "😮": "wow", "🧑": "helmet", "👩": "helmet", "🧊": "drop", "↩": "replay"};
+const EMO_SEQ = [[/(?:🧑|👩)‍🚀/gu, ''], [/👩‍🔬/gu, '🔬'], [/😮‍💨/gu, '🫧']];
+const EMO_RE = /[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{2300}-\u{23FF}\u{25A0}-\u{25FF}\u{2190}-\u{21FF}]/u;
+const EMO_SPLIT = /([\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{2300}-\u{23FF}\u{25A0}-\u{25FF}\u{2190}-\u{21FF}])/u;
+const KEEP = new Set(['✦', '✕', '➜', '→', '←', '↑', '↓', '►', '◄']);
+function iconEl(name) {
+  const s = document.createElement('span');
+  const [n, tone] = name.split(' ');
+  s.setAttribute('aria-hidden', 'true');
+  if (n === 'astro' || n === 'helmet') { s.className = `ico ico-img ico-${n}`; return s; }
+  s.className = `ico ico-${n}${tone ? ' ' + tone : ''}`;
+  s.innerHTML = `<svg viewBox="0 0 24 24">${ICONS[n]}</svg>`;
+  return s;
+}
+function iconizeText(node) {
+  let t = node.nodeValue;
+  if (!t || !EMO_RE.test(t.replace(/[✦✕➜→←↑↓►◄]/g, ''))) { if (t && /[️‍]/.test(t)) node.nodeValue = t.replace(/[️]/g, ''); return; }
+  t = t.replace(/️/g, '');
+  EMO_SEQ.forEach(([re, to]) => (t = t.replace(re, to)));
+  t = t.replace(/‍/g, '');
+  const frag = document.createDocumentFragment();
+  t.split(EMO_SPLIT).forEach((part) => {
+    if (!part) return;
+    if (part.length <= 2 && EMO_RE.test(part) && !KEEP.has(part)) {
+      const name = part === '' ? 'astro' : EMO[part];
+      if (name) frag.appendChild(iconEl(name));   // un emoji sin ícono propio simplemente no se muestra
+    } else frag.appendChild(document.createTextNode(part));
+  });
+  node.replaceWith(frag);
+}
+function iconize(root) {
+  if (root.nodeType === 3) return iconizeText(root);
+  if (root.nodeType !== 1 || root.closest('script,style,textarea,svg,.ico')) return;
+  const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, { acceptNode: (n) => (n.parentElement.closest('script,style,textarea,svg,.ico') ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT) });
+  const list = []; while (w.nextNode()) list.push(w.currentNode);
+  list.forEach(iconizeText);
+}
+let refit = 0;
+new MutationObserver((ms) => {
+  ms.forEach((m) => {
+    if (m.type === 'characterData') iconize(m.target);
+    else m.addedNodes.forEach((n) => n.isConnected && iconize(n));
+  });
+  cancelAnimationFrame(refit); refit = requestAnimationFrame(() => typeof fitScreen === 'function' && fitScreen());
+}).observe(document.body, { childList: true, subtree: true, characterData: true });
+iconize(document.body);
+
+
+/* ======================= Interfaz (rediseño) ======================= */
+const $ = (q, r = document) => r.querySelector(q);
+const $$ = (q, r = document) => [...r.querySelectorAll(q)];
+const store = {
+  get(k, d) { try { const v = localStorage.getItem('astroLuna.' + k); return v === null ? d : JSON.parse(v); } catch { return d; } },
+  set(k, v) { try { localStorage.setItem('astroLuna.' + k, JSON.stringify(v)); } catch {} },
+  del(k) { try { localStorage.removeItem('astroLuna.' + k); } catch {} },
+};
+const esc = (t) => String(t).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+const LAST_DAY = 4;
+
+const W_NO = LANG === 'en' ? 'off' : 'no';
+const CHIP_EN = [[/ciencia/, 'science'], [/celdas/, 'cells'], [/\(si llegan partículas\)/, '(if particles arrive)'], [/las plantas crecen/, 'plants grow'], [/sabes si llegan partículas/, 'you learn if particles arrive']];
+const EC = (x) => (LANG === 'en' ? CHIP_EN.reduce((t, [a, b]) => t.replace(a, b), String(x)) : x);
+if (LANG === 'en') (function () {
+  const O = {
+    charge: ['Charge the battery', ['More energy for the night'], ['Less science today']],
+    sample: ['Finish the sample', ['Lots of science'], ['The battery ends up almost empty']],
+    half: ['Half and half'],
+    air: ['All cells to air', ['The air holds steady'], ['The plants do not grow']],
+    plants: ['One cell for the plants', ['The plants grow'], ['Less air is made']],
+    lab: ['Two cells to the workshop'],
+    shelter: ['Everyone to the shelter', ['The body gets little radiation'], ['No science today']],
+    work: ['Keep working', ['More science'], ['More radiation if particles arrive']],
+    detector: ['Check the particle detector'],
+    eva1: ['1 astronaut goes out', ['Some science'], ['Uses a little air']],
+    eva2: ['2 astronauts go out', ['Lots of science'], ['Uses more air', 'More radiation']],
+    robot: ['Send the robot'],
+  };
+  const KL = { 1: 'the battery at the end of the day', 2: 'the air (O₂)', 3: 'the radiation dose', 4: 'the air (O₂)' };
+  Object.entries(SCENES).forEach(([d, sc]) => { sc.keyLabel = KL[d]; sc.opts.forEach((o) => { const e = O[o.id]; if (!e) return; o.t = e[0]; if (e[1]) o.g7 = e[1]; if (e[2]) o.c7 = e[2]; }); });
+  ['Sunset', 'Night', 'Alert', 'Dawn', 'Return'].forEach((l, i) => (DAYS[i].label = l));
+  const SN = {
+    bvad: ['NASA BVAD, NASA/TP-2015-218570 Rev2 (2022), tables 3-23 and 4-70', 'Project PDF (BVAD_2.15.22-final.pdf)'],
+    zhang: ["Zhang et al. 2020, Science Advances (Chang'e-4)"], donki: ['NASA DONKI (space weather database)'],
+    limits: ['NASA-STD-3001, radiation protection technical brief (OCHMO)'], ascend: ['NASA ASCEND 2025, Simonsen: dose per solar event on the lunar surface'],
+    earth: ['Space.com with NASA data: yearly dose on Earth'], radin2: ['Radi-N2, Canadian Space Agency: ISS zones', 'Project document'],
+    veggie: ['Khodadad et al. 2020, Veggie lettuce (Frontiers)'], game: ['Game value (tuned so the mission fits in a few days; not a measured figure)'],
+    modelo: ['Bioastronautics model (scikit-learn exported with m2cgen), with reference data from NASA DONKI and NASA OSDR/RadLab', 'file modelo_simulacion_espacial.js'],
+  };
+  Object.entries(SN).forEach(([k2, v]) => { if (SOURCES[k2]) { SOURCES[k2].name = v[0]; if (v[1]) SOURCES[k2].note = v[1]; } });
+})();
+const CREW = [
+  { id: 'X', name: 'Ximena', c: '#ffd166', role: 'the commander', skin: '#e9b48a' },
+  { id: 'T', name: 'Tomás', c: '#5ec8ff', role: 'the engineer', skin: '#c68a5c' },
+  { id: 'L', name: 'Lu', c: '#6ee7a0', role: 'the scientist', skin: '#f2cfae' },
+  { id: 'B', name: 'Beto', c: '#ff9ac1', role: 'the doctor', skin: '#8d5a3b' },
+];
+const crewById = Object.fromEntries(CREW.map((c) => [c.id, c]));
+
+/* ---------- caras: recortes de la ilustración + estado de ánimo ---------- */
+const MOOD = { happy: '😊', worried: '😟', wow: '😮' };
+const agentSVG = (id, mood = 'happy') => `<span class="agent" data-who="${id}" aria-hidden="true"><i>${MOOD[mood]}</i></span>`;
+
+/* ---------- glosario ---------- */
+const GLOSS = {
+  radiacion: ['Radiation', 'Invisible energy that travels through space. A lot of it can harm the body\'s cells.', 'Invisible particles that come from the Sun and other stars. We measure it in millisieverts (mSv).'],
+  dosis: ['Dose', 'How much radiation your body got. It is like a piggy bank that fills up and never empties.', 'Radiation absorbed by the body, in millisieverts (mSv). It adds up day by day.'],
+  llamarada: ['Solar flare', 'A very strong flash from the Sun. NASA satellites see it and send a warning.', 'An explosion on the Sun\'s surface. It is classed C, M or X by its brightness. NASA DONKI logs it.'],
+  particulas: ['Solar particles (SEP)', 'Very fast little bits the Sun sometimes throws out. They are what gives radiation.', 'Very energetic protons. A big flare does NOT always send them: that is why the class of a flare does not tell how much dose arrives.'],
+  bateria: ['Battery and cells', 'Where we store the Sun\'s energy. Each little square ⚡ is a cell.', 'Each cell is one unit of stored energy. At night you only have what you saved.'],
+  soporte: ['Life support', 'The machines that make the air the crew breathes.', 'A system that makes oxygen (O₂) and cleans the air. It needs energy.'],
+  oxigeno: ['Oxygen (O₂)', 'The air we need to live. The crew breathes it all day.', 'Each person uses about 0.84 kg of O₂ a day (NASA BVAD).'],
+  eva: ['Spacewalk (EVA)', 'Going outside the base in a spacesuit.', 'Extravehicular activity. The suit uses about 0.086 kg of O₂ per hour (NASA BVAD).'],
+  refugio: ['Shelter', 'The most protected room in the base. Its walls hold water, which stops radiation.', 'A lower-dose zone. On the Space Station it was measured that some zones are safer than others (Radi-N2).'],
+  noche: ['Lunar night', 'In this part of the Moon the night is very long. Without Sun, the panels do not charge!', 'A full lunar day lasts about 29.5 Earth days. In the game the night lasts 2 days.'],
+  msv: ['mSv (millisievert)', 'The unit for measuring dose.', 'Unit of dose. On Earth we get about 3.6 mSv a year.'],
+};
+const T = (k, txt) => `<button class="term" data-term="${k}">${txt}</button>`;
+
+/* ---------- estaciones de la escena: cada máquina es un control ---------- */
+const STATIONS = {
+  energy: { c: '#ffe066', at: [520, 350], mid: [520, 500], name: '🔋 Battery', multi: '🔋 Battery',
+    t7: 'The Sun\'s energy is stored here. Each ⚡ is a cell. It does not fill up at night.', t10: `Battery: at most ${GAME.maxBattery} cells. With Sun, ${GAME.panelPerSunDay} come in per day; at night, 0.` },
+  rocks: { c: '#c9b8ff', at: [150, 282], bot: 405, mid: [150, 345], name: '🔬 Rock workshop',
+    t7: 'Moon rocks are studied here. It gives science ⭐, but uses energy.', t10: 'Workshop: every cell you give it turns into science. If the crew is in the shelter, it makes nothing.' },
+  air: { c: '#6ee7a0', at: [1180, 408], mid: [1180, 540], name: '🫧 Air machine',
+    t7: 'It makes the air the crew breathes. It needs energy.', t10: `Life support: each cell makes ${GAME.o2PerCell} kg of O₂. The crew breathes ${r2(DATA.crew * DATA.o2PerPersonDay)} kg a day.` },
+  plants: { c: '#6ee7a0', at: [1200, 286], bot: 400, mid: [1200, 345], name: '🌱 Plants',
+    t7: 'Lettuces need light. If you give them energy, they grow and give food.', t10: 'With 1 cell on day 2, the lettuces are ready on day 4: +5 science.' },
+  food: { c: '#ffd166', at: [1020, 152], tag: [1020, 205], bot: 400, mid: [1020, 280], name: '📦 Food',
+    t7: 'The crew\'s food is here. With fresh lettuce, meals are better.', t10: 'Packaged food. The greenhouse plants add fresh food to it.' },
+  refuge: { c: '#5ec8ff', at: [700, 170], tag: [700, 222], bot: 305, mid: [700, 235], name: '🛏️ Shelter',
+    t7: 'The most protected place. Its walls hold water and stop radiation. No science is done there.', t10: `In the shelter the dose drops to ×${GAME.shelterFactor}. While the crew is there, the workshop makes nothing.` },
+  tank: { c: '#5ec8ff', at: [320, 92], tag: [320, 180], bot: 350, mid: [320, 220], name: '💧 Water tank',
+    t7: 'Water stops radiation. That is why the shelter walls are full of water.', t10: 'Water is good shielding: on the Space Station, zones with less dose were measured (Radi-N2).' },
+  comm: { c: '#6ee7a0', at: [464, 146], tag: [470, 212], bot: 286, mid: [464, 215], name: '📡 Detector',
+    t7: 'It warns when the Sun fires a flare.', t10: 'Particle detector: for 1 cell it tells whether a flare\'s particles (SEP) are really arriving.' },
+  walk: { c: '#ffffff', at: [872, 414], mid: [872, 490], name: '🧑‍🚀 Go out exploring', multi: '🧑‍🚀 Go out exploring',
+    t7: 'This is the way out to walk on the Moon. It gives science, but the suits use air.', t10: `Moonwalk (EVA): each suit uses ${DATA.evaO2PerHour} kg of O₂ per hour.` },
+  rover: { c: '#ffb35c', at: [245, 392], mid: [245, 437], name: '🤖 Robot',
+    t7: 'The robot explores without breathing. It brings less science than a person.', t10: 'The robot uses no air and gets no dose: it costs 1 cell and gives less science.' },
+};
+const OPT_ST = { charge: 'energy', half: 'energy', sample: 'rocks', air: 'air', plants: 'plants', lab: 'rocks', shelter: 'refuge', work: 'rocks', detector: 'comm', eva1: 'walk', eva2: 'walk', robot: 'rover' };
+const CREWPOS = { X: [730, 478], T: [515, 212], L: [850, 238], B: [1005, 506] };
+
+/* ---------- textos por día y modo ---------- */
+const STORY = {
+  1: {
+    7: () => `The Sun is about to hide! Do we save energy in the ${T('bateria', 'battery')} for the ${T('noche', 'night')}, or finish the rock sample?`,
+    10: () => `Only a few hours of Sun are left. The panels will give ${GAME.panelPerSunDay} cells today, and then come 2 days of ${T('noche', 'night')}. The ${T('soporte', 'life-support system')} uses ${GAME.lsWant} cells a day to make ${T('oxigeno', 'O₂')}. What do we do with today's energy?`,
+  },
+  2: {
+    7: () => `It is night and the panels do not charge. All the cells for ${T('oxigeno', 'air')}, or one for the plants?`,
+    10: () => `Night. Panels: 0 cells. The crew breathes ${r2(DATA.crew * DATA.o2PerPersonDay)} kg of O₂ a day (4 × 0.84 kg). Each cell in life support makes ${GAME.o2PerCell} kg. The lettuces need light to be ready on day 4.`,
+  },
+  3: {
+    7: () => `Alarm! The Sun fired a ${T('llamarada', 'flare')}. It may send ${T('particulas', 'particles')} with ${T('radiacion', 'radiation')}. Do we go to the ${T('refugio', 'shelter')} or keep working?`,
+    10: () => `NASA ${T('llamarada', 'DONKI')} reports an X-class flare. Careful: a big flare does not always send ${T('particulas', 'particles (SEP)')}. If they arrive and we are in the workshop: +${GAME.stormDoseWorking} ${T('msv', 'mSv')}. In the shelter: +${GAME.stormDoseShelter} mSv. The detector costs 1 cell.`,
+  },
+  4: {
+    7: () => `Dawn! Lu spotted ice in the crater. Going out in a suit gives science, but uses air. How many go out on the ${T('eva', 'moonwalk')}?`,
+    10: () => `Dawn: +${GAME.panelPerSunDay} cells. A moonwalk of ${GAME.evaHours} h: each person uses ${r2(GAME.evaHours * DATA.evaO2PerHour)} kg of extra O₂ (${DATA.evaO2PerHour} kg/h, NASA BVAD). The robot uses no air, but it costs 1 cell and gives less science.`,
+  },
+};
+const FACTS = {
+  1: { t: 'At the Moon\'s south pole, sunlight comes and goes. That is why bases need batteries for the night.', src: 'game', note: 'The lunar day-and-night cycle lasts about 29.5 Earth days.' },
+  2: { t: 'Each astronaut breathes about 0.84 kg of oxygen a day. 4 astronauts use more than 3 kg daily!', src: 'bvad' },
+  3: { t: 'NASA does not let an astronaut get more than 250 mSv in one solar event, or more than 600 mSv in a whole career. On Earth we get about 3.6 mSv a year.', src: 'limits' },
+  4: { t: 'On the Space Station they grow lettuce in a device called Veggie. It gives fresh food, but needs light, water and time.', src: 'veggie' },
+};
+const RISKY = { 1: 'Will the energy last two nights?', 2: '' };
+
+/* ---------- estado ---------- */
+let mode = store.get('mode', 7);
+let today = {}, bubbleSt = null, bgoAction = null, commonStr = '', lastWhy = null;
+let S = null, checkpoints = {}, chosen = null, predicted = null, shownAt = 0, hintsUsed = 0, phase = 'idle';
+let soundOn = store.get('sound', true);
+let voiceOn = store.get('voice2', null);
+const tele = store.get('tele', { sessions: 0, missions: 0, wins: 0, aborts: 0, decisions: [], predictions: { ok: 0, total: 0 } });
+const saveTele = () => store.set('tele', tele);
+const saveGame = () => store.set('save', S && !S.done ? { S, checkpoints, mode } : null);
+
+/* ---------- sonido y voz ---------- */
+let actx = null;
+function beep(f = 600, d = 0.08, type = 'sine', v = 0.15, delay = 0) {
+  if (!soundOn) return;
+  try {
+    actx ??= new (window.AudioContext || window.webkitAudioContext)();
+    const t = actx.currentTime + delay, o = actx.createOscillator(), g = actx.createGain();
+    o.type = type; o.frequency.value = f; g.gain.setValueAtTime(v, t); g.gain.exponentialRampToValueAtTime(0.0001, t + d);
+    o.connect(g).connect(actx.destination); o.start(t); o.stop(t + d + 0.02);
+  } catch {}
+}
+const SFX = {
+  tap: () => beep(660, 0.06),
+  pick: () => { beep(520, 0.07, 'triangle'); beep(780, 0.07, 'triangle', 0.12, 0.06); },
+  good: () => [523, 659, 784].forEach((f, i) => beep(f, 0.18, 'triangle', 0.14, i * 0.08)),
+  bad: () => [392, 330].forEach((f, i) => beep(f, 0.22, 'sine', 0.14, i * 0.14)),
+  alarm: () => [880, 660, 880].forEach((f, i) => beep(f, 0.12, 'square', 0.06, i * 0.16)),
+  blip: (up) => beep(up ? 880 : 300, 0.09, 'triangle', 0.1),
+};
+const voiceIsOn = () => voiceOn ?? (mode === 7);
+/* Voz: los navegadores no traen voces de niño; se elige una voz en español (de preferencia femenina, de México) y se sube el tono. */
+let speakBtn = null, speakTimer = 0;
+function pickVoice() {
+  const vs = speechSynthesis.getVoices().filter((x) => x.lang?.toLowerCase().startsWith(LANG));
+  const fem = LANG === 'en' ? /samantha|zira|aria|jenny|ava|susan|karen|female|google us english/i : /paulina|sabina|dalia|m[oó]nica|helena|elvira|laura|marisol|paloma|female|mujer|google espa/i;
+  const reg = LANG === 'en' ? /us|gb/i : /mx|419|us/i;
+  return vs.find((x) => reg.test(x.lang) && fem.test(x.name)) || vs.find((x) => fem.test(x.name)) || vs.find((x) => reg.test(x.lang)) || vs[0];
+}
+function setBtnState(btn, on) {
+  if (!btn || !btn.isConnected) return;
+  btn.dataset.playing = on ? '1' : '';
+  btn.textContent = on ? '■ Stop' : '▶ Listen';
+  btn.setAttribute('aria-label', on ? 'Stop the voice' : 'Listen');
+}
+function stopSpeak() {
+  clearTimeout(speakTimer);
+  try { speechSynthesis.cancel(); } catch {}
+  if (speakBtn) { setBtnState(speakBtn, false); speakBtn = null; }
+}
+/* Entonación: el texto se dice frase por frase. Las preguntas suben de tono y van un poco más despacio,
+   las exclamaciones van más agudas y rápidas, y las frases normales alternan ligeramente el tono para no sonar planas. */
+function speak(text, force = false, btn = null) {
+  if ((!voiceIsOn() && !force) || !('speechSynthesis' in window)) return;
+  const clean = String(text).replace(/<[^>]+>/g, '').replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE0F}\u{200D}]/gu, ' ').replace(/O₂/g, 'oxygen').replace(/mSv/g, 'millisieverts').replace(/\s+/g, ' ').trim();
+  try {
+    stopSpeak();
+    const v = pickVoice();
+    const base = mode === 7 ? 1.0 : 1.06;
+    const parts = clean.replace(/([.!?…:;])\s+/g, '$1\u0001').split('\u0001').map((p) => p.trim()).filter(Boolean);
+    const us = parts.map((p, i) => {
+      const u = new SpeechSynthesisUtterance(p);
+      const q = /\?$/.test(p), ex = /!$/.test(p), intro = /[:;]$/.test(p);
+      u.lang = LANG === 'en' ? 'en-US' : 'es-MX';
+      u.pitch = Math.min(2, 1.6 + (q ? 0.25 : ex ? 0.16 : intro ? 0.08 : i % 2 ? -0.07 : 0.03));
+      u.rate = base * (ex ? 1.08 : q ? 0.96 : intro ? 0.98 : i === parts.length - 1 ? 0.97 : 1);
+      if (v) u.voice = v;
+      return u;
+    });
+    if (!us.length) return;
+    if (btn) {
+      speakBtn = btn; setBtnState(btn, true);
+      const done = () => { if (speakBtn === btn) { clearTimeout(speakTimer); setBtnState(btn, false); speakBtn = null; } };
+      us.at(-1).onend = done; us.forEach((u) => (u.onerror = done));
+      speakTimer = setTimeout(done, Math.max(3000, clean.length * 95 + us.length * 250));   // por si el navegador no avisa que terminó
+    }
+    us.forEach((u) => speechSynthesis.speak(u));
+  } catch {}
+}
+/* un solo botón: si está sonando, para; si no, lee */
+function listenClick(btn, text) { if (btn.dataset.playing === '1') stopSpeak(); else speak(text, true, btn); }
+function announce(t) { $('#live').textContent = ''; setTimeout(() => ($('#live').textContent = String(t).replace(/<[^>]+>/g, '')), 30); }
+function syncToggles() {
+  $$('[data-toggle="sound"]').forEach((b) => { b.setAttribute('aria-pressed', soundOn); b.setAttribute('aria-label', `Sound effects: ${soundOn ? 'on' : W_NO}`); $('.stt', b).textContent = soundOn ? 'on' : W_NO; });
+  $$('[data-toggle="voice"]').forEach((b) => { b.setAttribute('aria-pressed', voiceIsOn()); b.setAttribute('aria-label', `Reading voice: ${voiceIsOn() ? 'on' : W_NO}`); $('.stt', b).textContent = voiceIsOn() ? 'on' : W_NO; });
+}
+
+/* ---------- navegación ---------- */
+function show(id) {
+  $$('.screen').forEach((s) => s.classList.toggle('on', s.id === id));
+  const h = $(`#${id} h1, #${id} h2`);
+  if (h) { h.setAttribute('tabindex', '-1'); h.focus({ preventScroll: true }); }
+  window.scrollTo(0, 0);
+}
+
+/* ---------- barra de acción ---------- */
+function setAction({ status = '', label = '▶ Do it!', enabled = false, onClick = null, warn = '', extra = '' } = {}) {
+  $('#actstatus').innerHTML = status + (warn ? `<span class="warn">⚠️ ${warn}</span>` : '');
+  if (extra !== null) { $('#actextra').innerHTML = extra; $('#actextra').classList.remove('pulse'); }
+  const b = $('#act');
+  b.innerHTML = label; b.disabled = !enabled; b.hidden = !enabled; b.onclick = onClick;
+  b.classList.remove('pulse');
+}
+
+/* ---------- la escena ocupa todo el alto disponible: nunca hay que desplazarse ---------- */
+function fitScreen() {
+  if (!$('#s-game').classList.contains('on')) return;
+  const avail = innerHeight - $('#topbar').offsetHeight - $('#meters').offsetHeight - $('#actionbar').offsetHeight - 46;
+  const maxW = $('#s-game').clientWidth - 32;
+  const w = Math.max(300, Math.min(maxW, avail * 16 / 9));
+  $('#scene').style.width = w + 'px'; $('#meters').style.width = w + 'px';
+  placeTags(); placeBubble();
+}
+addEventListener('resize', () => requestAnimationFrame(fitScreen));
+
+/* ---------- ayuda cuando el niño se detiene ---------- */
+let idleT = null;
+function idle(ms, fn) { clearTimeout(idleT); idleT = setTimeout(fn, ms); }
+function stopIdle() { clearTimeout(idleT); }
+
+/* ---------- medidores ---------- */
+function doseZone(d) { return d < GAME.doseGreen ? ['green zone', 'low', '🟢'] : d < 20 ? ['yellow zone', 'careful', '🟡'] : ['red zone', 'high', '🔴']; }
+function previewState(opt) { const t = structuredClone(S); const r = resolveDay(t, S.day, opt, { preview: true, assumeSep: S.day === 3 && !S.sepKnown ? true : null }); return { t, r }; }
+function meterHTML(s, { pv = null } = {}) {
+  const n = mode === 10;
+  let cls = Array.from({ length: GAME.maxBattery }, (_, i) => (i < s.battery ? 'full' : ''));
+  let need = '';
+  if (pv) {
+    const sun = pv.r.steps[0].add || 0;
+    const end = pv.t.battery;
+    cls = Array.from({ length: GAME.maxBattery }, (_, i) => (i < Math.min(end, s.battery + sun) ? 'full' : i < s.battery + sun ? 'spend' : ''));
+    for (let i = s.battery; i < s.battery + sun && i < GAME.maxBattery; i++) cls[i] += ' gain';
+    need = `<div class="need">${n ? `At the end of the day: ${end} ${end === 1 ? 'cell' : 'cells'}` : `At the end of the day: ${end === 1 ? '' : ''} ${'⚡'.repeat(end) || 'none'}`}</div>`;
+  } else if (S && S.day <= 2 && s === S) {
+    need = `<div class="need">🌙 Every night air needs ${n ? GAME.lsWant : '⚡⚡⚡'}</div>`;
+  }
+  const cells = cls.map((c) => `<span class="cell ${c}"></span>`).join('');
+  const o2pct = Math.max(0, Math.min(100, (s.o2 / GAME.maxO2) * 100));
+  const dosePct = s.dose <= 0 ? 0 : Math.max(3, Math.min(100, (s.dose / 25) * 100));
+  const [zone, zt, zi] = doseZone(s.dose);
+  const reserve = s.o2 < GAME.reserveO2;
+  const airWord = reserve ? 'very low!' : o2pct > 60 ? 'good' : 'medium';
+  const out = [
+    `<div class="meter" id="mt-battery"><div class="lbl"><span><span class="ic" aria-hidden="true">⚡</span> <span class="tx">${T('bateria', 'Energy')}</span></span><span class="word">${s.battery}/${GAME.maxBattery}</span></div><div class="cells" role="img" aria-label="${s.battery} cells full out of ${GAME.maxBattery}">${cells}</div>${need}</div>`,
+    `<div class="meter" id="mt-o2"><div class="lbl"><span><span class="ic" aria-hidden="true">🫧</span> <span class="tx">${T('oxigeno', 'Air')}</span></span><span class="word">${reserve ? '⚠️ ' : ''}${n ? r1(Math.max(0, s.o2)) + ' kg' : airWord}</span></div><div class="bar air" role="meter" aria-label="Air" aria-valuemin="0" aria-valuemax="${GAME.maxO2}" aria-valuenow="${r1(s.o2)}" aria-valuetext="${airWord}"><i style="width:${o2pct}%"></i></div>${reserve ? '<div class="zone" style="color:var(--warn)">⚠️ running low</div>' : ''}</div>`,
+    `<div class="meter" id="mt-dose"><div class="lbl"><span><span class="ic" aria-hidden="true">☢️</span> <span class="tx">${T('dosis', 'Radiation')}</span></span><span class="word">${zi} ${n ? r1(s.dose) + ' mSv' : zt}</span></div><div class="bar dose" role="meter" aria-label="Radiation" aria-valuemin="0" aria-valuemax="25" aria-valuenow="${r1(s.dose)}" aria-valuetext=" ${zone}"><i style="width:${dosePct}%"></i></div><div class="zone">${zi}  ${zone}<span class="ss"> · only goes up</span></div></div>`,
+  ];
+  if (n) out.push(`<div class="meter" id="mt-sci"><div class="lbl"><span><span class="ic" aria-hidden="true">⭐</span> <span class="tx">Science</span></span><span class="word">${s.science}/${GAME.scienceGoal}</span></div><div class="bar"><i style="width:${Math.min(100, (s.science / GAME.scienceGoal) * 100)}%;background:var(--sci)"></i></div><div class="zone">🥬 plants: ${s.plants ? 'growing' : 'no light'}</div></div>`);
+  return out.join('');
+}
+function renderMeters(pv = null) {
+  $('#meters').style.setProperty('--n', mode === 10 ? 4 : 3);
+  $('#meters').classList.toggle('n4', mode === 10);
+  document.body.classList.toggle('m10', mode === 10);
+  $('#meters').innerHTML = meterHTML(S, { pv });
+  $('#starsbadge').hidden = mode === 10;
+  $('#starsbadge').textContent = mode === 10 ? `🎯 goal: ${GAME.scienceGoal}` : `⭐ ${S.science} of ${GAME.scienceGoal}`;
+}
+
+/* ---------- escena ---------- */
+const pct = ([x, y]) => `left:${(x / 12.8).toFixed(2)}%;top:${(y / 7.2).toFixed(2)}%`;
+function setToday(list) {
+  today = {};
+  list.forEach((c) => (today[c.st] ??= []).push(c));
+  $$('.st[data-st]').forEach((g) => g.classList.toggle('today', !!today[g.dataset.st]));
+  $('#tags').innerHTML = Object.entries(today).map(([st, cs]) => {
+    const s = STATIONS[st];
+    return `<button class="tag" data-st="${st}" style="${pct(s.tag || s.at)};--c:${s.c}">${cs.length === 1 ? `${cs[0].e} ${cs[0].t}` : s.multi || s.name}</button>`;
+  }).join('');
+  placeTags();
+}
+function placeTags() {
+  const W = $('#scene').clientWidth;
+  $$('.tag').forEach((t) => {
+    const s = STATIONS[t.dataset.st], x = (s.tag || s.at)[0] / 1280 * W, w = t.offsetWidth;
+    t.style.left = Math.max(6, Math.min(W - w - 6, x - w / 2)) + 'px';
+  });
+}
+function renderBase() {
+  const info = DAYS[S.day - 1];
+  $('#scene').dataset.sky = S.day === 3 ? 'storm' : info.sky === 'night' ? 'night' : S.day === 1 ? 'dusk' : 'dawn';
+  const st = $('#storm');
+  st.classList.toggle('on', S.day === 3);
+  if (S.day === 3 && !st.children.length) st.innerHTML = Array.from({ length: 26 }, () => `<span class="p" style="left:${10 + Math.random() * 85}%;top:${Math.random() * 30}%;animation-delay:${Math.random() * 1.6}s"></span>`).join('');
+  $('#callout').textContent = S.day === 3 ? '⚠️ Solar flare!' : info.sky === 'night' ? '🌙 Night: no Sun' : S.day === 1 ? '🌅 Last Sun before the night' : '🌄 The Sun is back!';
+  // medidores dentro del mundo: las cúpulas brillan según la batería, los tanques según el aire
+  $$('.gd.dome').forEach((d) => (d.style.opacity = S.battery ? 0.25 + 0.75 * S.battery / GAME.maxBattery : 0));
+  $$('.gd.o2').forEach((d) => (d.style.opacity = Math.max(0, Math.min(1, S.o2 / GAME.maxO2))));
+  $$('.gd.leaf').forEach((d) => (d.style.opacity = S.plants ? 0.9 : 0));
+}
+function renderTrack() {
+  const icons = ['🌅', '🌙', '⚠️', '🌄'];
+  $('#track').innerHTML = icons.map((ic, i) => {
+    const d = i + 1, cls = d === S.day ? 'now' : d < S.day ? 'done' : '';
+    return `${i ? `<span class="seg ${d <= S.day ? 'done' : ''}" aria-hidden="true"></span>` : ''}<span class="dot ${cls}" ${d === S.day ? 'aria-current="step"' : ''}><i aria-hidden="true">${d < S.day ? '✔' : ic}</i>Day ${d}</span>`;
+  }).join('') + `<span class="seg" aria-hidden="true"></span><span class="dot"><i aria-hidden="true">🚀</i>Return</span>`;
+}
+/* efectos sobre la escena (coordenadas de la ilustración, 1280×720) */
+function floatAt(x, y, txt, kind = '') {
+  const d = document.createElement('div');
+  d.className = 'float ' + kind; d.textContent = txt;
+  d.style.left = Math.min(92, Math.max(8, x / 12.8)) + '%'; d.style.top = Math.max(20, y / 7.2) + '%';
+  $('#fx').appendChild(d); setTimeout(() => d.remove(), 1600);
+}
+function tipAt(x, y, html) {
+  $$('.tip').forEach((t) => t.remove());
+  const d = document.createElement('div');
+  d.className = 'tip'; d.innerHTML = html;
+  d.style.left = Math.min(68, Math.max(32, x / 12.8)) + '%'; d.style.top = Math.max(34, y / 7.2) + '%';
+  $('#fx').appendChild(d); setTimeout(() => d.remove(), 4500);
+}
+/* reacción grande al tocar o al ejecutar: destello + chispas + contorno encendido */
+function burst(st, color) {
+  const s = STATIONS[st], c = color || s.c;
+  const b = document.createElement('div');
+  b.className = 'burst'; b.style.cssText = `${pct(s.mid)};--c:${c}`;
+  $('#fx').appendChild(b); setTimeout(() => b.remove(), 1000);
+  for (let i = 0; i < 7; i++) {
+    const p = document.createElement('span'), a = (i / 7) * Math.PI * 2;
+    p.className = 'spark'; p.textContent = '✦';
+    p.style.cssText = `${pct(s.mid)};color:${c};--dx:${Math.round(Math.cos(a) * 90)}px;--dy:${Math.round(Math.sin(a) * 70)}px`;
+    $('#fx').appendChild(p); setTimeout(() => p.remove(), 1150);
+  }
+  const g = $(`.st[data-st="${st}"]`);
+  g.classList.add('flash'); setTimeout(() => g.classList.remove('flash'), 700);
+}
+
+/* ---------- diálogo del personaje (barra inferior) ---------- */
+function setDialog(whoId, mood, html, sayText) {
+  const who = crewById[whoId];
+  $('#dialog').innerHTML = `<div class="narr">${agentSVG(whoId, mood)}
+    <div class="say"><p><span class="name">${who.name}:</span> ${html}</p><button class="listen" id="say-dlg" aria-label="Listen to ${who.name}">▶ Listen</button></div></div>`;
+  $('#say-dlg').onclick = () => listenClick($('#say-dlg'), sayText);
+}
+
+/* ---------- escena: decisión ---------- */
+function optsFor(day) { return SCENES[day].opts.filter((o) => o.ages.includes(mode)); }
+function chipsFor(o, hideKey) {
+  if (mode === 7) return { g: o.g7, c: o.c7, hidden: null };
+  const p = previewNumbers(S, S.day, o);
+  if (!hideKey) return { ...p, hidden: null };
+  const key = SCENES[S.day].key;
+  const re = { battery: /celdas$/, o2: /kg O₂$/, dose: /mSv/ }[key];
+  const label = { battery: 'battery', o2: 'air', dose: 'dose' }[key];
+  return { g: p.g.filter((x) => !re.test(x)), c: p.c.filter((x) => !re.test(x)), hidden: `${label}` };
+}
+let commonChips = new Set();
+function computeCommon() {
+  commonChips = new Set();
+  if (mode !== 10) return '';
+  const all = optsFor(S.day).map((o) => { const p = chipsFor(o, true); return [...p.g.map((x) => 'g' + x), ...p.c.map((x) => 'c' + x)]; });
+  all[0].forEach((k) => { if (all.every((a) => a.includes(k))) commonChips.add(k); });
+  if (!commonChips.size) return '';
+  return `<div class="common"><span class="muted">In every option:</span>${[...commonChips].map((k) => `<span class="chip ${k[0] === 'g' ? 'gain' : 'cost'}">${EC(k.slice(1))}</span>`).join('')}</div>`;
+}
+function optHTML(o) {
+  const p0 = chipsFor(o, mode === 10 && !predicted);
+  const p = { ...p0, g: p0.g.filter((x) => !commonChips.has('g' + x)), c: p0.c.filter((x) => !commonChips.has('c' + x)) };
+  return `<button class="opt" data-opt="${o.id}" aria-pressed="false">
+    <span class="t"><span class="e" aria-hidden="true">${o.e}</span>${o.t}</span>
+    <span class="chips">${p.g.map((x) => `<span class="chip gain">${EC(x)}</span>`).join('')}${p.c.map((x) => `<span class="chip cost">${EC(x)}</span>`).join('')}${p.hidden ? `<span class="chip hide">❓ ${p.hidden} ?</span>` : ''}</span>
+  </button>`;
+}
+function renderScene(quiet = false) {
+  chosen = null; predicted = null; shownAt = performance.now(); hintsUsed = 0; phase = 'choose';
+  hideBubble();
+  renderTrack(); renderMeters(); renderBase();
+  const sc = SCENES[S.day], who = crewById[sc.who];
+  const text = STORY[S.day][mode]();
+  setDialog(who.id, S.day === 3 ? 'wow' : 'happy', text, text);
+  commonStr = computeCommon();
+  setToday(optsFor(S.day).map((o) => ({ st: OPT_ST[o.id], id: o.id, e: o.e, t: o.t, html: () => optHTML(o) })));
+  setAction({ status: '👆 Tap a glowing machine' });
+  saveGame();
+  fitScreen();
+  if (quiet) return;
+  showMission();
+}
+function showMission() {
+  const sc = SCENES[S.day], who = crewById[sc.who], text = STORY[S.day][mode]();
+  stopIdle();
+  openModal('m-mission', `<div class="small muted">Day ${S.day} of ${LAST_DAY} · ${DAYS[S.day - 1].label}</div>
+    <h2 id="mi-t">Mission for day ${S.day}</h2>
+    <div class="narr" style="margin-top:8px">${agentSVG(who.id, S.day === 3 ? 'wow' : 'happy')}<div class="say"><p><span class="name">${who.name}:</span> ${text}</p></div></div>
+    <div class="foot"><button class="listen" id="mi-say">▶ Listen</button><button class="btn go" id="mi-go">Go ahead! ▶</button></div>`);
+  $('#mi-say').onclick = () => listenClick($('#mi-say'), text);
+  $('#mi-go').onclick = () => { SFX.good(); stopSpeak(); closeModal('m-mission'); idle(10000, hintChoose); };
+  if (S.day === 3) SFX.alarm();
+  speak(`${who.name} says: ${text}`, false, $('#mi-say'));
+  announce(`Mission for day ${S.day}. ${text}`);
+  $('#mi-go').focus({ preventScroll: true });
+}
+function hintChoose() {
+  if (phase !== 'choose' || chosen || !$('#bubble').hidden) return;
+  hintsUsed++;
+  const who = crewById[SCENES[S.day].who];
+  $$('.tag').forEach((b) => { b.classList.remove('pulse'); void b.offsetWidth; b.classList.add('pulse'); });
+  const msg = 'Tap one of the glowing machines. Those are your options for today.';
+  setAction({ status: `💡 ${msg}` });
+  speak(`${who.name}: ${msg}`);
+  idle(14000, hintChoose);
+}
+
+/* ---------- burbuja de decisión: aparece junto a la máquina tocada ---------- */
+function hideBubble() {
+  $('#bubble').hidden = true; $('#scrim').hidden = true; bubbleSt = null; bgoAction = null;
+  $$('.st.sel').forEach((g) => g.classList.remove('sel'));
+}
+function closeBubble() {
+  if ($('#bubble').hidden) return;
+  hideBubble();
+  if (phase === 'choose' || phase === 'confirm') {
+    phase = 'choose'; chosen = null; predicted = null;
+    renderMeters();
+    setAction({ status: '👆 Tap a glowing machine' });
+    idle(10000, hintChoose);
+  }
+}
+function placeBubble() {
+  const B = $('#bubble'); if (B.hidden || !bubbleSt) return;
+  const s = STATIONS[bubbleSt], sc = $('#scene'), W = sc.clientWidth, H = sc.clientHeight, bw = B.offsetWidth, bh = B.offsetHeight;
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+  const x = clamp(s.at[0] / 1280 * W - bw / 2, 6, W - bw - 6);
+  let y = s.bot ? s.bot / 720 * H + 6 : s.at[1] / 720 * H - bh - 6;
+  const top = 6;
+  y = clamp(y, top, Math.max(top, H - bh - 6));
+  B.style.left = x + 'px'; B.style.top = y + 'px';
+}
+function bindBubble() {
+  const B = $('#bubble');
+  $$('.opt', B).forEach((b) => (b.onclick = () => (phase === 'detector' ? pickFollow(b.dataset.opt) : pick(b.dataset.opt))));
+  $('#bx').onclick = closeBubble;
+  $('#bgo').onclick = () => bgoAction && bgoAction();
+}
+function openBubble(st) {
+  stopIdle(); SFX.tap(); hidePop(); $$('.tip').forEach((t) => t.remove());
+  if (phase === 'confirm') phase = 'choose';
+  if (phase === 'choose') { chosen = null; predicted = null; renderMeters(); }
+  bubbleSt = st; bgoAction = null;
+  const cs = today[st], s = STATIONS[st], B = $('#bubble');
+  $$('.st').forEach((g) => g.classList.toggle('sel', g.dataset.st === st));
+  burst(st);
+  B.style.setProperty('--c', s.c);
+  B.innerHTML = `<button class="x" id="bx" aria-label="Close">✕</button><div class="bname">${s.name}</div>${phase === 'choose' ? commonStr : ''}
+    <div class="opts">${cs.map((c) => c.html()).join('')}</div><div class="bwarn" id="bwarn"></div><div id="bpred"></div>
+    <button class="btn go" id="bgo" disabled>▶ Do it!</button>`;
+  B.hidden = false; $('#scrim').hidden = false; bindBubble();
+  if (cs.length === 1) (phase === 'detector' ? pickFollow : pick)(cs[0].id);
+  else { placeBubble(); setAction({ status: `${s.name}: pick an option` }); speak(`${cs.map((c) => c.t).join(', or ')}`); }
+}
+function pick(id) {
+  SFX.pick(); stopIdle();
+  chosen = optsFor(S.day).find((o) => o.id === id); predicted = null;
+  const B = $('#bubble'), cs = today[bubbleSt];
+  const redraw = () => {
+    const show = mode === 10 && cs.length > 1 ? cs.filter((c) => c.id === id) : cs;
+    $('.opts', B).innerHTML = show.map((c) => c.html()).join('') + (show.length < cs.length ? '<button class="listen" id="bother">↩ See the other options</button>' : '');
+    $$('.opt', B).forEach((x) => x.setAttribute('aria-pressed', x.dataset.opt === id));
+    bindBubble();
+    if ($('#bother')) $('#bother').onclick = () => openBubble(bubbleSt);
+  };
+  redraw();
+  const pv = previewState(chosen);
+  renderMeters(mode === 10 ? null : pv);
+  const warn = mode === 7 && RISKY[S.day] && !canFinish(pv.t, S.day + 1) ? RISKY[S.day] : '';
+  $('#bwarn').innerHTML = (mode === 7 && S.day <= 2 ? `<span class="muted">At the end of the day: ${'⚡'.repeat(pv.t.battery) || 'no ⚡'}</span>` : '') + (warn ? `<br>⚠️ ${warn}` : '');
+  $('#bgo').textContent = `▶ Do it! · Day ${S.day}`;
+  bgoAction = runDay;
+  if (mode === 10) {
+    const sc = SCENES[S.day];
+    $('#bgo').disabled = true;
+    $('#bpred').innerHTML = `<div class="question"><b>🤔 What will happen to ${sc.keyLabel}?</b>
+      <div class="small muted">“Same” = changes by less than ${{ battery: '1 cell', o2: '0.3 kg', dose: '1 mSv' }[sc.key]}</div>
+      <div class="qopts" role="group" aria-label="Your prediction">${[['up', '⬆️ Up'], ['same', '➡️ Same'], ['down', '⬇️ Down']].map(([v, l]) => `<button class="btn" data-pred="${v}" aria-pressed="false">${l}</button>`).join('')}</div></div>`;
+    $$('[data-pred]', B).forEach((b) => (b.onclick = () => {
+      SFX.tap(); predicted = b.dataset.pred;
+      $$('[data-pred]', B).forEach((x) => x.setAttribute('aria-pressed', x === b));
+      redraw(); renderMeters(pv);
+      $('.question', B).classList.add('done');
+      $('#bgo').disabled = false; $('#bgo').classList.add('pulse');
+      phase = 'confirm'; placeBubble();
+      setAction({ status: `You predicted ${b.textContent.trim()}. Tap Do it! to see what happens.` });
+    }));
+    setAction({ status: `${chosen.e} ${chosen.t}: now predict 👉` });
+    idle(12000, () => { if (!predicted && !$('#bubble').hidden) { $('.question', B)?.classList.add('pulse'); speak('Tap up, same or down to predict.'); } });
+  } else {
+    $('#bpred').innerHTML = '';
+    $('#bgo').disabled = false;
+    phase = 'confirm';
+    setAction({ status: `You chose ${chosen.e} ${chosen.t}`, warn });
+    speak(chosen.t + (warn ? '. ' + warn : ''));
+    idle(9000, () => { if (!$('#bubble').hidden) { $('#bgo').classList.add('pulse'); setAction({ status: '💡 When you are ready, tap Do it!' }); } });
+  }
+  placeBubble();
+}
+
+/* ---------- ¿todavía se puede terminar la misión desde aquí? ---------- */
+function canFinish(state, day) {
+  if (day > LAST_DAY) return true;
+  for (const o of optsFor(day)) {
+    const variants = day === 3 && o.ctx.detector ? [true, false] : [null];
+    for (const f of variants) {
+      const t = structuredClone(state);
+      const opt = f === null ? o : { ...o, ctx: { ...o.ctx, followShelter: f } };
+      const r = resolveDay(t, day, opt);
+      if (!r.abort && canFinish(t, day + 1)) return true;
+    }
+  }
+  return false;
+}
+
+/* ---------- modelo bioastronáutico (bosques aleatorios exportados de scikit-learn) ----------
+   Entradas que el juego le pasa al modelo, a partir de lo que pasó en el día:
+   · intensidad de tormenta (0–10): 1 en días tranquilos; el día 3, 8.5 si llegan partículas y 3 si es falsa alarma
+   · dosis base: la dosis del día que calculó el motor (mSv)
+   · blindaje: 3 refugio · 2 dentro de la base · 1 caminata
+   · actividad: 0 refugio · 1 trabajo interior · 2 caminata
+   · contramedidas: 1 el día que se cosechan lechugas frescas
+   · energía al invernadero: % de las celdas usadas ese día que fueron a las plantas (se mantiene los días siguientes) */
+function modelFor(res, day) {
+  const storm = day === 3 ? (res.sep ? 8.5 : 3) : 1;
+  const act = res.shelter ? 0 : res.evaN ? 2 : 1;
+  const shield = res.shelter ? 3 : res.evaN ? 1 : 2;
+  const used = res.tallerUsed + res.plantsUsed + res.detectorUsed + res.robotUsed + res.lsCells;
+  if (res.plantsUsed && used) S.invShare = Math.round((res.plantsUsed / used) * 100);
+  const inv = S.plants ? S.invShare || 0 : 0;
+  const input = { tormenta: storm, dosis: r2(res.d.dose), blindaje: shield, actividad: act, contramedidas: res.harvest ? 1 : 0, invernadero: inv };
+  let out = null;
+  try { out = predecirEventoEspacial(input.tormenta, input.dosis, input.blindaje, input.actividad, input.contramedidas, input.invernadero); } catch {}
+  return { input, out };
+}
+function gaugesHTML(m) {
+  if (!m || !m.out) return '';
+  const n = mode === 10, o = m.out;
+  const g = (label, v, goodHigh, words) => {
+    const q = goodHigh ? (v >= 75 ? 'good' : v >= 55 ? 'mid' : 'bad') : (v <= 8 ? 'good' : v <= 20 ? 'mid' : 'bad');
+    const w = words[q === 'good' ? 0 : q === 'mid' ? 1 : 2];
+    return `<div class="gauge ${q}"><div class="top"><span>${label}</span><span>${n ? Math.round(v) + ' %' : w}</span></div><div class="gbar" role="img" aria-label="${label}: ${Math.round(v)} percent"><i style="width:${Math.max(3, Math.min(100, v))}%"></i></div></div>`;
+  };
+  return `<h3>${n ? 'Bioastronautics model: how the crew ended up today' : 'How did the crew end up today?'}</h3>
+    <div class="gauges">
+      ${g(n ? 'Cell damage' : 'Harm to the body', o.danoCelular, false, ['little', 'some', 'much'])}
+      ${g(n ? 'Crew efficiency' : 'Energy to work', o.eficienciaTripulacion, true, ['very well', 'so-so', 'low'])}
+      ${g(n ? 'Crop health' : 'Plants', o.saludCultivos, true, ['healthy', 'so-so', m.input.invernadero ? 'weak' : 'no light'])}
+    </div>${n ? '<div class="modelnote muted">Prediction from a model trained on reference data from NASA DONKI and OSDR/RadLab.</div>' : ''}`;
+}
+
+/* ---------- ejecutar el día ---------- */
+function runDay() {
+  if (!chosen || phase !== 'confirm') return;
+  stopIdle(); hideBubble(); setToday([]);
+  if (S.day === 3 && chosen.ctx.detector) return detectorStep();
+  finishDay(chosen);
+}
+function detectorStep() {
+  phase = 'detector';
+  burst('comm');
+  const arrives = S.sepArrives;
+  const msg = `📡 ${arrives ? '<b>Particles ARE arriving!</b> The counter is climbing fast.' : '<b>No particles are arriving.</b> The flare was big, but it sent no particles toward the Moon.'} You used 1 cell to measure. Now decide with data.`;
+  setDialog('L', arrives ? 'wow' : 'happy', msg, msg);
+  const mk = (id, st, e, t) => ({ st, id, e, t, html: () => `<button class="opt" data-opt="${id}" aria-pressed="false"><span class="t"><span class="e" aria-hidden="true">${e}</span>${t}</span></button>` });
+  setToday([mk('f1', 'refuge', '🛏️', 'Go to the shelter'), mk('f0', 'rocks', '🔬', 'Keep working')]);
+  setAction({ status: '👆 Tap the shelter or the workshop' });
+  fitScreen();
+  speak(msg);
+}
+function pickFollow(id) {
+  SFX.pick();
+  $$('.opt', $('#bubble')).forEach((b) => b.setAttribute('aria-pressed', b.dataset.opt === id));
+  $('#bgo').disabled = false; $('#bgo').textContent = '▶ Do it! · Day 3';
+  bgoAction = () => {
+    const opt = structuredClone(chosen); opt.ctx.followShelter = id === 'f1'; opt.followShelter = opt.ctx.followShelter;
+    hideBubble(); setToday([]); finishDay(opt);
+  };
+  setAction({ status: `You decided: ${id === 'f1' ? '🛏️ shelter' : '🔬 keep working'}` });
+  placeBubble();
+}
+
+function finishDay(opt) {
+  phase = 'anim';
+  setAction({ status: '⏳ Watch the base…' });
+  checkpoints[S.day] = structuredClone(S);
+  const before = structuredClone(S);
+  const res = resolveDay(S, S.day, opt);
+  const latency = Math.round(performance.now() - shownAt);
+  S.history.push({ day: S.day, opt: opt.id, follow: opt.ctx.followShelter, d: res.d, after: { battery: S.battery, o2: r2(S.o2), dose: r2(S.dose), science: S.science } });
+  let predOk = null;
+  if (mode === 10 && predicted) {
+    const key = SCENES[S.day].key, v = res.d[key];
+    const tol = { battery: 0.5, o2: 0.3, dose: 1 }[key];
+    const real = Math.abs(v) < tol ? 'same' : v > 0 ? 'up' : 'down';
+    predOk = real === predicted;
+    tele.predictions.total++; if (predOk) tele.predictions.ok++;
+    res.predReal = real;
+  }
+  tele.decisions.push({ mode, day: S.day, opt: opt.id, follow: opt.ctx.followShelter ?? null, latencyMs: latency, hints: hintsUsed, predOk, sep: S.day === 3 ? res.sep : null, t: Date.now() });
+  if (tele.decisions.length > 300) tele.decisions.shift();
+  saveTele();
+  playConsequences(res, before, () => {
+    renderMeters(); renderTrack();
+    if (res.abort) { S.aborted = true; tele.aborts++; saveTele(); SFX.bad(); renderBase(); return showAbort(res); }
+    const good = !(res.storm > 2) && res.d.o2 > -1 && !res.evaLimited;
+    renderBase();
+    (good ? SFX.good : SFX.tap)();
+    showResult(res, before, opt, predOk);
+    saveGame();
+  });
+}
+
+/* la consecuencia se ve en la base antes de leerla: cada máquina reacciona */
+function playConsequences(res, before, done) {
+  $$('.tip').forEach((t) => t.remove());
+  const n = mode === 10, steps = [], at = (st) => STATIONS[st].at;
+  if (res.steps[0].add) steps.push(() => { burst('energy'); floatAt(...at('energy'), `☀️ +${res.steps[0].add} ⚡`, 'good'); SFX.blip(true); });
+  else steps.push(() => floatAt(...at('energy'), '🌙 0 ⚡'));
+  if (res.tallerUsed) steps.push(() => { burst('rocks'); floatAt(...at('rocks'), `🔬 −${res.tallerUsed} ⚡`); SFX.blip(false); });
+  if (res.plantsUsed) steps.push(() => { burst('food'); setTimeout(() => burst('plants'), 250); floatAt(...at('plants'), '🌱 −1 ⚡'); $$('.gd.leaf').forEach((d) => (d.style.opacity = 0.9)); SFX.blip(false); });
+  if (res.detectorUsed) steps.push(() => { floatAt(...at('comm'), '📡 −1 ⚡'); SFX.blip(false); });
+  if (res.robotUsed) steps.push(() => { burst('rover'); floatAt(...at('rover'), '🤖 −1 ⚡'); SFX.blip(false); });
+  if (res.evaN) steps.push(() => { burst('walk'); floatAt(...at('walk'), `🧑‍🚀 × ${res.evaN}`); });
+  steps.push(() => { if (res.lsCells) burst('air'); floatAt(...at('air'), n ? `🫧 +${r1(res.made)} kg` : `🫧 −${res.lsCells} ⚡`); SFX.blip(res.made >= res.breathed); });
+  steps.push(() => {
+    const net = res.made - res.breathed - res.evaO2;
+    floatAt(730, 440, n ? `😮‍💨 −${r1(res.breathed + res.evaO2)} kg` : net >= -0.3 ? '🫧 air OK' : '🫧 air dropped', net >= -0.3 ? 'good' : 'bad');
+  });
+  if (res.shelter) steps.push(() => burst('refuge'));
+  if (res.storm) steps.push(() => { const st = res.shelter ? 'refuge' : 'rocks'; burst(st, res.shelter ? '#5ec8ff' : '#ff5c5c'); floatAt(...STATIONS[st].mid, `☢️ +${r1(res.d.dose)}${n ? ' mSv' : ''}`, res.shelter ? 'good' : 'bad'); SFX.blip(false); });
+  if (res.d.science > 0) steps.push(() => { floatAt(1120, 150, `⭐ +${res.d.science}`, 'good'); SFX.blip(true); });
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) { done(); return; }
+  steps.forEach((f, i) => setTimeout(f, i * 520));
+  setTimeout(done, steps.length * 520 + 500);
+}
+
+/* ---------- explicación (causa → efecto) ---------- */
+const nCells = (k) => `${k} ${k === 1 ? 'cell' : 'cells'}`;
+function explain(res, before) {
+  const n = mode === 10, day = S.day, chain = [];
+  let why = '';
+  if (day === 1) {
+    chain.push(['☀️', `Sun: +${nCells(res.steps[0].add)}`]);
+    if (res.tallerUsed) chain.push(['🔬', `Workshop used ${res.tallerUsed}`]);
+    chain.push(['🫧', `Air used ${res.lsCells}`]);
+    chain.push(['🔋', `${S.battery === 1 ? '1' : ` ${S.battery}`} left for the night`]);
+    why = S.battery >= 4
+      ? (n ? `You saved ${nCells(S.battery)}. The night lasts 2 days and air needs ${GAME.lsWant} per day: enough for more than one full day.` : 'You saved lots of energy! You will need it at night.')
+      : (n ? `Only ${S.battery === 1 ? '1 cell' : ` ${S.battery} cells`} left, and 2 days without Sun are coming that need ${GAME.lsWant * 2} for air. That gap is going to show.` : 'You used almost all the energy on science. At night there is no Sun to recharge…');
+  }
+  if (day === 2 || (day === 3 && !res.storm && !res.shelter && res.lsCells < GAME.lsWant)) {
+    chain.length = 0;
+    chain.push(['🌙', 'No Sun']);
+    chain.push(['🔋', `${nCells(res.lsCells)} to air`]);
+    chain.push(['🫧', n ? `Made ${r1(res.made)} kg` : 'The machine made air']);
+    chain.push(['👩‍🚀', n ? `Breathed ${r1(res.breathed)} kg` : 'The crew breathed']);
+    const net = res.made - res.breathed;
+    why = net >= 0 ? (n ? `You made ${r1(res.made)} kg and the crew breathed ${r1(res.breathed)} kg. The air held steady.` : 'The machine made all the air the crew breathed. Good!')
+      : (n ? `You made ${r1(res.made)} kg but the crew breathed ${r1(res.breathed)} kg: the tank dropped ${r1(-net)} kg.` : 'The machine made less air than the crew breathed. That is why the blue bar went down.');
+    if (res.plantsUsed) why += n ? ' The lettuces got light: they will be ready on day 4.' : ' But the plants got light and they will grow! 🌱';
+  }
+  if (day === 3) {
+    const lc = res.lsCells;
+    chain.length = 0;
+    if (res.sep) {
+      chain.push(['☀️', 'Flare'], ['⚡', 'Particles did arrive'], [res.shelter ? '🛏️' : '🔬', res.shelter ? 'Crew in the shelter' : 'Crew in the workshop'], ['☢️', n ? `+${r1(res.d.dose)} mSv` : res.shelter ? 'A little radiation' : 'Lots of radiation']);
+      why = res.shelter ? (n ? `The shelter's water walls stopped almost all of it: only ${r1(res.d.dose)} mSv instead of ${r1(GAME.stormDoseWorking + DATA.lunarDoseDay * GAME.insideFactor)}. The price: a day without science.` : 'The shelter protected the crew! The water in the walls stopped the radiation. No science today, but everyone is fine.')
+        : (n ? `Staying in the workshop gave science, but added ${r1(res.d.dose)} mSv. Above ${GAME.doseEvaRule} mSv, the doctor lets only 1 person go out tomorrow.` : 'There was science, but radiation got into the workshop. Beto, the doctor, is worried.');
+    } else {
+      chain.push(['☀️', 'Flare'], ['🚫', 'No particles arrived'], ['☢️', n ? `+${r1(res.d.dose)} mSv (background only)` : 'Normal radiation']);
+      why = res.shelter ? (n ? 'It was a false alarm: the flare sent no particles. Sheltering was not a mistake: with what you knew, it was the safe choice. The detector would have told you the truth for 1 cell.' : 'It was a false alarm. But staying safe is always a good idea!')
+        : (n ? 'False alarm: the class of a flare does not tell how much dose arrives. What matters are the particles (SEP).' : 'Phew, false alarm! No particles arrived this time.');
+    }
+    if (lc < GAME.lsWant) why += n ? (lc === 0 ? ' Careful: tonight there was no cell left for air.' : ` Careful: there were only ${nCells(lc)} for air tonight.`) : ' And there were few cells left for air…';
+  }
+  if (day === 4) {
+    chain.push(['🌄', `Sun: +${res.steps[0].add}`]);
+    if (res.evaN) chain.push(['🧑‍🚀', `${res.evaN} outside ${GAME.evaHours} h`]);
+    if (res.robotUsed) chain.push(['🤖', 'Robot explored']);
+    if (res.evaN) chain.push(['🫧', n ? `−${r2(res.evaO2)} kg for suits` : 'Suits use air']);
+    chain.push(['⭐', `+${res.d.science} science`]);
+    why = res.evaLimited ? (n ? `You wanted to send 2, but with ${r1(before.dose)} mSv the doctor allowed only 1. Yesterday's dose cost you science today.` : 'You wanted 2 to go out, but Beto the doctor said: “Only 1, they already got a lot of radiation”.')
+      : res.evaN === 2 ? (n ? `Two suits for ${GAME.evaHours} h used ${r2(res.evaO2)} kg of O₂ and gave lots of science.` : 'Two explorers found lots of ice! They used a bit more air.')
+      : res.robotUsed ? (n ? 'The robot does not breathe or get dosed, but it gives less science. It is another way to explore.' : 'The robot explored without using air!')
+      : (n ? `One suit for ${GAME.evaHours} h used ${r2(res.evaO2)} kg of O₂.` : 'Lu explored the crater and used a little air.');
+    if (res.harvest) why += n ? ' Also, the lettuces were ready: fresh food, +5 science.' : ' And they harvested lettuce! 🥬';
+  }
+  return { chain, why };
+}
+const TOL = { battery: 0.5, o2: 0.3, dose: 0.05, science: 0.5 };
+function deltaTile(icon, label, v, unit, key, goodUp = true) {
+  const same = Math.abs(v) < TOL[key];
+  const up = v > 0, good = goodUp ? up : !up;
+  let val;
+  if (mode === 10) val = same ? 'same' : `${up ? '+' : ''}${unit === 'cells' || unit === '' ? v : r2(v)} ${unit}`;
+  else val = same ? 'same' : key === 'dose' && v < 1 ? 'a little' : up ? 'went up' : 'went down';
+  return `<div class="delta"><span>${icon} ${label}</span><span class="v ${same ? 'same' : good ? 'up' : 'down'}">${same ? '➡️' : up ? '⬆️' : '⬇️'} ${val}</span></div>`;
+}
+function nextDay() {
+  SFX.tap(); stopSpeak();
+  $('#m-why').classList.remove('on');
+  S.day += 1; S.day > LAST_DAY ? endMission() : renderScene();
+}
+function showResult(res, before, opt, predOk) {
+  phase = 'result';
+  const { chain, why } = explain(res, before);
+  const f = FACTS[S.day], src = SOURCES[f.src];
+  const who = crewById[SCENES[S.day].who];
+  const model = modelFor(res, S.day);
+  const lowEff = model.out && model.out.eficienciaTripulacion < 60;
+  const mood = !(res.storm > 2) && res.d.o2 > -1 && !res.evaLimited && !lowEff ? 'happy' : 'worried';
+  const h = S.history.at(-1); if (h) h.model = model.out;
+  const td = tele.decisions.at(-1); if (td) { td.model = model.out; td.modelInput = model.input; saveTele(); }
+  setDialog(who.id, mood, `<span id="why">${why}</span>`, why);
+  const predTxt = predOk === null ? '' : predOk ? '✅ Your prediction was right!' : `🤔 You predicted “${{ up: 'goes up', same: 'same', down: 'goes down' }[predicted]}” and it ${{ up: 'went up', same: 'stayed the same', down: 'went down' }[res.predReal]}. That is how we learn!`;
+  const deltas = `<div class="deltas">
+      ${deltaTile('⚡', 'Energy', res.d.battery, 'cells', 'battery')}
+      ${deltaTile('🫧', 'Air', res.d.o2, 'kg', 'o2')}
+      ${deltaTile('☢️', 'Radiation', res.d.dose, 'mSv', 'dose', false)}
+      ${deltaTile('⭐', 'Science', res.d.science, '', 'science')}
+    </div>`;
+  const predChip = predTxt ? `<span class="predchip ${predOk ? 'ok' : 'no'}">${predTxt}</span>` : '';
+  const last = S.day >= LAST_DAY;
+  const nextLabel = last ? '🚀 Return to Earth' : `Go to day ${S.day + 1} ▶`;
+  lastWhy = { chain, f, src, why, who, mood, deltas, predChip, model, nextLabel, day: S.day };
+  // la barra de abajo queda como respaldo si alguien cierra el resultado
+  setAction({ status: deltas + predChip, extra: '<button class="btn small" id="whybtn">🔍 Why?</button>', label: nextLabel, enabled: true, onClick: nextDay });
+  $('#whybtn').onclick = () => openWhy(false);
+  fitScreen();
+  announce(`Result of day ${S.day}. ${why}`);
+  saveGame();
+  openWhy(true);
+}
+function openWhy(auto) {
+  const { chain, f, src, why, who, mood, deltas, predChip, model, nextLabel, day } = lastWhy;
+  openModal('m-why', `<div class="row" style="justify-content:space-between"><h2 id="wh-t">Result of day ${day}</h2><button class="icon-btn" data-close aria-label="Close and look at the base">✕</button></div>
+    <div class="resgrid"><div>
+    <div class="narr">${agentSVG(who.id, mood)}<div class="say"><p><span class="name">${who.name}:</span> ${why}</p></div></div>
+    ${deltas}${predChip}
+    <h3>🔍 Why did it happen?</h3>
+    <div class="chain compact" aria-label="What caused what">${chain.map(([e, t], i) => `${i ? '<span class="arrow" aria-hidden="true">➜</span>' : ''}<span class="link"><b aria-hidden="true">${e}</b>${t}</span>`).join('')}</div>
+    </div><div>
+    ${gaugesHTML(model)}
+    <div class="fact"><b>🛰️ Real fact:</b> ${f.t}
+      ${mode === 10 ? `<details><summary>Where does this come from?</summary><span class="small muted">${src.url ? `<a href="${src.url}" target="_blank" rel="noopener">${src.name}</a>` : src.name}${f.note ? ' · ' + f.note : ''}</span></details>` : ''}</div>
+    </div></div>
+    <div class="foot"><button class="listen" id="res-say">▶ Listen</button><button class="btn go" id="res-next">${nextLabel}</button></div>`);
+  $$('#m-why [data-close]').forEach((x) => (x.onclick = () => { stopSpeak(); closeModal('m-why'); }));
+  $('#res-say').onclick = () => listenClick($('#res-say'), why);
+  $('#res-next').onclick = nextDay;
+  if (auto) speak(why, false, $('#res-say'));
+  $('#res-next').focus({ preventScroll: true });
+}
+
+/* ---------- misión en pausa: solo reintentos que sí pueden funcionar ---------- */
+function abortChain() {
+  const h = (d) => S.history.find((x) => x.day === d);
+  const links = [];
+  const d1 = h(1);
+  if (d1 && d1.opt !== 'charge') links.push([d1.opt === 'half' ? '⚖️' : '🔬', 'Day 1: energy to the workshop']);
+  else links.push(['🔋', 'Day 1: energy was saved']);
+  const d2 = h(2);
+  if (d2 && d2.opt === 'plants') links.push(['🌱', 'Day 2: one cell to the plants']);
+  if (d2 && d2.opt === 'lab') links.push(['🔬', 'Day 2: two cells to the workshop']);
+  links.push(['🌙', 'Nights without Sun'], ['🔋', 'Empty battery'], ['🫧', 'No air']);
+  return links;
+}
+function showAbort(res) {
+  phase = 'abort';
+  const n = mode === 10;
+  const viable = Object.keys(checkpoints).map(Number).sort((a, b) => a - b).filter((d) => canFinish(structuredClone(checkpoints[d]), d));
+  const cur = S.day;
+  const firstBad = Object.keys(checkpoints).map(Number).sort((a, b) => a - b).find((d) => !viable.includes(d));
+  const latest = viable.at(-1);
+  const hint = cur !== latest && firstBad
+    ? (n ? `From day ${firstBad} on, the energy was no longer enough for air, whatever you chose. The key is day ${latest}.` : `From day ${firstBad} on, the energy was no longer enough for air. We need to change what we did on day ${latest}.`)
+    : (n ? `At night less O₂ was made than was breathed.` : 'At night we made less air than we breathed. Try another option this time.');
+  const body = `
+    <div class="narr">${agentSVG('X', 'worried')}<div><h2 id="ab-t">Houston: “Pause the mission!”</h2>
+    <p>${n ? `The O₂ tank hit 0. The crew breathes ${r1(res.breathed)} kg a day and there were only ${nCells(res.lsCells)} to make oxygen.` : 'The base ran out of air. Nobody got hurt: the mission pauses and we can try again.'}</p></div></div>
+    <div class="chain">${abortChain().map(([e, t], i) => `${i ? '<span class="arrow" aria-hidden="true">➜</span>' : ''}<span class="link"><b aria-hidden="true">${e}</b>${t}</span>`).join('')}</div>
+    <p><b>💡 Hint:</b> ${hint}</p>
+    <p class="muted small">In real missions, when something fails, the crew returns safely and plans again. Failing here is part of learning.</p>
+    <div class="row">${viable.slice().reverse().map((d, i) => `<button class="btn ${i === 0 ? 'primary' : ''}" data-back="${d}">${d === cur ? `🔁 Replay day ${d}` : `⏪ Back to day ${d} ${DAYS[d - 1].icon}`}</button>`).join('')}</div>`;
+  openModal('m-abort', body);
+  setAction({ status: 'Mission paused' });
+  speak($('#abort-body').innerText);
+  $$('[data-back]').forEach((b) => (b.onclick = () => {
+    const d = Number(b.dataset.back);
+    S = structuredClone(checkpoints[d]);
+    S.history = S.history.filter((h) => h.day < d);
+    S.aborted = false; S.retried = true;
+    Object.keys(checkpoints).forEach((k) => { if (Number(k) > d) delete checkpoints[k]; });
+    closeModal('m-abort');
+    renderScene();
+  }));
+}
+
+/* ---------- fin de misión ---------- */
+function miniChart(key, label, color, max, unit) {
+  const pts = [{ day: 0, battery: GAME.startBattery, o2: GAME.startO2, dose: 0 }, ...S.history.map((h) => ({ day: h.day, ...h.after }))];
+  const W = 200, H = 150, L = 26, B = 22, Tp = 10, R = 8;
+  const x = (d) => L + (d / LAST_DAY) * (W - L - R);
+  const y = (v) => H - B - (Math.max(0, v) / max) * (H - B - Tp);
+  const path = pts.map((p, i) => `${i ? 'L' : 'M'}${x(p.day)},${y(p[key])}`).join(' ');
+  return `<div class="mini"><b style="color:${color}">${label}</b>
+    <svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${label}: ends at ${r1(pts.at(-1)[key])} ${unit}">
+      ${[0, max].map((v) => `<text x="${L - 6}" y="${y(v) + 4}" fill="#c3cbef" font-size="14" text-anchor="end">${v}</text><line x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}" stroke="#33407a"/>`).join('')}
+      ${[0, 1, 2, 3, 4].map((d) => `<text x="${x(d)}" y="${H - 6}" fill="#c3cbef" font-size="14" text-anchor="middle">${d === 0 ? '0' : d}</text>`).join('')}
+      <path d="${path}" fill="none" stroke="${color}" stroke-width="3.5"/>
+      ${pts.map((p) => `<circle cx="${x(p.day)}" cy="${y(p[key])}" r="3.5" fill="${color}"/>`).join('')}
+    </svg><div class="small muted">at the end: ${r1(pts.at(-1)[key])} ${unit === 'cells' && r1(pts.at(-1)[key]) === 1 ? 'cell' : unit}</div></div>`;
+}
+const OPT_NAME = Object.fromEntries(Object.values(SCENES).flatMap((s) => s.opts.map((o) => [o.id, `${o.e} ${o.t}`])));
+const OPT_E = Object.fromEntries(Object.values(SCENES).flatMap((s) => s.opts.map((o) => [o.id, o.e])));
+function endMission() {
+  stopIdle();
+  S.done = true; store.del('save');
+  const st = stars(S);
+  tele.missions++; if (st.safe && st.science) tele.wins++; saveTele();
+  const count = [st.safe, st.science, st.dose].filter(Boolean).length;
+  const nick = esc(store.get('nick', '') || 'commander');
+  const h = (d) => S.history.find((x) => x.day === d) || {};
+  const learned = [
+    h(1).opt === 'charge' || h(1).opt === 'half' ? '⚡ You saved energy before the night: without Sun, you only have what you saved.' : '⚡ The afternoon\'s energy had to last the whole night.',
+    h(3).opt === 'shelter' || h(3).follow ? '🛏️ You sheltered from the storm: radiation adds up and never goes away.' : h(3).opt === 'detector' ? '📡 You measured before deciding: the class of a flare does not tell how much radiation arrives.' : '☢️ Working through the storm gave science, but the radiation never goes down.',
+    h(2).opt === 'plants' ? '🌱 The plants were an investment: they cost air on day 2 and gave food on day 4.' : '🫧 You took care of the air: every person breathes oxygen every day.',
+  ];
+  const daysStrip = S.history.map((x) => `<div class="daycard"><div class="small muted">Day ${x.day}</div><div class="e" aria-hidden="true">${OPT_E[x.opt]}</div><div>${x.d.science > 0 ? `⭐ +${x.d.science}` : 'no ⭐'}</div><div class="small">${x.d.o2 >= -0.3 ? '🫧 air OK' : '🫧 air dropped'}</div></div>`).join('');
+  $('#end').innerHTML = `
+    <div class="endgrid">
+      <div>
+        <div class="end-hero">${agentSVG('X', count >= 2 ? 'happy' : 'worried').replace('class="agent"', 'class="agent" style="width:72px;height:72px;flex-basis:72px"')}
+          <div><h2 id="t-end">${st.safe ? 'Mission complete' : 'Mission over'}, ${nick}!</h2><p class="muted">${count === 3 ? 'All three stars! Great job commanding the base.' : 'Play again and try other decisions.'}</p></div></div>
+        <div class="bigstars" aria-label="${count} of 3 stars">
+          <div class="bigstar ${st.safe ? '' : 'off'}"><b aria-hidden="true">${st.safe ? '⭐' : '☆'}</b>Everyone safe</div>
+          <div class="bigstar ${st.science ? '' : 'off'}"><b aria-hidden="true">${st.science ? '⭐' : '☆'}</b>Science ${S.science} of ${GAME.scienceGoal}</div>
+          <div class="bigstar ${st.dose ? '' : 'off'}"><b aria-hidden="true">${st.dose ? '⭐' : '☆'}</b>Radiation: ${mode === 10 ? `${r1(S.dose)} mSv` : doseZone(S.dose)[1]}</div>
+        </div>
+        <div class="row">
+          <button class="btn primary" id="again">🔁 Play again</button>
+          <button class="btn" id="tohome">🏠 Home</button>
+        </div>
+        <details style="margin-top:10px"><summary>For teachers and families</summary>
+          <table><thead><tr><th>Day</th><th>Decision</th><th>What happened</th></tr></thead><tbody>
+          ${S.history.map((x) => `<tr><td>${x.day}</td><td>${OPT_NAME[x.opt]}${x.follow !== undefined && x.follow !== null ? (x.follow ? ' → shelter' : ' → work') : ''}</td><td>O₂ ${r1(x.after.o2)} kg · ${nCells(x.after.battery)} · ${r1(x.after.dose)} mSv · science ${x.after.science}</td></tr>`).join('')}
+          </tbody></table>
+          <ol class="small"><li>Why was it important to save energy before the night?</li><li>If another solar storm comes, what would you do differently? Why?</li><li>${mode === 10 ? 'What would you gain and lose by sending the robot instead of people?' : 'Why do you think plants help on a space base?'}</li></ol>
+          <button class="btn small" data-open="teacher">🎓 Full guide</button>
+        </details>
+      </div>
+      <div>
+        <h3>${mode === 10 ? '📈 How your base changed' : '🗓️ Your mission, day by day'}</h3>
+        ${mode === 10 ? `<div class="minis">${miniChart('battery', '⚡ Battery', '#ffd166', GAME.maxBattery, 'cells')}${miniChart('o2', '🫧 Air', '#5ec8ff', GAME.maxO2, 'kg')}${miniChart('dose', '☢️ Dose', '#ff7a7a', 25, 'mSv')}</div>
+          <p class="endnote muted">On Earth we get about ${DATA.earthYear} mSv a year. NASA allows no more than ${DATA.careerLimit} mSv over an astronaut's whole career.</p>` : `<div class="days">${daysStrip}</div>`}
+        <h3>🧠 What you learned</h3>
+        <ul class="learned">${learned.map((l) => `<li>${l}</li>`).join('')}</ul>
+        ${(() => { const ms = S.history.map((x) => x.model).filter(Boolean); if (!ms.length) return '';
+          const mx = Math.max(...ms.map((m) => m.danoCelular)), av = ms.reduce((a, m) => a + m.eficienciaTripulacion, 0) / ms.length, cu = ms.at(-1).saludCultivos;
+          return mode === 10 ? `<p class="endnote muted">Bioastronautics model: peak cell damage ${Math.round(mx)} % · average crew efficiency ${Math.round(av)} % · crops at the end ${Math.round(cu)} %.</p>`
+            : `<p class="endnote muted">The crew worked ${av >= 75 ? 'very well' : av >= 55 ? 'so-so' : 'with low spirits'} and their bodies took ${mx <= 8 ? 'little' : mx <= 20 ? 'some' : 'much'} damage.</p>`; })()}
+      </div>
+    </div>`;
+  bindOpeners($('#end'));
+  $('#again').onclick = () => startMission(false);
+  $('#tohome').onclick = () => goStart();
+  show('s-end');
+  if (count === 3) SFX.good();
+  speak(`Mission complete! ${count} of 3 stars. ${learned.join(' ')}`);
+}
+
+/* ---------- modales ---------- */
+let lastFocus = null;
+function openModal(id, html) {
+  lastFocus = document.activeElement;
+  const m = $('#' + id);
+  if (html) m.firstElementChild.innerHTML = html;
+  m.classList.add('on');
+  m.querySelector('button, a, [tabindex]')?.focus();
+}
+function closeModal(id) { $('#' + id).classList.remove('on'); lastFocus?.focus?.({ preventScroll: true }); }
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    const open = $$('.modal.on').filter((m) => m.id !== 'm-abort' && m.id !== 'm-mission');
+    if (open.length) closeModal(open.at(-1).id);
+    hidePop();
+  }
+  if (e.key === 'Tab') { // mantener el foco dentro del modal abierto
+    const m = $$('.modal.on').at(-1); if (!m) return;
+    const f = $$('button, a, input, summary, [tabindex]:not([tabindex="-1"])', m).filter((x) => x.offsetParent);
+    if (!f.length) return;
+    if (e.shiftKey && document.activeElement === f[0]) { e.preventDefault(); f.at(-1).focus(); }
+    else if (!e.shiftKey && document.activeElement === f.at(-1)) { e.preventDefault(); f[0].focus(); }
+  }
+});
+$$('.modal').forEach((m) => m.addEventListener('click', (e) => { if (e.target === m && m.id !== 'm-abort' && m.id !== 'm-mission') closeModal(m.id); }));
+
+function glossaryHTML() {
+  return `<div class="row" style="justify-content:space-between"><h2 id="gl-t">📖 Mission words</h2><button class="icon-btn" data-close aria-label="Close">✕</button></div>
+    ${Object.entries(GLOSS).map(([k, [t, a, b]]) => `<p><b>${t}:</b> ${mode === 7 ? a : b} <button class="listen" data-speak="${esc(t + '. ' + (mode === 7 ? a : b))}" aria-label="Listen ${t}">▶ Listen</button></p>`).join('')}`;
+}
+function helpHTML() {
+  return `<div class="row" style="justify-content:space-between"><h2 id="he-t">❓ Help</h2><button class="icon-btn" data-close aria-label="Close">✕</button></div>
+    <div class="helpgrid"><button class="btn primary" id="help-tour"><span aria-hidden="true">👀</span>How to play</button><button class="btn" data-open="glossary"><span aria-hidden="true">📖</span>Mission words</button></div>`;
+}
+function settingsHTML() {
+  return `<div class="row" style="justify-content:space-between"><h2 id="se-t">⚙️ Settings</h2><button class="icon-btn" data-close aria-label="Close">✕</button></div>
+    <div class="setrow"><span>🗣️ Voice that reads the text</span><button class="pill" data-toggle="voice" aria-pressed="true"><span class="lb">Voice</span><span class="stt">on</span></button></div>
+    <div class="setrow"><span>Language</span><span class="langsw" role="group" aria-label="Idioma / Language"><button data-lang="es" lang="es">Español</button><button data-lang="en" lang="en">English</button></span></div>
+    <div class="setrow"><span>🎵 Sound effects</span><button class="pill" data-toggle="sound" aria-pressed="true"><span class="lb">Effects</span><span class="stt">on</span></button></div>
+    <div class="setrow"><span>👀 See how to play again</span><button class="btn small" id="help-tour">View</button></div>
+    <div class="setrow"><span>🎓 For teachers and families</span><button class="btn small" data-open="teacher">Open guide</button></div>`;
+}
+let resetArmed = false;
+function teacherHTML() {
+  const dec = tele.decisions;
+  const byDay = (d, ok) => { const xs = dec.filter((x) => x.day === d); return xs.length ? `${Math.round((xs.filter(ok).length / xs.length) * 100)}% (${xs.length})` : '—'; };
+  const lat = dec.length ? (dec.reduce((a, b) => a + b.latencyMs, 0) / dec.length / 1000).toFixed(1) + ' s' : '—';
+  const hinted = dec.length ? Math.round((dec.filter((x) => x.hints > 0).length / dec.length) * 100) + '%' : '—';
+  const srcRows = [
+    ['O₂ use: 0.84 kg per person per day', 'bvad'], ['Moonwalk: 0.086 kg of O₂ per hour', 'bvad'],
+    ['Background dose on the Moon: 1.369 mSv/day', 'zhang'], ['Flares and particles (SEP) as separate events', 'donki'],
+    ['Limits: 600 mSv per career, 250 mSv per solar event', 'limits'], ['A solar event on the lunar surface can give ~100 mSv', 'ascend'],
+    ['For comparison: ~3.6 mSv a year on Earth', 'earth'], ['Shelter: some zones get less dose', 'radin2'], ['Greenhouse (Veggie lettuce)', 'veggie'], ['Cell damage, crew efficiency and crop health: random-forest model (30 trees per output)', 'modelo'],
+    [`Battery ${GAME.maxBattery} cells, ${GAME.panelPerSunDay} per sunny day, ${GAME.o2PerCell} kg O₂ per cell, tank ${GAME.startO2}–${GAME.maxO2} kg`, 'game'],
+    [`Storm: +${GAME.stormDoseWorking} mSv in the workshop, +${GAME.stormDoseShelter} in the shelter; shelter ×${GAME.shelterFactor}, base ×${GAME.insideFactor}`, 'game'],
+  ];
+  return `<div class="row" style="justify-content:space-between"><h2 id="te-t">🎓 Guide for teachers and families</h2><button class="icon-btn" data-close aria-label="Close">✕</button></div>
+  <h3>What is learned</h3>
+  <ul>
+    <li><b>Systems thinking:</b> energy, air, radiation and food depend on one another.</li>
+    <li><b>Deciding under constraints:</b> no option is free; every decision has a price shown on screen.</li>
+    <li><b>Planning ahead:</b> what is decided at sunset shows two days later.</li>
+    <li><b>Evidence before assumption:</b> the class of a flare does not tell how much radiation arrives (10–12 mode).</li>
+  </ul>
+  <h3>Related standards</h3>
+  <ul class="small">
+    <li>NGSS 3-5-ETS1-2: generate and compare solutions based on criteria and constraints.</li>
+    <li>NGSS MS-ETS1-2: evaluate competing solutions using a systematic process.</li>
+    <li class="muted">Pending: equivalents in Mexico's SEP curriculum.</li>
+  </ul>
+  <h3>How it is designed by age</h3>
+  <p class="small"><b>7–9:</b> two options, voice on, three meters with words instead of numbers. <b>10–12:</b> three options, numbers with units, a prediction before seeing the number, and final charts. Failing is not punished: the mission pauses, the cause is explained, and only retries that can work are offered.</p>
+  <h3>Questions for after playing</h3>
+  <ol class="small"><li>Which decision on one day affected another day? How did you know?</li><li>When is it worth losing science to protect the crew?</li><li>How is saving the base's energy like saving energy at home?</li></ol>
+  <h3>📈 Telemetry on this device</h3>
+  <table class="small"><tbody>
+    <tr><td>Missions finished / with science goal</td><td>${tele.missions} / ${tele.wins}</td></tr>
+    <tr><td>Missions paused (ran out of air)</td><td>${tele.aborts}</td></tr>
+    <tr><td>Day 1: saved energy (charge or half)</td><td>${byDay(1, (x) => x.opt !== 'sample')}</td></tr>
+    <tr><td>Day 3: sheltered or measured first</td><td>${byDay(3, (x) => x.opt !== 'work')}</td></tr>
+    <tr><td>Correct predictions (10–12, without seeing the number)</td><td>${tele.predictions.total ? Math.round((tele.predictions.ok / tele.predictions.total) * 100) + '% of ' + tele.predictions.total : '—'}</td></tr>
+    <tr><td>Average time to decide</td><td>${lat}</td></tr>
+    <tr><td>Decisions that needed a hint</td><td>${hinted}</td></tr>
+  </tbody></table>
+  <h3>📒 Logbook (latest decisions)</h3>
+  <table class="small"><thead><tr><th>Mode</th><th>Day</th><th>Decision</th><th>Hints</th><th>Prediction</th></tr></thead><tbody>
+  ${dec.slice(-10).reverse().map((x) => `<tr><td>${x.mode === 7 ? '7–9' : '10–12'}</td><td>${x.day}</td><td>${OPT_NAME[x.opt] || x.opt}</td><td>${x.hints ?? 0}</td><td>${x.predOk === null ? '—' : x.predOk ? '✅' : '🤔'}</td></tr>`).join('') || '<tr><td colspan="5">No decisions yet.</td></tr>'}
+  </tbody></table>
+  <div class="row" style="margin-top:8px"><button class="btn small" id="export">📋 Copy telemetry (JSON)</button><button class="btn small" id="reset-tele">Delete data…</button></div>
+  <h3>Sources for every number</h3>
+  <table class="small"><thead><tr><th>Design decision</th><th>Source</th></tr></thead><tbody>
+  ${srcRows.map(([d, k]) => { const s = SOURCES[k]; return `<tr><td>${d}</td><td>${s.url ? `<a href="${s.url}" target="_blank" rel="noopener">${s.name}</a>` : s.name}${s.note ? ` (${s.note})` : ''}</td></tr>`; }).join('')}
+  </tbody></table>
+  <p class="small muted">Privacy: no accounts and no servers. The nickname, the saved mission and the telemetry stay only in this browser.</p>`;
+}
+function bindModal(k) {
+  const m = $('#m-' + k);
+  $$('[data-close]', m).forEach((x) => (x.onclick = () => closeModal('m-' + k)));
+  $$('[data-speak]', m).forEach((x) => (x.onclick = () => listenClick(x, x.dataset.speak)));
+  bindToggles(m); syncToggles(); bindOpeners(m); bindLang(m);
+  const ht = $('#help-tour', m);
+  if (ht) ht.onclick = () => { m.classList.remove('on'); startCoach(false); };
+  const ex = $('#export', m);
+  if (ex) ex.onclick = async () => {
+    const json = JSON.stringify({ exportedAt: new Date().toISOString(), privacy: 'no personal data', ...tele }, null, 2);
+    try { await navigator.clipboard.writeText(json); ex.textContent = '✅ Copied'; }
+    catch { ex.insertAdjacentHTML('afterend', `<textarea readonly style="width:100%;min-height:140px;margin-top:8px;background:#0d1433;color:#f4f6ff;border-radius:12px" aria-label="Telemetry in JSON">${esc(json)}</textarea>`); ex.textContent = 'Select and copy the text'; }
+  };
+  const rs = $('#reset-tele', m);
+  if (rs) { resetArmed = false; rs.onclick = () => {
+    if (!resetArmed) { resetArmed = true; rs.textContent = '⚠️ Sure? Tap again to delete'; rs.style.borderColor = 'var(--warn)'; return; }
+    Object.assign(tele, { sessions: 0, missions: 0, wins: 0, aborts: 0, decisions: [], predictions: { ok: 0, total: 0 } }); saveTele();
+    openModal('m-teacher', teacherHTML()); bindModal('teacher');
+  }; }
+}
+function bindOpeners(root = document) {
+  $$('[data-open]', root).forEach((b) => (b.onclick = () => {
+    SFX.tap();
+    const k = b.dataset.open;
+    const host = b.closest('.modal'); if (host) host.classList.remove('on');
+    openModal('m-' + k, k === 'glossary' ? glossaryHTML() : k === 'settings' ? settingsHTML() : k === 'help' ? helpHTML() : teacherHTML());
+    bindModal(k);
+  }));
+}
+function bindToggles(root = document) {
+  $$('[data-toggle]', root).forEach((b) => (b.onclick = () => {
+    if (b.dataset.toggle === 'sound') { soundOn = !soundOn; store.set('sound', soundOn); }
+    else { voiceOn = !voiceIsOn(); store.set('voice2', voiceOn); if (!voiceOn) stopSpeak(); else speak('Voice on', true); }
+    syncToggles(); SFX.tap();
+  }));
+}
+
+/* ---------- definición emergente ---------- */
+function hidePop() { $('#pop').classList.remove('on'); }
+$('#pop-x').onclick = hidePop;
+document.addEventListener('click', (e) => {
+  const t = e.target.closest('.term');
+  if (!t) { if (!e.target.closest('#pop')) hidePop(); return; }
+  e.preventDefault(); e.stopPropagation();
+  const g = GLOSS[t.dataset.term]; if (!g) return;
+  const txt = mode === 7 ? g[1] : g[2];
+  $('#pop-body').innerHTML = `<b>${g[0]}</b><br>${txt}`;
+  const pop = $('#pop'), r = t.getBoundingClientRect();
+  pop.style.left = Math.max(8, Math.min(innerWidth - 350, r.left)) + 'px';
+  pop.style.top = (r.bottom + 8 + 140 > innerHeight ? Math.max(8, r.top - 150) : r.bottom + 8) + 'px';
+  pop.classList.add('on');
+  speak(`${g[0]}. ${txt}`);
+  SFX.tap();
+}, true);
+
+/* ---------- tocar la escena: máquinas y tripulación ---------- */
+function tapped() { store.set('tapped', true); if (coachTry) coachTried(); }
+function stationTip(st) {
+  tapped();
+  const s = STATIONS[st], txt = mode === 7 ? s.t7 : s.t10;
+  burst(st);
+  tipAt(s.mid[0], s.mid[1], `<b>${s.name}</b><br>${txt}`);
+  speak(`${s.name}. ${txt}`);
+  SFX.tap();
+}
+function crewTip(id) {
+  tapped();
+  const c = crewById[id];
+  const say = { X: 'I run the base. You decide every day!', T: 'I look after the air machine and the battery.', L: 'I do the science. I want to study the ice!', B: 'I look after the crew\'s health and watch the radiation.' }[c.id];
+  tipAt(CREWPOS[id][0], CREWPOS[id][1], `<b>${c.name}</b>, ${c.role}<br>${say}`);
+  speak(`${c.name}: ${say}`);
+  SFX.tap();
+}
+function sceneTap(e) {
+  if (e.target.closest('#bubble')) return;
+  const c = e.target.closest('[data-crew]'); if (c) return crewTip(c.dataset.crew);
+  const t = e.target.closest('[data-st]');
+  if (e.target.closest('#scrim') || !$('#bubble').hidden) return;
+  if (!t) return;
+  const st = t.dataset.st;
+  if (today[st] && !coachTry && ['choose', 'confirm', 'detector'].includes(phase)) openBubble(st);
+  else stationTip(st);
+}
+$('#bubble').addEventListener('click', (e) => e.stopPropagation());
+$('#scene').addEventListener('click', sceneTap);
+$('#scene').addEventListener('keydown', (e) => {
+  if ((e.key === 'Enter' || e.key === ' ') && e.target.matches('g.st')) { e.preventDefault(); sceneTap(e); }
+  if (e.key === 'Escape') closeBubble();
+});
+
+/* ---------- recorrido guiado: cada elemento de la pantalla real, uno por uno ---------- */
+let coachI = 0, coachFirst = false, coachTry = false, coachList = [];
+function coachSteps() {
+  const k = mode === 7, choosing = phase === 'choose';
+  return [
+    { el: null, t: k ? 'Hi! I am Ximena, the commander. We will live 4 days on the Moon and you decide what we do. First, let me show you the base.' : 'I am Ximena, commander of the base. The mission lasts 4 days. Each day you pick an option and the engine works out the result with NASA data. Let me show you the screen.' },
+    { el: '#mt-battery', t: k ? 'This is the energy. Each little square ⚡ comes from the Sun. It does not fill up at night!' : `Battery: at most ${GAME.maxBattery} cells. The panels give ${GAME.panelPerSunDay} cells on sunny days and 0 at night.` },
+    { el: '#mt-o2', t: k ? 'This is the air. The crew breathes it all day. The machine that makes it uses energy.' : `Oxygen: the crew breathes ${r2(DATA.crew * DATA.o2PerPersonDay)} kg a day. Each cell in life support makes ${GAME.o2PerCell} kg. If it hits 0, the mission pauses.` },
+    { el: '#mt-dose', t: k ? 'This is the radiation. It is like a piggy bank: it fills up and never empties. Better keep it in the green!' : 'Accumulated dose in mSv. It only goes up: there is a background dose every day, plus extra if particles from the Sun arrive.' },
+    { el: k ? '#starsbadge' : '#mt-sci', t: k ? `These are your science stars. The goal: collect ${GAME.scienceGoal} and get everyone back safe.` : `Goal: ${GAME.scienceGoal} science, return with air and with a low dose. There is no single way to win: every option has a price.` },
+    { el: '#scene', try: true, t: k ? 'This is the base. Try it! Tap a machine or someone in the crew.' : 'This is the base. Try it: tap a machine to see what it uses, or someone in the crew.' },
+    { el: '#dialog', t: k ? 'Here the crew and I talk to you. Tap ▶ Listen to hear it again.' : 'Here the crew gives you the day\'s data. ▶ Listen reads it aloud.' },
+    { el: '#scene', t: k ? 'The glowing machines with a label are today\'s options. Tap one, look at what you gain ✔ and what it costs ✖, then tap Do it!' : 'The machines with a label are the day\'s options. Tap one, predict what will happen, and run the day with Do it!' },
+  ];
+}
+function placeHole() {
+  const st = coachList[coachI]; if (!st || !$('#coach').classList.contains('on')) return;
+  const bub = $('#coach-bubble'); bub.style.bottom = Math.max(12, innerHeight - $('#actionbar').getBoundingClientRect().top + 8) + 'px';
+  if (!st.el) return;
+  const r = $(st.el).getBoundingClientRect(), pad = 6, h = $('#hole');
+  h.style.left = r.left - pad + 'px'; h.style.top = r.top - pad + 'px';
+  h.style.width = r.width + pad * 2 + 'px'; h.style.height = r.height + pad * 2 + 'px';
+}
+function coachTried() {
+  const n = $('#trynote'); if (!n) return;
+  n.className = 'trynote ok'; n.textContent = '✔ That\'s it! That is how you ask what each thing does.';
+  $('#coach-next').classList.add('pulse');
+}
+function coachStep() {
+  const st = coachList[coachI], last = coachI === coachList.length - 1;
+  coachTry = !!st.try;
+  $$('.tip').forEach((t) => t.remove());
+  $('#coach').classList.toggle('nospot', !st.el);
+  $('#coach').classList.toggle('try', coachTry);
+  document.body.classList.toggle('trying', coachTry);
+  if (st.el) $(st.el).scrollIntoView({ block: 'center' });
+  $('#coach-bubble').innerHTML = `<div class="narr"><div class="agentcol">${agentSVG('X', 'happy')}<button class="listen" id="coach-say" aria-label="Listen">▶ Listen</button></div>
+      <div class="say"><p>${st.t}</p>${st.try ? '<p class="trynote" id="trynote">👆 Tap a machine to try it</p>' : ''}</div></div>
+    <div class="coachnav">
+      <span class="dots" role="img" aria-label="Step ${coachI + 1} of ${coachList.length}">${coachList.map((_, i) => `<i class="${i <= coachI ? 'on' : ''}"></i>`).join('')}</span>
+      <span class="navbtns">${coachI ? '<button class="btn small" id="coach-back">◀ Back</button>' : ''}<button class="btn small" id="coach-skip">Skip</button><button class="btn primary" id="coach-next">${last ? (coachFirst ? 'Let\'s play! 🚀' : 'Done ✔') : 'Next ▶'}</button></span></div>`;
+  $('#coach-say').onclick = () => listenClick($('#coach-say'), st.t);
+  $('#coach-skip').onclick = endCoach;
+  if (coachI) $('#coach-back').onclick = () => { SFX.tap(); coachI--; coachStep(); };
+  $('#coach-next').onclick = () => { SFX.tap(); if (!last) { coachI++; coachStep(); } else endCoach(); };
+  placeHole();
+  $('#coach-next').focus({ preventScroll: true });
+  speak(st.t, false, $('#coach-say'));
+}
+function startCoach(first) {
+  coachFirst = first; coachI = 0; stopIdle(); hidePop(); closeBubble(); stopIdle();
+  coachList = coachSteps();
+  $('#coach').classList.add('on'); coachStep();
+}
+function endCoach() {
+  coachTry = false;
+  document.body.classList.remove('trying');
+  $('#coach').classList.remove('on', 'try'); store.set('coached', true);
+  $$('.tip').forEach((t) => t.remove());
+  window.scrollTo(0, 0);
+  stopSpeak();
+  if (coachFirst) renderScene();
+  else if (phase === 'choose' && !chosen) idle(10000, hintChoose);
+}
+addEventListener('resize', placeHole);
+addEventListener('scroll', placeHole, { passive: true });
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && $('#coach').classList.contains('on')) endCoach(); });
+
+/* ---------- arranque ---------- */
+function setMode(m) {
+  mode = m; store.set('mode', m);
+  $$('.mode').forEach((b) => b.setAttribute('aria-checked', Number(b.dataset.mode) === m));
+  syncToggles();
+}
+function startMission(withTutorial) {
+  S = newState(mode); checkpoints = {};
+  tele.sessions++; saveTele();
+  show('s-game');
+  renderTrack(); renderMeters(); renderBase();
+  if (withTutorial) { renderScene(true); startCoach(true); }
+  else renderScene();
+}
+function goStart() {
+  stopIdle();
+  const sv = store.get('save', null);
+  $('#resume').hidden = !sv;
+  if (sv) $('#resume').textContent = `▶ Continue my mission (day ${sv.S.day})`;
+  show('s-start');
+}
+$('#home').onclick = () => {
+  SFX.tap();
+  openModal('m-exit', `<div class="narr">${agentSVG('X', 'worried')}<div><h2 id="ex-t">Leave the base?</h2><p>Your mission is saved. You can continue from day ${S.day}.</p></div></div>
+    <div class="row" style="margin-top:12px"><button class="btn primary" id="ex-stay">🌙 I'll stay</button><button class="btn" id="ex-go">🏠 Exit to home</button></div>`);
+  $('#ex-stay').onclick = () => closeModal('m-exit');
+  $('#ex-go').onclick = () => { saveGame(); closeModal('m-exit'); goStart(); };
+};
+$('#resume').onclick = () => {
+  const sv = store.get('save', null); if (!sv) return;
+  SFX.good(); setMode(sv.mode); S = sv.S; checkpoints = sv.checkpoints || {};
+  show('s-game'); renderScene();
+};
+$$('.mode').forEach((b) => (b.onclick = () => { SFX.tap(); setMode(Number(b.dataset.mode)); speak(b.innerText); }));
+$('.modes').addEventListener('keydown', (e) => {
+  if (!['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(e.key)) return;
+  e.preventDefault(); const m = mode === 7 ? 10 : 7; setMode(m); $(`.mode[data-mode="${m}"]`).focus();
+});
+$('#nick').value = store.get('nick', '');
+$('#nick').oninput = (e) => store.set('nick', e.target.value.trim());
+$('#play').onclick = () => {
+  SFX.good();
+  store.del('save');
+  startMission(true);
+};
+function bindLang(root = document) {
+  $$('[data-lang]', root).forEach((b) => {
+    b.setAttribute('aria-pressed', b.dataset.lang === LANG);
+    b.onclick = () => { if (b.dataset.lang === LANG) return; stopSpeak(); if (S && !S.done) saveGame(); store.set('lang', b.dataset.lang); location.reload(); };
+  });
+}
+bindLang();
+bindToggles(); bindOpeners();
+setMode(mode);
+goStart();
+}
+(function () {
+  let l = null;
+  try { l = JSON.parse(localStorage.getItem('astroLuna.lang')); } catch (e) {}
+  if (l !== 'es' && l !== 'en') l = (navigator.language || 'es').toLowerCase().startsWith('en') ? 'en' : 'es';
+  document.documentElement.lang = l;
+  (l === 'en' ? bootEN : bootES)();
+})();
 </script>
 </body>
 </html>
