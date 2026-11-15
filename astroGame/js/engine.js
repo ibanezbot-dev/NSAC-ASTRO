@@ -1,11 +1,12 @@
 /**
- * Motor del juego (sin DOM). Gestiona turnos, rayos ⚡, niveles de habilidad (1-5),
- * traducción silenciosa de los 4 módulos visuales a las entradas del modelo ML,
- * entorno Safe-to-Fail (Dron de Rescate sin reinicio punitivo), modo Sandbox
- * y conexión con la Telemetría de Ganancia de Aprendizaje.
+ * Motor del juego (sin DOM). Gestiona modos de edad (7–9 y 10–12 años),
+ * niveles de habilidad (1–5, Zona de Desarrollo Próximo), turnos, rayos ⚡,
+ * traducción silenciosa de módulos a las entradas del modelo ML,
+ * personalización de variables en vivo (Astro-Matic), entorno Safe-to-Fail
+ * (Cero Game Over punitivo + Pistas Progresivas en 1er y 2do intento) y Telemetría.
  */
 import {
-  MISSION, SKILL_LEVELS, AP_RULES, MAX_BOLTS_PER_MODULE, PROGRESS_BASE,
+  AGE_MODES, MISSION, SKILL_LEVELS, AP_RULES, MAX_BOLTS_PER_MODULE, PROGRESS_BASE,
   BROKEN_EFFICIENCY_PENALTY, SPACE_EVENTS, EVENT_WEIGHTS, SCRIPTED_EVENTS,
   BREAK_CHANCE, SHIELD_BREAK_FACTOR, MAX_BREAKS_PER_SOL, MODULE_IDS,
   COMMANDERS, CREW_SIZE, CREW_ENERGY_OFFSETS, CREW_HOMES, NASA_SPINOFF_FACTS,
@@ -20,18 +21,21 @@ export const apFromEfficiency = (eff) =>
 export const getSkillConfig = (level = 3) =>
   SKILL_LEVELS.find((l) => l.level === Number(level)) ?? SKILL_LEVELS[2];
 
+export const getAgeModeConfig = (ageMode = '10-12') =>
+  AGE_MODES[ageMode] ?? AGE_MODES['10-12'];
+
 /**
- * Traducción silenciosa: rayos por módulo → entradas del modelo.
- *  - Escudos + Agua → nivel_blindaje (1 básico · 2 escudo activo · 3 refugio pared de agua)
- *  - Refugio (3) = emergencia total → actividad 0 (todos al refugio)
- *  - Comida + Oxígeno → energia_invernadero (35-100) y contramedidas (0/1)
- *  - El agua desviada al escudo compite con el invernadero (−12 % por rayo)
- *  - Producción > defensa → actividad 2 (trabajo intenso), si no → 1
+ * Traducción silenciosa: rayos por módulo → entradas del modelo ML.
+ *  - Modo 7-9 años (3 módulos primarios): 'comida' actúa como 🌱🫧 Bio-Invernadero unificado
+ *    (acopla cultivo y bio-oxígeno para respetar el límite de <= 3 módulos de Wouters et al., 2008).
+ *  - Modo 10-12 años (4 módulos primarios): Agua, Comida, Escudos y Oxígeno independientes.
  */
-export function translateToModelInputs(alloc) {
+export function translateToModelInputs(alloc, ageMode = '10-12') {
   const a = { agua: 0, comida: 0, escudos: 0, oxigeno: 0, ...alloc };
+  const isYoungMode = ageMode === '7-9';
+
   const defense = a.escudos + a.agua;
-  const production = a.comida + a.oxigeno;
+  const production = isYoungMode ? a.comida * 1.5 : a.comida + a.oxigeno;
 
   let blindaje = 1;
   if (defense >= 1) blindaje = 2;
@@ -39,11 +43,27 @@ export function translateToModelInputs(alloc) {
 
   const emergencia = blindaje === 3;
   const actividad = emergencia ? 0 : production > defense ? 2 : 1;
-  const energiaInvernadero = clamp(35 + 25 * a.comida + 15 * a.oxigeno - 12 * a.agua, 35, 100);
-  const contramedidas = a.oxigeno >= 2 || (a.oxigeno >= 1 && a.comida >= 1) ? 1 : 0;
+
+  const energiaInvernadero = isYoungMode
+    ? clamp(35 + 32 * a.comida - 12 * a.agua, 35, 100)
+    : clamp(35 + 25 * a.comida + 15 * a.oxigeno - 12 * a.agua, 35, 100);
+
+  const contramedidas = isYoungMode
+    ? (a.comida >= 2 ? 1 : 0)
+    : (a.oxigeno >= 2 || (a.oxigeno >= 1 && a.comida >= 1) ? 1 : 0);
+
   const aguaDesviada = a.agua > 0;
 
-  return { blindaje, actividad, contramedidas, energiaInvernadero, emergencia, aguaDesviada, defense, production };
+  return {
+    blindaje,
+    actividad,
+    contramedidas,
+    energiaInvernadero,
+    emergencia,
+    aguaDesviada,
+    defense,
+    production,
+  };
 }
 
 export function progressGain(actividad, eficiencia, cultivos, boost = 1) {
@@ -52,10 +72,8 @@ export function progressGain(actividad, eficiencia, cultivos, boost = 1) {
 }
 
 /**
- * Punto de No Retorno: simula el MEJOR futuro posible (soles en calma, rayos
- * usados primero para reparar y luego para producir, eficiencia recuperándose
- * +30/sol). Si incluso así no se llega a la meta, activa la Evacuación Preventiva
- * o el Dron de Suministros Safe-to-Fail.
+ * Punto de No Retorno: simula el MEJOR futuro posible. Si incluso así no se llega
+ * a la meta, activa la Asistencia Safe-to-Fail (Dron de Suministros sin Game Over punitivo).
  */
 export function checkPointOfNoReturn({ progress, sol, maxSols = MISSION.maxSols, eficiencia, broken, salud, boost = 1 }) {
   if (salud <= 0) return { impossible: true, reason: 'crew' };
@@ -82,9 +100,10 @@ export function checkPointOfNoReturn({ progress, sol, maxSols = MISSION.maxSols,
   return { impossible: false, best, remaining };
 }
 
-/** Mensaje pedagógico formativo (corto, para niños) según lo que pasó en el día. */
-export function lessonFor({ event, inputs, output }) {
+/** Mensaje pedagógico formativo según lo que ocurrió en el día. */
+export function lessonFor({ event, inputs, output, ageMode = '10-12' }) {
   const { blindaje, actividad, contramedidas, aguaDesviada } = inputs;
+  const bioIcon = ageMode === '7-9' ? '🌱🫧' : '🌱';
   if (event.id === 'claseX') {
     if (blindaje === 3) return '¡El agua frenó la tormenta! 💧🛡️';
     return 'La tormenta pasó el escudo. Usa 🛡️ + 💧 juntos.';
@@ -93,10 +112,10 @@ export function lessonFor({ event, inputs, output }) {
     if (blindaje >= 2) return '¡Escudo arriba! Llamarada desviada 🛡️';
     return 'Sin 🛡️ la radiación cansa al equipo.';
   }
-  if (output.saludCultivos < 45) return 'Tus plantas tienen sed. Toca 🌱';
+  if (output.saludCultivos < 45) return `Tus plantas tienen sed. Toca ${bioIcon}`;
   if (aguaDesviada) return 'Sol tranquilo: guarda 💧 para las plantas.';
   if (actividad === 2) return '¡Sol tranquilo, misión rápida! 🚀';
-  if (contramedidas) return '🌱 + 🫧 = ¡vitaminas para el equipo! 🫐';
+  if (contramedidas) return `${bioIcon} = ¡vitaminas para el equipo! 🫐`;
   return '¡Buen trabajo, comandante! ⭐';
 }
 
@@ -134,16 +153,20 @@ export class Game extends EventTarget {
     this.dispatchEvent(new CustomEvent(type, { detail: { ...detail, state: this.state } }));
   }
 
-  start({ commander, name, skillLevel }) {
+  start({ commander, name, ageMode, skillLevel }) {
     this.rng = createRng(this.seed++);
+    const modeId = ageMode ?? storage.get(STORAGE_KEYS.ageMode, '10-12');
+    const modeCfg = getAgeModeConfig(modeId);
     const lvl = skillLevel ?? storage.get(STORAGE_KEYS.skillLevel, 3);
     const skill = getSkillConfig(lvl);
     this.state = {
       commander,
       name,
+      ageMode: modeCfg.id,
+      ageModeCfg: modeCfg,
       skillLevel: skill.level,
       skill,
-      sandboxMode: skill.level === 5,
+      sandboxMode: skill.level === 5 || modeCfg.highCeilingDefault,
       sol: 0,
       maxSols: MISSION.maxSols,
       progress: 0,
@@ -161,9 +184,29 @@ export class Game extends EventTarget {
       history: [],
       totalBreaks: 0,
       hintLevel: 0,
+      solSnapshot: null,
     };
     this.emit('mission:start');
     this.beginSol();
+  }
+
+  setAgeMode(ageMode) {
+    const modeCfg = getAgeModeConfig(ageMode);
+    storage.set(STORAGE_KEYS.ageMode, modeCfg.id);
+    if (!this.state) return;
+    this.state.ageMode = modeCfg.id;
+    this.state.ageModeCfg = modeCfg;
+    // Si pasa a 7-9 y había rayos o avería en oxígeno, transferirlos a comida
+    if (modeCfg.id === '7-9' && this.state.modules.oxigeno) {
+      this.state.modules.oxigeno.broken = false;
+      if (this.state.modules.oxigeno.bolts > 0) {
+        this.state.ap += this.state.modules.oxigeno.bolts;
+        this.state.modules.oxigeno.bolts = 0;
+        this.state.actions = this.state.actions.filter((a) => a.id !== 'oxigeno');
+      }
+    }
+    this.emit('mode:change', { ageMode: modeCfg.id });
+    this.emit('plan:change', { id: null, action: 'mode' });
   }
 
   setSkillLevel(level) {
@@ -176,13 +219,41 @@ export class Game extends EventTarget {
   }
 
   /**
-   * Permite personalizar el clima espacial en vivo (Laboratorio Astro-Matic / Sandbox).
+   * Permite seleccionar un evento predefinido en vivo (Laboratorio Astro-Matic / Sandbox).
    */
   setWeatherEvent(eventId) {
     const s = this.state;
     if (!s || s.phase !== 'planning' || !SPACE_EVENTS[eventId]) return false;
-    s.event = SPACE_EVENTS[eventId];
+    s.event = { ...SPACE_EVENTS[eventId] };
     s.hintLevel = telemetry.progressiveHintState(s.event.id);
+    this.emit('weather:change', { event: s.event });
+    return true;
+  }
+
+  /**
+   * Personalización de Variables en tiempo real (Paso 2 — inspiración Astro-Matic):
+   * Permite al estudiante ingresar o controlar parámetros propios de intensidad solar (0-10)
+   * y dosis de radiación (0.5-60 mSv/día) para observar relaciones de causa y efecto en vivo.
+   */
+  setCustomWeatherParams({ intensidad, mSv }) {
+    const s = this.state;
+    if (!s || s.phase !== 'planning') return false;
+    const intVal = clamp(Number(intensidad ?? s.event.intensidad), 0.2, 10.0);
+    const mSvVal = clamp(Number(mSv ?? s.event.mSv), 0.4, 60.0);
+    const baseKey = intVal >= 7.5 || mSvVal >= 32 ? 'claseX' : intVal >= 3.5 || mSvVal >= 8 ? 'claseM' : 'calma';
+    const base = SPACE_EVENTS[baseKey];
+    s.event = {
+      ...base,
+      intensidad: Math.round(intVal * 10) / 10,
+      mSv: Math.round(mSvVal * 10) / 10,
+      custom: true,
+    };
+    telemetry.recordCustomVariables({
+      ageMode: s.ageMode,
+      level: s.skillLevel,
+      intensidad: s.event.intensidad,
+      mSv: s.event.mSv,
+    });
     this.emit('weather:change', { event: s.event });
     return true;
   }
@@ -190,7 +261,7 @@ export class Game extends EventTarget {
   rollEvent(sol) {
     const s = this.state;
     const scripted = SCRIPTED_EVENTS[sol];
-    if (scripted && s.skillLevel <= 3) return SPACE_EVENTS[scripted];
+    if (scripted && s.skillLevel <= 3) return { ...SPACE_EVENTS[scripted] };
     const weights = s.skill?.weights ?? EVENT_WEIGHTS;
     let r = this.rng();
     let id = 'calma';
@@ -198,27 +269,70 @@ export class Game extends EventTarget {
       if ((r -= w) <= 0) { id = key; break; }
     }
     if (id === 'claseX' && s.prevEventId === 'claseX') id = 'claseM';
-    return SPACE_EVENTS[id];
+    return { ...SPACE_EVENTS[id] };
   }
 
-  beginSol() {
+  beginSol({ keepEvent = null, forcedHintLevel = null } = {}) {
     const s = this.state;
-    s.sol += 1;
-    s.event = this.rollEvent(s.sol);
+    if (!keepEvent) {
+      s.sol += 1;
+      s.event = this.rollEvent(s.sol);
+    } else {
+      s.event = { ...keepEvent };
+    }
     s.apMax = apFromEfficiency(s.eficiencia);
     s.ap = s.apMax;
     s.actions = [];
     for (const m of Object.values(s.modules)) { m.bolts = 0; m.repaired = false; }
-    s.hintLevel = telemetry.progressiveHintState(s.event.id);
+    // Snapshot para permitir reintento formativo en el 2do intento (Paso 4)
+    s.solSnapshot = {
+      progress: s.progress,
+      eficiencia: s.eficiencia,
+      cultivos: s.cultivos,
+      salud: s.salud,
+      totalBreaks: s.totalBreaks,
+      brokenMap: Object.fromEntries(MODULE_IDS.map((id) => [id, s.modules[id].broken])),
+      event: { ...s.event },
+    };
+    s.hintLevel = forcedHintLevel !== null ? forcedHintLevel : telemetry.progressiveHintState(s.event.id);
     s.phase = 'planning';
     telemetry.markSolStart();
     this.emit('sol:start');
+  }
+
+  /**
+   * Reintenta el mismo Sol activando la Pista Progresiva Nivel 2 (Paso 4):
+   * Resalta la zona correcta y reduce/atenúa las opciones distractoras para guiar el descubrimiento autónomo.
+   */
+  retryCurrentSolWithHint() {
+    const s = this.state;
+    if (!s || !s.solSnapshot) return false;
+    const snap = s.solSnapshot;
+    s.progress = snap.progress;
+    s.eficiencia = snap.eficiencia;
+    s.cultivos = snap.cultivos;
+    s.salud = snap.salud;
+    s.totalBreaks = snap.totalBreaks;
+    MODULE_IDS.forEach((id) => {
+      s.modules[id].broken = !!snap.brokenMap[id];
+      s.modules[id].bolts = 0;
+      s.modules[id].repaired = false;
+    });
+    s.crew.forEach((c, i) => {
+      c.energia = clamp(s.eficiencia + CREW_ENERGY_OFFSETS[i], 0, 100);
+    });
+    if (s.history.length && s.history[s.history.length - 1]?.sol === s.sol) {
+      s.history.pop();
+    }
+    this.beginSol({ keepEvent: snap.event, forcedHintLevel: 2 });
+    return true;
   }
 
   /** Toque del jugador sobre un módulo. Devuelve qué pasó para el feedback visual. */
   tap(id) {
     const s = this.state;
     if (!s || s.phase !== 'planning') return { ok: false, reason: 'busy' };
+    if (s.ageMode === '7-9' && id === 'oxigeno') return { ok: false, reason: 'hidden-in-mode' };
     const m = s.modules[id];
     if (!m) return { ok: false, reason: 'unknown' };
     if (s.ap <= 0) return { ok: false, reason: 'no-ap' };
@@ -238,6 +352,10 @@ export class Game extends EventTarget {
     }
     s.ap -= 1;
     s.actions.push({ id, action });
+
+    const evalNow = telemetry.evaluateDecision(s.event, this.plan(), s.apMax, s.ageMode);
+    telemetry.markPlanEvaluated(evalNow.optimal);
+
     this.emit('plan:change', { id, action });
     return { ok: true, action };
   }
@@ -249,6 +367,10 @@ export class Game extends EventTarget {
     const m = s.modules[id];
     if (action === 'repair') { m.broken = true; m.repaired = false; } else { m.bolts -= 1; }
     s.ap += 1;
+
+    const evalNow = telemetry.evaluateDecision(s.event, this.plan(), s.apMax, s.ageMode);
+    telemetry.markPlanEvaluated(evalNow.optimal);
+
     this.emit('plan:change', { id, action: 'undo' });
     return true;
   }
@@ -259,7 +381,7 @@ export class Game extends EventTarget {
   }
 
   plan() {
-    return translateToModelInputs(this.allocation());
+    return translateToModelInputs(this.allocation(), this.state?.ageMode ?? '10-12');
   }
 
   async resolve() {
@@ -287,9 +409,11 @@ export class Game extends EventTarget {
       return null;
     }
 
-    // Registrar en Telemetría de Ganancia de Aprendizaje (Paso 7)
+    // Registrar en Telemetría de Ganancia de Aprendizaje y Bitácora (Paso 7)
     const evalTelemetry = telemetry.recordSol({
+      ageMode: s.ageMode,
       level: s.skillLevel,
+      sol: s.sol,
       event,
       inputs,
       apMax: s.apMax,
@@ -297,7 +421,8 @@ export class Game extends EventTarget {
     });
 
     // Averías sin reparar restan eficiencia (soporte vital degradado).
-    const brokenBefore = MODULE_IDS.filter((id) => s.modules[id].broken);
+    const activeIds = s.ageModeCfg?.activeModules ?? MODULE_IDS;
+    const brokenBefore = activeIds.filter((id) => s.modules[id].broken);
     const eficiencia = clamp(output.eficienciaTripulacion - BROKEN_EFFICIENCY_PENALTY * brokenBefore.length, 0, 100);
     const cultivos = output.saludCultivos;
 
@@ -323,12 +448,12 @@ export class Game extends EventTarget {
 
     s.crew.forEach((c, i) => { c.energia = clamp(eficiencia + CREW_ENERGY_OFFSETS[i], 0, 100); });
 
-    const broken = MODULE_IDS.filter((id) => s.modules[id].broken).length;
+    const broken = activeIds.filter((id) => s.modules[id].broken).length;
     let outcome = 'continue';
     let pnr = { impossible: false };
     if (s.progress >= MISSION.goal) {
       outcome = 'won';
-      telemetry.recordMissionWin();
+      telemetry.recordMissionWin({ ageMode: s.ageMode, level: s.skillLevel, sol: s.sol });
     } else {
       pnr = checkPointOfNoReturn({
         progress: s.progress,
@@ -344,6 +469,7 @@ export class Game extends EventTarget {
 
     const report = {
       sol: s.sol,
+      ageMode: s.ageMode,
       event,
       inputs,
       output,
@@ -356,7 +482,7 @@ export class Game extends EventTarget {
       newBreaks,
       brokenUnrepaired: brokenBefore,
       apNext: apFromEfficiency(eficiencia),
-      lesson: lessonFor({ event, inputs, output }),
+      lesson: lessonFor({ event, inputs, output, ageMode: s.ageMode }),
       spinoff: pickSpinoffFact({ event, inputs }),
       telemetry: evalTelemetry,
       outcome,
@@ -375,7 +501,8 @@ export class Game extends EventTarget {
     if (s.sol <= 1) return []; // el primer sol es guiado y sin sustos
     const scale = s.skill?.breakScale ?? 1;
     const base = BREAK_CHANCE[event.id] * SHIELD_BREAK_FACTOR[inputs.blindaje] * scale;
-    const candidates = MODULE_IDS
+    const activeIds = s.ageModeCfg?.activeModules ?? MODULE_IDS;
+    const candidates = activeIds
       .filter((id) => !s.modules[id].broken)
       .map((id) => {
         let p = base;
@@ -394,14 +521,13 @@ export class Game extends EventTarget {
 
   /**
    * Entorno Seguro para Fallar (Safe-to-Fail — Paso 4):
-   * Si se activa la Evacuación Preventiva, el niño puede pedir un Dron de Suministros
-   * que repara los módulos, recupera la energía de la tripulación y amplía los suministros
-   * para continuar aprendiendo sin perder su progreso ni reiniciar desde cero.
+   * Cero Game Over punitivo: el Dron de Suministros repara módulos, recupera energía
+   * y amplía los suministros sin perder el progreso ni obligar a reiniciar desde cero.
    */
   rescueContinue() {
     const s = this.state;
     if (!s) return false;
-    telemetry.recordRescue();
+    telemetry.recordRescue({ ageMode: s.ageMode, level: s.skillLevel, sol: s.sol });
     for (const m of Object.values(s.modules)) {
       m.broken = false;
       m.repaired = true;
@@ -413,7 +539,7 @@ export class Game extends EventTarget {
     s.crew.forEach((c, i) => {
       c.energia = clamp(s.eficiencia + CREW_ENERGY_OFFSETS[i], 0, 100);
     });
-    // Rebobinar el sol actual para que aplique lo aprendido de inmediato
+    // Rebobinar el sol actual con pista progresiva activa para que aplique lo aprendido de inmediato
     s.sol = Math.max(0, s.sol - 1);
     this.beginSol();
     return true;

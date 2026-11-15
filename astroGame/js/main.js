@@ -58,9 +58,9 @@ async function bootstrap() {
   // 2. Montar vistas y modal docente
   startView = new StartView({
     root: viewStartEl,
-    onStart: ({ commander, name, skillLevel }) => {
+    onStart: ({ commander, name, ageMode, skillLevel }) => {
       showView('station');
-      game.start({ commander, name, skillLevel });
+      game.start({ commander, name, ageMode, skillLevel });
     },
   });
 

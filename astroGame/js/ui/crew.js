@@ -182,7 +182,8 @@ export class CrewLayer {
       const bubble = m.el.querySelector('.astro__bubble');
       if (bubble) bubble.textContent = energy < 40 ? '💤' : '';
 
-      let destNode = m.homeNode;
+      const isYoung = s.ageMode === '7-9';
+      let destNode = isYoung && m.homeNode === 'oxigeno_0' ? 'comida_0' : m.homeNode;
       let mode = 'home';
 
       if (s.sheltered) {

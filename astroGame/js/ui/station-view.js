@@ -42,8 +42,9 @@ export class StationView {
         </div>
       </div>
 
-      <!-- Canvas de partículas solares SEP (Retina) -->
-      <canvas class="storm-canvas" id="storm-canvas" aria-hidden="true"></canvas>
+      <!-- Canvas de partículas solares SEP (Retina) con etiqueta accesible WCAG / Section 508 -->
+      <canvas class="storm-canvas" id="storm-canvas" role="img"
+        aria-label="Simulación visual de partículas solares y desviación del escudo"></canvas>
 
       <!-- HUD Superior (Apple HIG Glassmorphism + Audio 3 Capas + Guía Docente) -->
       <header class="station-hud" aria-label="Estado de la misión">
@@ -57,14 +58,14 @@ export class StationView {
             <span class="hud-commander__name" id="hud-name">Comandante</span>
           </div>
           <div class="vitals-chips" aria-label="Estado del equipo y las plantas">
-            <span class="vital-chip" id="chip-crew" title="Energía del equipo" aria-label="Energía del equipo">👩‍🚀 <b id="val-crew">100%</b></span>
-            <span class="vital-chip" id="chip-crops" title="Salud de las plantas" aria-label="Salud de las plantas">🌱 <b id="val-crops">75%</b></span>
+            <span class="vital-chip" id="chip-crew" data-pattern="solid" title="Energía del equipo" aria-label="Energía del equipo">👩‍🚀 <b id="val-crew">100%</b></span>
+            <span class="vital-chip" id="chip-crops" data-pattern="solid" title="Salud de las plantas" aria-label="Salud de las plantas">🌱 <b id="val-crops">75%</b></span>
           </div>
         </div>
 
-        <!-- Señal visual de Clima Espacial (con icono geométrico para daltonismo) -->
-        <div class="weather-banner glass-pill" id="weather-banner" role="status" aria-live="polite">
-          <span class="weather-banner__signal" id="weather-signal" aria-hidden="true">😎</span>
+        <!-- Señal visual de Clima Espacial (con icono geométrico + patrón visual para daltonismo) -->
+        <div class="weather-banner glass-pill" id="weather-banner" data-event="calma" data-pattern="solid" role="status" aria-live="polite">
+          <span class="weather-banner__signal" id="weather-signal" aria-hidden="true">😎 ●</span>
           <div class="weather-banner__copy">
             <strong class="weather-banner__title" id="weather-title">Sol tranquilo</strong>
             <span class="weather-banner__tip" id="weather-tip">Toca 🌱 y 🫧</span>
@@ -72,50 +73,78 @@ export class StationView {
         </div>
 
         <div class="hud-cluster hud-cluster--right glass-pill">
-          <button type="button" class="hud-icon-btn" id="station-lab-btn" hidden
-            aria-label="Abrir laboratorio científico" aria-expanded="false" title="Laboratorio">
+          <button type="button" class="hud-icon-btn" id="station-lab-btn"
+            aria-label="Abrir Laboratorio de Simulación y Variables (Techo Alto)" aria-expanded="false" title="Laboratorio de Simulación">
             <span aria-hidden="true">🔬</span>
           </button>
           <button type="button" class="hud-icon-btn hud-icon-btn--bgm" id="station-bgm-btn"
-            aria-label="Activar o silenciar música de fondo" title="Música">
+            aria-label="Activar o silenciar música de fondo (BGM)" title="Música (BGM)">
             <span id="station-bgm-icon">🎵</span>
           </button>
           <button type="button" class="hud-icon-btn" id="station-sound-btn"
-            aria-label="Activar o silenciar efectos de sonido" title="Sonidos">
+            aria-label="Activar o silenciar efectos de sonido (SFX)" title="Sonidos (SFX)">
             <span id="station-sound-icon">🔊</span>
           </button>
           <button type="button" class="hud-icon-btn" id="station-tts-btn"
-            aria-label="Activar o desactivar lectura en voz alta" title="Voz">
+            aria-label="Activar o desactivar lectura en voz alta (TTS)" title="Voz (TTS)">
             <span id="station-tts-icon">🗣️</span>
           </button>
-          <button type="button" class="hud-icon-btn hud-icon-btn--edu" id="station-edu-btn"
-            aria-label="Abrir Guía Docente y Telemetría de Aprendizaje" title="Guía para adultos">
+          <button type="button" class="hud-pill-btn glass-pill hud-icon-btn--edu" id="station-edu-btn"
+            aria-label="Abrir Guía Docente / Padres y Telemetría de Aprendizaje" title="Guía Docente / Padres">
             <span aria-hidden="true">🎓</span>
+            <span class="hud-pill-btn__text">Guía Docente / Padres</span>
           </button>
         </div>
       </header>
 
-      <!-- Panel Desplegable de Techo Alto (High Ceiling + Sandbox Astro-Matic bajo demanda) -->
+      <!-- Panel Desplegable de Techo Alto (High Ceiling 10-12 años + Personalización de Variables + Gráficas en Vivo) -->
       <aside class="high-ceiling-drawer glass-card" id="high-ceiling-drawer" hidden
-        aria-label="Laboratorio científico">
+        aria-label="Laboratorio de Simulación de Sistemas y Variables en Vivo">
         <div class="hc-header">
-          <strong>🔬 Laboratorio</strong>
+          <strong>🔬 Simulador de Sistemas (Techo Alto · Astro-Matic)</strong>
           <button type="button" class="hc-close-btn" id="hc-close-btn" aria-label="Cerrar laboratorio">✕</button>
         </div>
         <div class="hc-sandbox">
-          <span class="hc-sandbox__label">Elige el clima:</span>
+          <span class="hc-sandbox__label">1. Eventos solares predefinidos (NASA DONKI):</span>
           <div class="hc-weather-btns" id="hc-weather-btns">
-            <button type="button" class="hc-weather-btn" data-event="calma">😎 Calma<small>0.8 mSv</small></button>
-            <button type="button" class="hc-weather-btn" data-event="claseM">🔥 Clase M<small>16 mSv</small></button>
-            <button type="button" class="hc-weather-btn" data-event="claseX">🌪️ Clase X<small>50 mSv</small></button>
+            <button type="button" class="hc-weather-btn" data-event="calma">😎 ● Calma<small>0.8 mSv</small></button>
+            <button type="button" class="hc-weather-btn" data-event="claseM">🔥 ▲ Clase M<small>16 mSv</small></button>
+            <button type="button" class="hc-weather-btn" data-event="claseX">🌪️ ◆ Clase X<small>50 mSv</small></button>
+          </div>
+          <div class="hc-sliders" aria-label="Personalización de variables en tiempo real">
+            <label class="hc-slider-row" for="hc-slider-intensity">
+              <span>☀️ Intensidad Solar: <b id="hc-lbl-intensity">1.2</b>/10</span>
+              <input type="range" id="hc-slider-intensity" min="0.5" max="10" step="0.5" value="1.2"
+                aria-label="Personalizar intensidad de tormenta solar de 0.5 a 10" />
+            </label>
+            <label class="hc-slider-row" for="hc-slider-msv">
+              <span>☢️ Dosis Radiación: <b id="hc-lbl-msv">0.8</b> mSv/día</span>
+              <input type="range" id="hc-slider-msv" min="0.5" max="60" step="0.5" value="0.8"
+                aria-label="Personalizar dosis de radiación en milisieverts por día" />
+            </label>
           </div>
         </div>
-        <div class="hc-metrics" id="hc-metrics">
-          <div class="hc-metric"><span>🛡️ Escudo</span><strong id="hc-val-shield">Nivel 1</strong></div>
-          <div class="hc-metric"><span>💡 Luz</span><strong id="hc-val-light">35%</strong></div>
-          <div class="hc-metric"><span>🧬 Daño</span><strong id="hc-val-damage">—</strong></div>
-          <div class="hc-metric"><span>👩‍🚀 Energía</span><strong id="hc-val-eff">—</strong></div>
-          <div class="hc-metric"><span>🌱 Plantas</span><strong id="hc-val-crops">—</strong></div>
+        <div class="hc-live-charts" aria-label="Gráficas de respuesta del sistema en vivo">
+          <div class="hc-chart-row">
+            <div class="hc-chart-row__head"><span>🛡️ Nivel de Blindaje</span><strong id="hc-val-shield">Básico</strong></div>
+            <div class="hc-chart-track"><div class="hc-chart-fill hc-chart-fill--cyan" id="hc-bar-shield" style="width:33%"></div></div>
+          </div>
+          <div class="hc-chart-row">
+            <div class="hc-chart-row__head"><span>💡 Luz Invernadero</span><strong id="hc-val-light">35%</strong></div>
+            <div class="hc-chart-track"><div class="hc-chart-fill hc-chart-fill--aqua" id="hc-bar-light" style="width:35%"></div></div>
+          </div>
+          <div class="hc-chart-row">
+            <div class="hc-chart-row__head"><span>🧬 Daño Celular (ML)</span><strong id="hc-val-damage">0%</strong></div>
+            <div class="hc-chart-track"><div class="hc-chart-fill hc-chart-fill--red" id="hc-bar-damage" style="width:0%"></div></div>
+          </div>
+          <div class="hc-chart-row">
+            <div class="hc-chart-row__head"><span>👩‍🚀 Eficiencia Equipo (ML)</span><strong id="hc-val-eff">100%</strong></div>
+            <div class="hc-chart-track"><div class="hc-chart-fill hc-chart-fill--green" id="hc-bar-eff" style="width:100%"></div></div>
+          </div>
+          <div class="hc-chart-row">
+            <div class="hc-chart-row__head"><span>🌱 Salud Cultivos (ML)</span><strong id="hc-val-crops">75%</strong></div>
+            <div class="hc-chart-track"><div class="hc-chart-fill hc-chart-fill--green" id="hc-bar-crops" style="width:75%"></div></div>
+          </div>
         </div>
       </aside>
 
@@ -291,7 +320,7 @@ export class StationView {
         </div>
       </footer>
 
-      <!-- Tarjeta corta de Fin de Día + Dato NASA -->
+      <!-- Tarjeta corta de Fin de Día + Feedback Formativo (Paso 4) + Dato NASA (Paso 6) -->
       <aside class="sol-toast" id="sol-toast" hidden aria-live="polite">
         <div class="sol-toast__card glass-card">
           <div class="sol-toast__top">
@@ -299,11 +328,17 @@ export class StationView {
             <span class="sol-toast__gain" id="toast-gain">+8% 🚀</span>
           </div>
           <p class="sol-toast__lesson" id="toast-lesson">¡Buen trabajo!</p>
+          <p class="sol-toast__reason" id="toast-reason" hidden></p>
           <div class="sol-toast__metrics" id="toast-metrics"></div>
           <div class="sol-toast__spinoff" id="toast-spinoff"></div>
-          <button type="button" class="sol-toast__btn" id="next-sol-btn">
-            Seguir ▶
-          </button>
+          <div class="sol-toast__actions">
+            <button type="button" class="sol-toast__retry-btn" id="retry-sol-hint-btn" hidden>
+              🔄 2º intento con pista
+            </button>
+            <button type="button" class="sol-toast__btn" id="next-sol-btn">
+              Seguir ▶
+            </button>
+          </div>
         </div>
       </aside>
 
@@ -428,6 +463,14 @@ export class StationView {
       this.game.next();
     });
 
+    $('#retry-sol-hint-btn', this.root).addEventListener('click', () => {
+      sfx.unlock();
+      sfx.play('go');
+      $('#sol-toast', this.root).hidden = true;
+      this.game.retryCurrentSolWithHint();
+      sfx.speak('Segundo intento activado. Observa los módulos iluminados y evita los distractores.');
+    });
+
     $('#hud-home-btn', this.root).addEventListener('click', () => {
       sfx.unlock();
       sfx.play('tap');
@@ -450,6 +493,19 @@ export class StationView {
       sfx.play('tap');
       this.game.setWeatherEvent(btn.dataset.event);
     });
+
+    // Personalización de Variables en tiempo real (Paso 2 — inspiración Astro-Matic)
+    const intSlider = $('#hc-slider-intensity', this.root);
+    const msvSlider = $('#hc-slider-msv', this.root);
+    const onCustomVarInput = () => {
+      const intensidad = Number(intSlider?.value || 1.2);
+      const mSv = Number(msvSlider?.value || 0.8);
+      $('#hc-lbl-intensity', this.root).textContent = intensidad.toFixed(1);
+      $('#hc-lbl-msv', this.root).textContent = mSv.toFixed(1);
+      this.game.setCustomWeatherParams({ intensidad, mSv });
+    };
+    intSlider?.addEventListener('input', onCustomVarInput);
+    msvSlider?.addEventListener('input', onCustomVarInput);
 
     $('#station-bgm-btn', this.root).addEventListener('click', () => {
       sfx.unlock();
@@ -492,8 +548,8 @@ export class StationView {
       sfx.unlock();
       sfx.play('go');
       $('#end-modal', this.root).hidden = true;
-      const { commander, name, skillLevel } = this.game.state;
-      this.game.start({ commander, name, skillLevel });
+      const { commander, name, ageMode, skillLevel } = this.game.state;
+      this.game.start({ commander, name, ageMode, skillLevel });
     });
 
     $('#change-cmd-btn', this.root).addEventListener('click', () => {
@@ -509,6 +565,7 @@ export class StationView {
       if (!$('#educator-modal')?.hidden && $('#educator-modal')) return;
       const keyMap = { 1: 'agua', 2: 'comida', 3: 'escudos', 4: 'oxigeno' };
       if (keyMap[e.key]) {
+        if (this.game.state?.ageMode === '7-9' && keyMap[e.key] === 'oxigeno') return;
         e.preventDefault();
         this.handleModuleTap(keyMap[e.key]);
       } else if (e.key === 'Backspace' || e.key === 'z' || e.key === 'Z') {
@@ -523,13 +580,40 @@ export class StationView {
     });
   }
 
+  applyAgeModeLayout(state) {
+    const isYoung = state.ageMode === '7-9';
+    this.root.dataset.ageMode = state.ageMode;
+    if (this.modEls.oxigeno) {
+      this.modEls.oxigeno.hidden = isYoung;
+    }
+    const tagRight = $('#tag-bio-o2', this.root);
+    const tagBottom = $('#tag-shield-o2', this.root);
+    if (tagRight) tagRight.hidden = isYoung;
+    if (tagBottom) tagBottom.hidden = isYoung;
+
+    const comidaEl = this.modEls.comida;
+    if (comidaEl) {
+      const iconEl = comidaEl.querySelector('.station-module__icon');
+      const titleEl = comidaEl.querySelector('.station-module__title');
+      if (iconEl) iconEl.textContent = isYoung ? '🌱🫧' : '🌱';
+      if (titleEl) titleEl.textContent = isYoung ? 'Bio-Invernadero' : 'Comida';
+      comidaEl.setAttribute(
+        'aria-label',
+        isYoung
+          ? 'Bio-Invernadero de Comida y Oxígeno (tecla 2). Toca para darle energía.'
+          : 'Comida (tecla 2). Toca para darle energía.',
+      );
+    }
+  }
+
   bindGameEvents() {
     this.game.addEventListener('mission:start', ({ detail: { state } }) => {
       $('#end-modal', this.root).hidden = true;
       $('#sol-toast', this.root).hidden = true;
-      $('#hud-name', this.root).textContent = state.name;
+      $('#hud-name', this.root).textContent = `${state.name} · ${state.ageMode} N${state.skillLevel}`;
+      this.applyAgeModeLayout(state);
       const labBtn = $('#station-lab-btn', this.root);
-      if (labBtn) labBtn.hidden = !state.skill?.sandboxAllowed;
+      if (labBtn) labBtn.hidden = false;
       this.crewLayer.mount(state.crew);
       this.toggleHighCeiling(state.skillLevel === 5);
       requestAnimationFrame(() => {
@@ -538,8 +622,14 @@ export class StationView {
       });
     });
 
+    this.game.addEventListener('mode:change', ({ detail: { state } }) => {
+      this.applyAgeModeLayout(state);
+      $('#hud-name', this.root).textContent = `${state.name} · ${state.ageMode} N${state.skillLevel}`;
+    });
+
     this.game.addEventListener('sol:start', ({ detail: { state } }) => {
       $('#sol-toast', this.root).hidden = true;
+      this.applyAgeModeLayout(state);
       this.renderHUD(state);
       this.renderWeather(state.event);
       this.renderModulesAndPipes(state);
@@ -556,7 +646,6 @@ export class StationView {
       this.renderModulesAndPipes(state);
       this.renderScaffolding(state);
       this.updateHighCeilingPreview(state);
-      sfx.speak(`Simulando ${state.event.label}`);
     });
 
     this.game.addEventListener('plan:change', ({ detail: { state, id } }) => {
@@ -588,15 +677,33 @@ export class StationView {
     if (!this.highCeilingOpen || !state?.event) return;
     const plan = this.game.plan();
     const transMap = {
-      1: 'Básico',
-      2: 'Magnético',
-      3: '💧 Pared de Agua',
+      1: 'Básico (33%)',
+      2: 'Magnético (66%)',
+      3: '💧 Pared de Agua (100%)',
     };
+    const shieldPct = plan.blindaje === 3 ? 100 : plan.blindaje === 2 ? 66 : 33;
+    const lightPct = Math.round(plan.energiaInvernadero);
+
     $('#hc-val-shield', this.root).textContent = transMap[plan.blindaje];
-    $('#hc-val-light', this.root).textContent = `${Math.round(plan.energiaInvernadero)}%`;
+    $('#hc-val-light', this.root).textContent = `${lightPct}%`;
+    const barShield = $('#hc-bar-shield', this.root);
+    const barLight = $('#hc-bar-light', this.root);
+    if (barShield) barShield.style.width = `${shieldPct}%`;
+    if (barLight) barLight.style.width = `${lightPct}%`;
+
+    const intSlider = $('#hc-slider-intensity', this.root);
+    const msvSlider = $('#hc-slider-msv', this.root);
+    if (intSlider && document.activeElement !== intSlider) {
+      intSlider.value = String(state.event.intensidad);
+      $('#hc-lbl-intensity', this.root).textContent = Number(state.event.intensidad).toFixed(1);
+    }
+    if (msvSlider && document.activeElement !== msvSlider) {
+      msvSlider.value = String(state.event.mSv);
+      $('#hc-lbl-msv', this.root).textContent = Number(state.event.mSv).toFixed(1);
+    }
 
     $$('.hc-weather-btn', this.root).forEach((b) => {
-      b.classList.toggle('is-active', b.dataset.event === state.event.id);
+      b.classList.toggle('is-active', !state.event.custom && b.dataset.event === state.event.id);
     });
 
     try {
@@ -608,9 +715,18 @@ export class StationView {
         contramedidas: plan.contramedidas,
         energiaInvernadero: plan.energiaInvernadero,
       });
-      $('#hc-val-damage', this.root).textContent = `${Math.round(out.danoCelular)}%`;
-      $('#hc-val-eff', this.root).textContent = `${Math.round(out.eficienciaTripulacion)}%`;
-      $('#hc-val-crops', this.root).textContent = `${Math.round(out.saludCultivos)}%`;
+      const dmg = Math.round(out.danoCelular);
+      const eff = Math.round(out.eficienciaTripulacion);
+      const crp = Math.round(out.saludCultivos);
+      $('#hc-val-damage', this.root).textContent = `${dmg}%`;
+      $('#hc-val-eff', this.root).textContent = `${eff}%`;
+      $('#hc-val-crops', this.root).textContent = `${crp}%`;
+      const barDmg = $('#hc-bar-damage', this.root);
+      const barEff = $('#hc-bar-eff', this.root);
+      const barCrp = $('#hc-bar-crops', this.root);
+      if (barDmg) barDmg.style.width = `${dmg}%`;
+      if (barEff) barEff.style.width = `${eff}%`;
+      if (barCrp) barCrp.style.width = `${crp}%`;
     } catch {
       /* ignore preview error */
     }
@@ -635,7 +751,6 @@ export class StationView {
     if (!res.ok) {
       sfx.play('deny');
       haptic([10, 30, 10]);
-      // Micro-vibración sutil solo en los rayos del módulo, sin sacudir toda la tarjeta
       animate(
         boltsRow,
         [
@@ -658,7 +773,6 @@ export class StationView {
 
     sfx.play(res.action === 'repair' ? 'repair' : 'bolt');
     haptic(8);
-    // Respuesta táctil suave y natural solo sobre el arte interno (1.5% de presión)
     animate(
       artEl,
       [
@@ -688,6 +802,7 @@ export class StationView {
 
   renderHUD(state) {
     $('#hud-sol', this.root).textContent = `☀️ Día ${state.sol}/${state.maxSols}`;
+    $('#hud-name', this.root).textContent = `${state.name} · ${state.ageMode} N${state.skillLevel}`;
     const pct = Math.round(state.progress);
     $('#hud-progress', this.root).textContent = `${pct}%`;
     $('#hud-progress-fill', this.root).style.width = `${pct}%`;
@@ -695,10 +810,17 @@ export class StationView {
 
     const eff = Math.round(state.eficiencia);
     const crops = Math.round(state.cultivos);
-    $('#val-crew', this.root).textContent = `${eff}%`;
-    $('#val-crops', this.root).textContent = `${crops}%`;
-    $('#chip-crew', this.root).dataset.tone = toneFor(eff);
-    $('#chip-crops', this.root).dataset.tone = toneFor(crops);
+    const crewTone = toneFor(eff);
+    const cropsTone = toneFor(crops);
+    const patternForTone = (t) => (t === 'good' ? 'solid' : t === 'warn' ? 'stripe' : 'grid');
+    const shapeForTone = (t) => (t === 'good' ? '●' : t === 'warn' ? '▲' : '◆');
+
+    $('#val-crew', this.root).textContent = `${shapeForTone(crewTone)} ${eff}%`;
+    $('#val-crops', this.root).textContent = `${shapeForTone(cropsTone)} ${crops}%`;
+    $('#chip-crew', this.root).dataset.tone = crewTone;
+    $('#chip-crew', this.root).dataset.pattern = patternForTone(crewTone);
+    $('#chip-crops', this.root).dataset.tone = cropsTone;
+    $('#chip-crops', this.root).dataset.pattern = patternForTone(cropsTone);
 
     const boltsEl = $('#ap-bolts', this.root);
     let boltsHTML = '';
@@ -733,9 +855,23 @@ export class StationView {
     this.skyEl.dataset.event = event.id;
     const banner = $('#weather-banner', this.root);
     banner.dataset.event = event.id;
+    banner.dataset.pattern = event.pattern || 'solid';
     $('#weather-signal', this.root).textContent = `${event.emoji || event.signal} ${event.shape || ''}`;
-    $('#weather-title', this.root).textContent = event.label;
-    $('#weather-tip', this.root).textContent = event.tip;
+    $('#weather-title', this.root).textContent = event.custom
+      ? `${event.label} (${event.mSv} mSv)`
+      : event.label;
+    const tipText = this.game.state?.ageMode === '7-9' && event.id === 'calma'
+      ? 'Toca 🌱🫧'
+      : event.tip;
+    $('#weather-tip', this.root).textContent = tipText;
+
+    const canvas = $('#storm-canvas', this.root);
+    if (canvas) {
+      canvas.setAttribute(
+        'aria-label',
+        `Simulación visual de partículas solares: ${event.label} (${event.mSv} mSv/día).`,
+      );
+    }
   }
 
   renderModulesAndPipes(state) {
@@ -962,7 +1098,7 @@ export class StationView {
 
     const callout = $('#pipe-callout', this.root);
     const calloutText = $('#pipe-callout-text', this.root);
-    const evalNow = telemetry.evaluateDecision(state.event, plan, state.apMax);
+    const evalNow = telemetry.evaluateDecision(state.event, plan, state.apMax, state.ageMode);
 
     if (state.hintLevel >= 1 && !evalNow.optimal && state.ap > 0) {
       callout.dataset.tone = 'warn';
@@ -982,7 +1118,9 @@ export class StationView {
       callout.classList.add('is-visible');
     } else if (plan.contramedidas) {
       callout.dataset.tone = 'bio';
-      calloutText.textContent = '🌱 + 🫧 = ¡Súper equipo y más plantas! 🫐';
+      calloutText.textContent = state.ageMode === '7-9'
+        ? '🌱🫧 = ¡Súper equipo y más plantas! 🫐'
+        : '🌱 + 🫧 = ¡Súper equipo y más plantas! 🫐';
       callout.classList.add('is-visible');
     } else {
       callout.classList.remove('is-visible');
@@ -997,17 +1135,22 @@ export class StationView {
 
     const alloc = this.game.allocation();
     const plan = this.game.plan();
+    const activeIds = state.ageModeCfg?.activeModules ?? MODULE_IDS;
 
-    const brokenIds = MODULE_IDS.filter((id) => state.modules[id].broken);
+    const brokenIds = activeIds.filter((id) => state.modules[id].broken);
     if (brokenIds.length && state.ap > 0) {
       brokenIds.forEach((id) => this.modEls[id].classList.add('is-scaffold'));
       return;
     }
 
-    const evalNow = telemetry.evaluateDecision(state.event, plan, state.apMax);
+    const evalNow = telemetry.evaluateDecision(state.event, plan, state.apMax, state.ageMode);
     if (state.hintLevel >= 2 && !evalNow.optimal && state.ap > 0) {
-      evalNow.targetModules.forEach((id) => this.modEls[id].classList.add('is-scaffold'));
-      evalNow.distractorModules.forEach((id) => this.modEls[id].classList.add('is-dimmed'));
+      evalNow.targetModules.forEach((id) => {
+        if (this.modEls[id] && !this.modEls[id].hidden) this.modEls[id].classList.add('is-scaffold');
+      });
+      evalNow.distractorModules.forEach((id) => {
+        if (this.modEls[id] && !this.modEls[id].hidden) this.modEls[id].classList.add('is-dimmed');
+      });
       return;
     }
 
@@ -1016,7 +1159,7 @@ export class StationView {
 
     if (state.event.id === 'calma') {
       if (alloc.comida === 0) this.modEls.comida.classList.add('is-scaffold');
-      if (alloc.oxigeno === 0) this.modEls.oxigeno.classList.add('is-scaffold');
+      if (state.ageMode !== '7-9' && alloc.oxigeno === 0) this.modEls.oxigeno.classList.add('is-scaffold');
     } else if (state.event.id === 'claseM') {
       if (alloc.escudos === 0) this.modEls.escudos.classList.add('is-scaffold');
     } else if (state.event.id === 'claseX') {
@@ -1040,6 +1183,7 @@ export class StationView {
       allocation: this.game.allocation(),
       sheltered: plan.emergencia,
       energies: state.crew.map((c) => c.energia),
+      ageMode: state.ageMode,
     });
   }
 
@@ -1121,13 +1265,30 @@ export class StationView {
 
   showSolToast(report) {
     const toast = $('#sol-toast', this.root);
+    const isOptimal = report.telemetry?.optimal ?? true;
     $('#toast-badge', this.root).textContent = `${report.event.emoji || report.event.signal} ¡Día ${report.sol} listo!`;
     $('#toast-gain', this.root).textContent = `+${Math.round(report.gain)}% 🚀`;
     $('#toast-lesson', this.root).textContent = report.lesson;
 
+    const reasonEl = $('#toast-reason', this.root);
+    if (reasonEl) {
+      if (report.telemetry?.reason) {
+        reasonEl.hidden = false;
+        reasonEl.dataset.tone = isOptimal ? 'good' : 'warn';
+        reasonEl.textContent = report.telemetry.reason;
+      } else {
+        reasonEl.hidden = true;
+      }
+    }
+
+    const retryHintBtn = $('#retry-sol-hint-btn', this.root);
+    if (retryHintBtn) {
+      retryHintBtn.hidden = isOptimal;
+    }
+
     if (report.spinoff) {
       $('#toast-spinoff', this.root).innerHTML = `
-        <strong>🛰️ Dato NASA:</strong> ${report.spinoff.text}
+        <strong>🛰️ Dato NASA (${report.spinoff.tag}):</strong> ${report.spinoff.text}
       `;
     }
 
@@ -1142,7 +1303,7 @@ export class StationView {
       ${breakChip}
     `;
     toast.hidden = false;
-    sfx.speak(report.lesson);
+    sfx.speak(isOptimal ? report.lesson : `${report.lesson}. ${report.telemetry?.reason || ''}`);
   }
 
   showEndModal(kind, state, report) {

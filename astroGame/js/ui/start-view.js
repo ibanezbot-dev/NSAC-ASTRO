@@ -1,27 +1,43 @@
 /**
  * Vista 1 — Pantalla de Inicio / Selección de Comandante (Mockup 1).
- * Integra los 6 Pilares de k12-edugame-web-architect:
- *  - Cuadrante superior izquierdo: Branding "ASTRO" inclinado + "Your little big commander"
- *  - Esquina superior derecha: Controles de Audio en 3 Capas (BGM, SFX, TTS) + Guía Docente
- *  - Centro: Selector con campo "your name" (COPPA Stateless), marco central del comandante,
- *    botones `< Button` y `Button >` (Hitbox >= 64x64 px), Andamiaje por Habilidad (Niveles 1 a 5)
- *    y botón inferior "Start" con presión física.
+ * Integra los Pilares de k12-edugame-web-architect:
+ *  - Cuadrante superior izquierdo: Branding "ASTRO" + subtítulo amigable
+ *  - Esquina superior derecha: Controles de Audio en 3 Capas independientes (BGM, SFX, TTS)
+ *    + Botón explícito "🎓 Guía Docente / Padres" (Todos con Hitbox >= 64x64 px)
+ *  - Centro: Indicativo / Apodo espacial anónimo (COPPA Stateless, cero nombres reales ni cuentas),
+ *    carrusel de comandante, Selector de Modo de Edad (7–9 años vs. 10–12 años) +
+ *    Andamiaje por Habilidad (Niveles 1 a 5 dentro de cada modo, Zona de Desarrollo Próximo),
+ *    medallas guardadas en localStorage y botón "Start" con presión física.
  */
-import { COMMANDERS, SKILL_LEVELS, STORAGE_KEYS } from '../config.js';
+import { AGE_MODES, COMMANDERS, MEDALS, SKILL_LEVELS, STORAGE_KEYS } from '../config.js';
 import { $, $$, animate, escapeHTML, haptic, storage } from '../util.js';
 import { astronautSVG } from '../art/astronaut.js';
 import { startBackdropSVG } from '../art/backdrops.js';
 import { sfx } from '../audio.js';
 import { educatorModal } from './educator-modal.js';
+import { telemetry } from '../telemetry.js';
+
+const SAFE_CALLSIGNS = [
+  'Astro-7',
+  'Cometa-3',
+  'Artemis-9',
+  'Quásar-5',
+  'Supernova-1',
+  'Apolo-11',
+  'Nebulosa-8',
+  'Púlsar-4',
+];
 
 export class StartView {
-  /** @param {{ root: HTMLElement, onStart: (payload:{commander:object, name:string, skillLevel:number})=>void }} opts */
+  /** @param {{ root: HTMLElement, onStart: (payload:{commander:object, name:string, ageMode:string, skillLevel:number})=>void }} opts */
   constructor({ root, onStart }) {
     this.root = root;
     this.onStart = onStart;
     const savedId = storage.get(STORAGE_KEYS.commander, COMMANDERS[0].id);
     this.index = Math.max(0, COMMANDERS.findIndex((c) => c.id === savedId));
     this.savedName = storage.get(STORAGE_KEYS.name, '');
+    const savedMode = storage.get(STORAGE_KEYS.ageMode, '10-12');
+    this.ageMode = AGE_MODES[savedMode] ? savedMode : '10-12';
     this.skillLevel = Number(storage.get(STORAGE_KEYS.skillLevel, 3)) || 3;
     this.best = storage.get(STORAGE_KEYS.best, null);
   }
@@ -31,45 +47,54 @@ export class StartView {
       <div class="start-backdrop" aria-hidden="true">${startBackdropSVG()}</div>
 
       <header class="start-brand" aria-label="ASTRO - Your little big commander">
+        <span class="start-brand__badge">NASA STEM · COPPA STATELESS</span>
         <h1 class="start-brand__title">ASTRO</h1>
         <p class="start-brand__subtitle">¡Tu pequeño gran comandante!</p>
       </header>
 
-      <!-- Barra superior de Accesibilidad Multimodal (Audio 3 Capas + Guía Docente) -->
-      <nav class="top-utility-bar" aria-label="Controles de audio, voz y guía docente">
-        <button type="button" class="hud-icon-btn" id="start-bgm-btn"
-          aria-label="Activar o silenciar música de fondo" title="Música">
+      <!-- Barra superior de Accesibilidad Multimodal (Audio 3 Capas + Guía Docente / Padres) -->
+      <nav class="top-utility-bar" aria-label="Controles de audio en 3 capas, voz y guía docente">
+        <button type="button" class="hud-icon-btn hud-icon-btn--bgm" id="start-bgm-btn"
+          aria-label="Activar o silenciar música de fondo (BGM)" title="Música de fondo (BGM)">
           <span id="start-bgm-icon">🎵</span>
         </button>
         <button type="button" class="hud-icon-btn" id="start-sound-btn"
-          aria-label="Activar o silenciar efectos de sonido" title="Sonidos">
+          aria-label="Activar o silenciar efectos de sonido (SFX)" title="Efectos de sonido (SFX)">
           <span id="start-sound-icon">🔊</span>
         </button>
         <button type="button" class="hud-icon-btn" id="start-tts-btn"
-          aria-label="Activar o desactivar lectura en voz alta" title="Voz">
+          aria-label="Activar o desactivar lectura en voz alta (TTS)" title="Lectura en voz alta (TTS)">
           <span id="start-tts-icon">🗣️</span>
         </button>
-        <button type="button" class="hud-icon-btn hud-icon-btn--edu" id="start-edu-btn"
-          aria-label="Abrir Guía Docente y para Padres" title="Guía para adultos">
+        <button type="button" class="hud-pill-btn glass-pill hud-icon-btn--edu" id="start-edu-btn"
+          aria-label="Abrir Guía Docente y para Padres" title="Guía Docente / Padres">
           <span aria-hidden="true">🎓</span>
+          <span class="hud-pill-btn__text">Guía Docente / Padres</span>
         </button>
       </nav>
 
-      <main class="start-stage" aria-label="Selección de comandante">
+      <main class="start-stage" aria-label="Selección de comandante, modo de edad y nivel">
         <form class="commander-selector" id="commander-form" novalidate>
           <div class="name-field-wrap">
-            <label class="sr-only" for="commander-name">Tu apodo de comandante (sin datos personales)</label>
-            <input
-              id="commander-name"
-              class="name-input glass-pill"
-              type="text"
-              name="commanderName"
-              maxlength="18"
-              autocomplete="off"
-              spellcheck="false"
-              placeholder="✏️ Tu apodo"
-              value="${escapeHTML(this.savedName)}"
-            />
+            <label class="sr-only" for="commander-name">Indicativo o apodo espacial (COPPA Stateless: no ingreses tu nombre real ni correo)</label>
+            <div class="callsign-row">
+              <input
+                id="commander-name"
+                class="name-input glass-pill"
+                type="text"
+                name="commanderName"
+                maxlength="16"
+                autocomplete="off"
+                spellcheck="false"
+                aria-label="Indicativo o apodo espacial anónimo (sin nombre real)"
+                placeholder="🛰️ Apodo espacial (ej. Astro-7)"
+                value="${escapeHTML(this.savedName)}"
+              />
+              <button type="button" class="callsign-dice-btn glass-pill" id="random-callsign-btn"
+                aria-label="Generar apodo espacial aleatorio seguro (COPPA)" title="Apodo espacial aleatorio">
+                🎲
+              </button>
+            </div>
           </div>
 
           <div class="selector-carousel">
@@ -79,7 +104,7 @@ export class StartView {
             </button>
 
             <div class="avatar-frame glass-card" id="avatar-frame" tabindex="0"
-              role="region" aria-live="polite" aria-label="Vista previa del comandante">
+              role="region" aria-live="polite" aria-label="Vista previa del comandante espacial">
               <div class="avatar-frame__glow" id="avatar-glow"></div>
               <div class="avatar-frame__grid" aria-hidden="true"></div>
               <div class="avatar-frame__stage" id="avatar-stage"></div>
@@ -88,7 +113,7 @@ export class StartView {
                   <span class="avatar-frame__name" id="avatar-name"></span>
                   <span class="avatar-frame__trait" id="avatar-trait"></span>
                 </div>
-                <div class="avatar-dots" id="avatar-dots" role="tablist" aria-label="Comandantes"></div>
+                <div class="avatar-dots" id="avatar-dots" aria-hidden="true"></div>
               </div>
             </div>
 
@@ -98,24 +123,42 @@ export class StartView {
             </button>
           </div>
 
-          <!-- Andamiaje por Habilidad (Niveles 1 a 5 — sin etiquetas rígidas de edad) -->
-          <div class="skill-selector glass-pill" role="radiogroup" aria-label="Nivel de habilidad (1 a 5)">
-            <div class="skill-selector__pills" id="skill-pills">
-              ${SKILL_LEVELS.map(
-                (l) => `
-                <button type="button"
-                  class="skill-pill ${l.level === this.skillLevel ? 'is-active' : ''}"
-                  data-level="${l.level}"
-                  role="radio"
-                  aria-checked="${l.level === this.skillLevel}"
-                  aria-label="Nivel ${l.level}: ${l.kid}"
-                  title="${l.title}">
-                  <span class="skill-pill__emoji" aria-hidden="true">${l.emoji}</span>
-                  <span class="skill-pill__num">${l.level}</span>
-                </button>`,
-              ).join('')}
+          <!-- Selector de Modo de Edad (7-9 años vs 10-12 años) + Niveles 1 a 5 (Paso 2 y Paso 3) -->
+          <div class="scaffolding-panel glass-card" role="group" aria-label="Configuración de modo de edad y nivel de dificultad">
+            <div class="age-mode-selector" role="radiogroup" aria-label="Modo de edad (fija carga cognitiva e interacción)">
+              ${Object.values(AGE_MODES)
+                .map(
+                  (m) => `
+                  <button type="button"
+                    class="age-mode-btn ${m.id === this.ageMode ? 'is-active' : ''}"
+                    data-age-mode="${m.id}"
+                    role="radio"
+                    aria-checked="${m.id === this.ageMode}"
+                    aria-label="Modo ${m.label}: ${m.desc}">
+                    <span class="age-mode-btn__title">${m.badge}</span>
+                  </button>`,
+                )
+                .join('')}
             </div>
-            <span class="skill-selector__desc" id="skill-desc"></span>
+
+            <div class="skill-selector" role="radiogroup" aria-label="Nivel de habilidad del 1 al 5 (Zona de Desarrollo Próximo)">
+              <div class="skill-selector__pills" id="skill-pills">
+                ${SKILL_LEVELS.map(
+                  (l) => `
+                  <button type="button"
+                    class="skill-pill ${l.level === this.skillLevel ? 'is-active' : ''}"
+                    data-level="${l.level}"
+                    role="radio"
+                    aria-checked="${l.level === this.skillLevel}"
+                    aria-label="Nivel ${l.level}: ${l.kid} (${l.title})"
+                    title="${l.title}">
+                    <span class="skill-pill__emoji" aria-hidden="true">${l.emoji}</span>
+                    <span class="skill-pill__num">N${l.level}</span>
+                  </button>`,
+                ).join('')}
+              </div>
+              <span class="skill-selector__desc" id="skill-desc"></span>
+            </div>
           </div>
 
           <div class="start-cta-wrap">
@@ -139,6 +182,7 @@ export class StartView {
 
     this.renderDots();
     this.renderCommander(0);
+    this.renderAgeMode();
     this.renderSkillLevel();
     this.refreshBest();
     this.syncAudioButtons();
@@ -147,8 +191,7 @@ export class StartView {
 
   renderDots() {
     this.dotsEl.innerHTML = COMMANDERS.map(
-      (c, i) => `<button type="button" class="avatar-dot" data-idx="${i}" role="tab"
-        aria-label="${c.name} (${c.trait})" aria-selected="${i === this.index}"></button>`,
+      (_, i) => `<span class="avatar-dot ${i === this.index ? 'is-active' : ''}"></span>`,
     ).join('');
   }
 
@@ -163,7 +206,6 @@ export class StartView {
 
     [...this.dotsEl.children].forEach((dot, i) => {
       dot.classList.toggle('is-active', i === this.index);
-      dot.setAttribute('aria-selected', String(i === this.index));
     });
 
     if (dir !== 0) {
@@ -180,6 +222,17 @@ export class StartView {
     storage.set(STORAGE_KEYS.commander, c.id);
   }
 
+  renderAgeMode() {
+    const mode = AGE_MODES[this.ageMode] ?? AGE_MODES['10-12'];
+    $$('.age-mode-btn', this.root).forEach((btn) => {
+      const active = btn.dataset.ageMode === mode.id;
+      btn.classList.toggle('is-active', active);
+      btn.setAttribute('aria-checked', String(active));
+    });
+    storage.set(STORAGE_KEYS.ageMode, mode.id);
+    this.updateScaffoldingSummary();
+  }
+
   renderSkillLevel() {
     const cfg = SKILL_LEVELS.find((l) => l.level === this.skillLevel) ?? SKILL_LEVELS[2];
     $$('.skill-pill', this.root).forEach((btn) => {
@@ -187,8 +240,17 @@ export class StartView {
       btn.classList.toggle('is-active', active);
       btn.setAttribute('aria-checked', String(active));
     });
-    $('#skill-desc', this.root).textContent = `${cfg.emoji} Nivel ${cfg.level} · ${cfg.kid}`;
     storage.set(STORAGE_KEYS.skillLevel, cfg.level);
+    this.updateScaffoldingSummary();
+  }
+
+  updateScaffoldingSummary() {
+    const mode = AGE_MODES[this.ageMode] ?? AGE_MODES['10-12'];
+    const cfg = SKILL_LEVELS.find((l) => l.level === this.skillLevel) ?? SKILL_LEVELS[2];
+    const descEl = $('#skill-desc', this.root);
+    if (descEl) {
+      descEl.textContent = `${mode.short} (${mode.maxModules} módulos) · ${cfg.emoji} Nivel ${cfg.level}: ${cfg.kid}`;
+    }
   }
 
   step(delta) {
@@ -233,21 +295,31 @@ export class StartView {
     $('#prev-commander', this.root).addEventListener('click', () => this.step(-1));
     $('#next-commander', this.root).addEventListener('click', () => this.step(1));
 
+    // Generador de apodo espacial anónimo (COPPA Stateless)
+    $('#random-callsign-btn', this.root).addEventListener('click', () => {
+      sfx.unlock();
+      sfx.play('tap');
+      const pick = SAFE_CALLSIGNS[Math.floor(Math.random() * SAFE_CALLSIGNS.length)];
+      this.inputEl.value = pick;
+      storage.set(STORAGE_KEYS.name, pick);
+      sfx.speak(`Indicativo ${pick}`);
+    });
+
     // Affordance sonoro < 100 ms al pasar el cursor sobre controles
     $$('button', this.root).forEach((btn) => {
       btn.addEventListener('pointerenter', () => sfx.play('hover'));
     });
 
-    this.dotsEl.addEventListener('click', (e) => {
-      const btn = e.target.closest('[data-idx]');
-      if (!btn) return;
-      const idx = Number(btn.dataset.idx);
-      if (idx === this.index) return;
-      const dir = idx > this.index ? 1 : -1;
-      this.index = idx;
-      sfx.unlock();
-      sfx.play('tap');
-      this.renderCommander(dir);
+    // Selector de Modo de Edad (7-9 vs 10-12 años)
+    $$('.age-mode-btn', this.root).forEach((btn) => {
+      btn.addEventListener('click', () => {
+        sfx.unlock();
+        sfx.play('tap');
+        this.ageMode = btn.dataset.ageMode;
+        this.renderAgeMode();
+        const mode = AGE_MODES[this.ageMode];
+        if (mode) sfx.speak(`Modo ${mode.label}. ${mode.maxModules} módulos en pantalla.`);
+      });
     });
 
     $('#skill-pills', this.root).addEventListener('click', (e) => {
@@ -282,7 +354,7 @@ export class StartView {
       this.syncAudioButtons();
       sfx.play('tap');
       if (sfx.isTTSEnabled()) {
-        sfx.speak('Voz activada. Elige tu comandante y toca Jugar.');
+        sfx.speak('Voz activada. Elige tu modo de edad, nivel y toca Jugar.');
       }
     });
 
@@ -318,18 +390,27 @@ export class StartView {
       const name = rawName || commander.name;
       storage.set(STORAGE_KEYS.name, rawName);
       storage.set(STORAGE_KEYS.commander, commander.id);
-      this.onStart?.({ commander, name, skillLevel: this.skillLevel });
+      storage.set(STORAGE_KEYS.ageMode, this.ageMode);
+      storage.set(STORAGE_KEYS.skillLevel, this.skillLevel);
+      this.onStart?.({ commander, name, ageMode: this.ageMode, skillLevel: this.skillLevel });
     });
   }
 
   refreshBest() {
     this.best = storage.get(STORAGE_KEYS.best, null);
+    const unlocked = telemetry.getUnlockedMedals();
+    const medalIcons = MEDALS
+      .filter((m) => unlocked.includes(m.id))
+      .map((m) => m.icon)
+      .join(' ');
     const el = $('#start-best-line', this.root);
     if (!el) return;
     if (this.best) {
-      el.textContent = `🏆 Récord: ${'⭐'.repeat(this.best.stars)} en ${this.best.sols} días`;
+      el.textContent = `🏆 Récord: ${'⭐'.repeat(this.best.stars)} en ${this.best.sols} días${medalIcons ? ` · Medallas: ${medalIcons}` : ''}`;
+    } else if (medalIcons) {
+      el.textContent = `🏅 Medallas en localStorage: ${medalIcons}`;
     } else {
-      el.textContent = '☀️ ¡Protege tu estación del Sol!';
+      el.textContent = '☀️ ¡Protege tu estación lunar del Sol! (100% privado en tu navegador)';
     }
   }
 }

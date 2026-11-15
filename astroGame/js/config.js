@@ -10,9 +10,39 @@ export const MISSION = Object.freeze({
 });
 
 /**
- * Andamiaje por Habilidad (Niveles 1 a 5) — Sin etiquetas rígidas de edad.
- * Protege la autoestima de alumnos mayores en nivel básico y permite avanzar
- * a niños pequeños sobresalientes (Low Floor, High Ceiling).
+ * Modos de Edad (Paso 2, Paso 3 y Gotcha de Carga Cognitiva Extrínseca):
+ *  - Modo 7 a 9 años: fija la carga visible en máximo 3 módulos primarios simultáneos
+ *    (Agua, Escudos y Bio-Invernadero unificado) y máximo 3 indicadores en HUD (Wouters et al., 2008).
+ *  - Modo 10 a 12 años: muestra los 4 módulos primarios acoplados e incorpora el panel de
+ *    Techo Alto (simulación de sistemas con múltiples variables interconectadas y gráficas en vivo).
+ *  Dentro de cada modo de edad, el jugador puede elegir del Nivel 1 al Nivel 5 (ZDP).
+ */
+export const AGE_MODES = Object.freeze({
+  '7-9': {
+    id: '7-9',
+    label: '7 a 9 años',
+    short: '7–9 años',
+    badge: '🧒 7–9 años · Piso Bajo (3 módulos)',
+    maxModules: 3,
+    activeModules: ['agua', 'escudos', 'comida'],
+    highCeilingDefault: false,
+    desc: '3 módulos primarios en pantalla (💧 Agua, 🛡️ Escudos, 🌱🫧 Bio-Invernadero) para cuidar la memoria de trabajo.',
+  },
+  '10-12': {
+    id: '10-12',
+    label: '10 a 12 años',
+    short: '10–12 años',
+    badge: '🧑‍🚀 10–12 años · Techo Alto (4 módulos + Lab)',
+    maxModules: 4,
+    activeModules: ['agua', 'comida', 'escudos', 'oxigeno'],
+    highCeilingDefault: true,
+    desc: '4 módulos acoplados + Laboratorio de Simulación con variables personalizables y gráficas en vivo.',
+  },
+});
+
+/**
+ * Andamiaje por Habilidad (Niveles 1 a 5) dentro de cada modo de edad (7–9 y 10–12 años).
+ * El modo fija la interacción y la carga visible; el nivel fija la dificultad (Zona de Desarrollo Próximo).
  */
 export const SKILL_LEVELS = Object.freeze([
   {
@@ -27,7 +57,7 @@ export const SKILL_LEVELS = Object.freeze([
     breakScale: 0.45,
     progressBoost: 1.2,
     alwaysScaffold: true,
-    sandboxAllowed: false,
+    sandboxAllowed: true,
   },
   {
     level: 2,
@@ -41,7 +71,7 @@ export const SKILL_LEVELS = Object.freeze([
     breakScale: 0.75,
     progressBoost: 1.08,
     alwaysScaffold: false,
-    sandboxAllowed: false,
+    sandboxAllowed: true,
   },
   {
     level: 3,
@@ -55,7 +85,7 @@ export const SKILL_LEVELS = Object.freeze([
     breakScale: 1.0,
     progressBoost: 1.0,
     alwaysScaffold: false,
-    sandboxAllowed: false,
+    sandboxAllowed: true,
   },
   {
     level: 4,
@@ -220,6 +250,96 @@ export const EDUCATOR_GUIDE = Object.freeze({
   ],
 });
 
+/** Medallas desbloqueables guardadas 100% en localStorage (COPPA Stateless — Paso 5). */
+export const MEDALS = Object.freeze([
+  {
+    id: 'water_shield',
+    icon: '💧🛡️',
+    title: 'Escudo de Agua',
+    desc: 'Frenaste una Tormenta Clase X usando la pared de agua.',
+  },
+  {
+    id: 'bio_synergy',
+    icon: '🌱🫧',
+    title: 'Bio-Sinergia',
+    desc: 'Activaste vitaminas antioxidantes para cuidar las células.',
+  },
+  {
+    id: 'astro_lab',
+    icon: '🔬',
+    title: 'Científico Astro-Matic',
+    desc: 'Personalizaste variables en el Laboratorio de Simulación.',
+  },
+  {
+    id: 'mission_commander',
+    icon: '🏆',
+    title: 'Comandante Lunar',
+    desc: 'Completaste el 100% de la misión espacial.',
+  },
+]);
+
+/**
+ * Tabla de Justificación de Decisiones con Fuente (Paso 8 de k12-edugame-web-architect):
+ * 3 columnas obligatorias: decision, fuente, url.
+ * Si una referencia no se verificó (ej. Astro-Matic), se marca explícitamente como pendiente.
+ */
+export const DESIGN_SOURCES = Object.freeze([
+  {
+    key: 'donki',
+    decision: 'Núcleo jugable de clima espacial (Calma, Fulguración Clase M y Tormenta SEP Clase X)',
+    fuente: 'NASA CCMC / DONKI (Space Weather Database Of Notifications, Knowledge, Information)',
+    url: 'https://ccmc.gsfc.nasa.gov/tools/DONKI/',
+  },
+  {
+    key: 'osdr',
+    decision: 'Dosis de radiación (0.8 a 50 mSv/día), daño celular y bio-contramedidas con Arabidopsis',
+    fuente: 'NASA Open Science Data Repository (OSDR) & RadLab',
+    url: 'https://osdr.nasa.gov/bio/repo/',
+  },
+  {
+    key: 'spinoff',
+    decision: 'Blindaje antirradiación con paredes de agua (Orion) y reciclaje hídrico / LEDs agrícolas',
+    fuente: 'NASA Artemis Orion Water Walls & NASA Spinoff',
+    url: 'https://spinoff.nasa.gov/',
+  },
+  {
+    key: 'cognitive_load',
+    decision: 'Límite de carga cognitiva visible: máx. 3 módulos primarios (7–9 años) y máx. 4 módulos (10–12 años)',
+    fuente: 'Wouters, Paas & van Merriënboer (2008) / Read & Markopoulos, Interaction Design & Children',
+    url: 'https://doi.org/10.1007/s10648-008-9085-y',
+  },
+  {
+    key: 'scaffolding',
+    decision: 'Andamiaje en 5 niveles por modo de edad (Zona de Desarrollo Próximo) y estándares curriculares',
+    fuente: 'Next Generation Science Standards (NGSS MS-ESS1-1, 3-5-ETS1-2, MS-LS1-5) & Vygotsky ZDP',
+    url: 'https://www.nextgenscience.org/',
+  },
+  {
+    key: 'hitboxes',
+    decision: 'Hitboxes ergonómicos mínimos de 64×64 px para niños (sobre base WCAG 2.2 24×24 px y 44×44 px AAA)',
+    fuente: 'W3C WCAG 2.2 SC 2.5.8 (Target Size Minimum) & SC 2.5.5 (AAA) + Decisión de diseño infantil 7–9 años',
+    url: 'https://www.w3.org/TR/WCAG22/#target-size-minimum',
+  },
+  {
+    key: 'accessibility',
+    decision: 'Contraste >= 4.5:1, navegación por teclado (Tab), iconos/patrones para daltonismo y audio 3 capas + TTS',
+    fuente: 'W3C WCAG 2.2 SC 1.4.3 / SC 1.4.1 & U.S. Access Board Section 508',
+    url: 'https://www.section508.gov/',
+  },
+  {
+    key: 'coppa',
+    decision: 'Privacidad infantil sin cuentas, correos ni nombres reales (persistencia local en localStorage)',
+    fuente: "FTC Children's Online Privacy Protection Rule (COPPA, 16 CFR Part 312)",
+    url: 'https://www.ftc.gov/legal-library/browse/rules/childrens-online-privacy-protection-rule-coppa',
+  },
+  {
+    key: 'astromatic',
+    decision: 'Personalización de variables de causa y efecto en tiempo real (inspiración Astro-Matic)',
+    fuente: 'Pendiente de verificación (inspiración Astro-Matic citada en skill sin fuente primaria aún)',
+    url: 'Pendiente (sin fuente verificada aún)',
+  },
+]);
+
 /** Comandantes seleccionables en la Vista 1. */
 export const COMMANDERS = Object.freeze([
   { id: 'nova', name: 'Nova', trait: 'Exploradora', suit: '#DCE6F5', accent: '#FF7A45', visor: '#5AC8FA', badge: 'star' },
@@ -237,7 +357,9 @@ export const CREW_HOMES = Object.freeze(['escudos', 'agua', 'comida', 'oxigeno',
 export const STORAGE_KEYS = Object.freeze({
   name: 'name',
   commander: 'commander',
+  ageMode: 'ageMode',
   skillLevel: 'skillLevel',
+  medals: 'medals',
   bgmMuted: 'bgmMuted',
   sfxMuted: 'sfxMuted',
   ttsEnabled: 'ttsEnabled',

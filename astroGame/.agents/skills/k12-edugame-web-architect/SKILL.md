@@ -1,15 +1,15 @@
 ---
 name: k12-edugame-web-architect
-description: Audita, corrige, disena y construye paginas web educativas, simuladores interactivos y videojuegos K-12 aplicando las buenas practicas pedagogicas, de UX/UI diegetica, accesibilidad y arquitectura HTML5 de la NASA. Usala cuando el usuario pida crear, revisar, refactorizar o mejorar una aplicacion web educativa, un juego STEM o una interfaz para ninos y jovenes garantizando ganancia de aprendizaje (learning gain).
+description: Audita, corrige, disena y construye paginas web educativas, simuladores y videojuegos para ninos de 7 a 12 anos, con pedagogia, UX diegetica, accesibilidad y ganancia de aprendizaje verificable.
 ---
 # k12-edugame-web-architect
 
-Esta skill transforma cualquier pagina web o prototipo interactivo en una experiencia educativa de grado K-12 de alto impacto, auditando fallos pedagogicos o de usabilidad y generando codigo nuevo alineado con las mejores practicas de diseno instruccional y arquitectura web inspiradas en NASA Kids Club y estandares STEM.
+Esta skill transforma cualquier pagina web o prototipo interactivo en una experiencia educativa para ninos de 7 a 12 anos de alto impacto, auditando fallos pedagogicos o de usabilidad y generando codigo nuevo alineado con las mejores practicas de diseno instruccional y arquitectura web inspiradas en NASA Kids Club y estandares STEM.
 
 ## When to Use
 
-- El usuario pide auditar, corregir o mejorar una pagina web educativa, juego serio o simulador K-12 existente.
-- El usuario solicita crear desde cero un modulo interactivo, un Hub exploratorio, un minijuego o una interfaz web para ninos o adolescentes.
+- El usuario pide auditar, corregir o mejorar una pagina web educativa, juego serio o simulador para ninos de 7 a 12 anos.
+- El usuario solicita crear desde cero un modulo interactivo, un Hub exploratorio, un minijuego o una interfaz web para ninos de 7 a 12 anos.
 - Se requiere transformar contenido teorico o estandares curriculares (NGSS, NCTM, CCSS, STEM) en mecanicas de juego que generen ganancia real de aprendizaje (learning gain).
 - El usuario busca optimizar la ergonomia tactil, la accesibilidad infantil (Section 508 / WCAG), la privacidad sin cuentas (COPPA) o la telemetria de aprendizaje en una aplicacion web.
 
@@ -27,8 +27,8 @@ Identifica si el usuario entrego codigo/diseno existente o si solicita un compon
 Asegura que el aprendizaje sea el motor de la mecanica y no un cuestionario aislado:
 
 - **Nucleo Jugable (Core Loop):** Convierte el concepto educativo en la variable que el jugador manipula para ganar (por ejemplo, balancear energia, escudos y soporte vital, o completar secuencias logicas) en lugar de interrumpir el juego con preguntas de opcion multiple.
-- **Personalizacion de Variables:** Permite que el usuario ingrese o controle parametros propios para observar relaciones de causa y efecto en tiempo real (estilo simulador Astro-Matic).
-- **Andamiaje por Habilidad (Niveles 1 a 5):** Clasifica la dificultad del Nivel 1 al Nivel 5 en lugar de usar etiquetas rigidas de edad. Esto protege la autoestima de alumnos mayores en nivel basico y permite avanzar a ninos pequenos sobresalientes (Zona de Desarrollo Proximo).
+- **Personalizacion de Variables:** Permite que el usuario ingrese o controle parametros propios para observar relaciones de causa y efecto en tiempo real (inspiracion por verificar: Astro-Matic, sin fuente aun).
+- **Andamiaje por Habilidad (Niveles 1 a 5):** Clasifica la dificultad del Nivel 1 al Nivel 5 dentro de cada modo de edad (7 a 9 anos y 10 a 12 anos). El modo fija la interaccion y la carga visible; el nivel fija la dificultad. Esto permite avanzar a ninos sobresalientes sin cambiar de modo (Zona de Desarrollo Proximo).
 
 ### Paso 3: Disenar Interfaz Diegetica (Exploratory Hub) con Piso Bajo y Techo Alto
 
@@ -37,7 +37,7 @@ Reemplaza los menus de texto tradicionales por entornos explorables:
 - **Hub Espacial o Laboratorio Interactivo:** Presenta el menu principal como una habitacion, consola o estacion donde cada objeto visual representa un modulo o actividad.
 - **Affordance Visual y Sonoro:** Garantiza que todo elemento interactivo brille, escale suavemente al pasar el cursor (hover/touch) en menos de 100 ms y anuncie su funcion visualmente.
 - **Piso Bajo (Low Floor):** Elimina las paredes de texto al inicio. Un nino debe entender que hacer en menos de 5 segundos mediante iconografia clara, animaciones guia y controles visuales.
-- **Techo Alto (High Ceiling):** Para primaria alta y secundaria, incorpora paneles de simulacion de sistemas con multiples variables interconectadas y graficas de respuesta en vivo.
+- **Techo Alto (High Ceiling):** Para el modo de 10 a 12 anos, incorpora paneles de simulacion de sistemas con multiples variables interconectadas y graficas de respuesta en vivo.
 
 ### Paso 4: Implementar Entorno Seguro para Fallar (Safe-to-Fail) y Feedback Formativo
 
@@ -51,9 +51,9 @@ Elimina las mecanicas punitivas que bloquean la exploracion cientifica:
 
 Al escribir o corregir codigo HTML, CSS y JavaScript, aplica estos requisitos tecnicos verificables:
 
-- **Hitboxes Ergonomicos:** Define areas clicables o tactiles de minimo `64x64 px` con separacion suficiente para evitar toques accidentales en tabletas o pantallas escolares.
+- **Hitboxes Ergonomicos:** Define areas clicables o tactiles de minimo `64x64 px` (decision de diseno para ninos de 7 a 9 anos; WCAG 2.2 exige 24x24 px como minimo y 44x44 px es la recomendacion AAA) con separacion suficiente para evitar toques accidentales en tabletas o pantallas escolares.
 - **Bloqueo de Orientacion (Viewport Lock):** Incluye deteccion mediante CSS (`@media (orientation: portrait)`) o JavaScript para mostrar un aviso visual amigable que invite a girar el dispositivo a modo horizontal (landscape) cuando la interfaz requiera ancho completo.
-- **Preloader Visual:** Implementa una barra de progreso porcentual (`0% - 100%`) para la carga de activos (spritesheets WebP/SVG y audios), evitando pantallas en blanco o saltos de diseno (CLS).
+- **Preloader Visual:** Implementa una barra de progreso porcentual (`0% - 100%`) para la carga de activos (solo si se usan activos externos; el prototipo base no los necesita), evitando pantallas en blanco o saltos de diseno (CLS).
 - **Privacidad Infantil (COPPA Stateless):** No solicites correos, nombres reales, inicios de sesion ni bases de datos externas de usuarios. Guarda todo el progreso, medallas y configuracion exclusivamente en `localStorage` o `sessionStorage`.
 
 ### Paso 6: Integrar Accesibilidad Multimodal, Contexto Real y Guia Docente
@@ -72,10 +72,15 @@ Para demostrar cientificamente que el juego ensena, incluye un modulo ligero de 
 - **Curva de Reduccion de Errores:** Comparativa de intentos fallidos en la primera ronda frente a las rondas posteriores del mismo concepto.
 - **Tiempo de Toma de Decision:** Latencia entre la aparicion del reto y la accion correcta.
 - **Dominio por Nivel:** Porcentaje de exito al subir del Nivel 1 al Nivel 5 sin requerir pistas asistidas.
+- **Conexion con la bitacora:** Cada evento de telemetria se muestra al maestro como entrada de bitacora, con su decision y su fuente.
+
+### Paso 8: Justificar cada decision con fuente
+
+Cada mecanica, pauta de diseno o cifra debe llevar una fuente con URL o referencia del proyecto (PDF). Si no se verifico, se marca como pendiente y no como dato. Registrar las fuentes en una tabla con tres columnas: decision, fuente y URL.
 
 ## Gotchas
 
 - **Convertir el juego en un examen disfrazado:** Nunca detengas la accion principal para abrir un modal con preguntas de texto tipo examen escolar. Si necesitas evaluar comprension, haz que el usuario ajuste controles o resuelva una anomalia dentro de la simulacion.
-- **Saturar la memoria de trabajo infantil (Carga Cognitiva Extrinseca):** Evita mostrar mas de 4 modulos o variables primarias simultaneamente en pantalla. Agrupa la informacion secundaria en pestanas o paneles desplegables bajo demanda.
+- **Saturar la memoria de trabajo infantil (Carga Cognitiva Extrinseca):** Evita mostrar mas de 3 modulos o variables primarias simultaneamente en pantalla para 7 a 9 anos, y mas de 4 para 10 a 12 (Wouters et al. 2008; handbook de Interaction Design & Children). Agrupa la informacion secundaria en pestanas o paneles desplegables bajo demanda.
 - **Depender solo del color para indicar estados:** Un nino con daltonismo no distinguira una alerta roja de un estado verde. Acompana siempre los cambios de color con iconos distintivos, patrones visuales y alertas sonoras suaves.
 - **Romper el flujo por falta de activos:** Al generar codigo nuevo, utiliza graficos vectoriales SVG inline, CSS avanzado y la API nativa `Web Audio API` o `speechSynthesis` para que el prototipo funcione al 100% desde el primer segundo sin depender de archivos externos rotos.
