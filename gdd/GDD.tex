@@ -1,0 +1,1011 @@
+% =====================================================================
+% ASTRO -- Game Design Document
+% NASA Space Apps Challenge 2026
+% Build a Junior Astronaut Mission Trainer
+%
+% Compile with pdfLaTeX (Overleaf: pdfLaTeX, TeX Live 2023+).
+% Images: place files in ../assets/figures/ using the names referenced below.
+% The document compiles without images; placeholders are shown instead.
+% =====================================================================
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{xcolor}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{enumitem}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{fancyhdr}
+\usepackage{microtype}
+\usepackage{float}
+\usepackage[hidelinks]{hyperref}
+
+\definecolor{astroblue}{HTML}{0B1026}
+\definecolor{astroyellow}{HTML}{F0E442}
+\definecolor{astroteal}{HTML}{009E73}
+\definecolor{astrogray}{HTML}{666666}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.55em}
+\setlist[itemize]{topsep=0.3em,itemsep=0.15em}
+\setlist[enumerate]{topsep=0.3em,itemsep=0.15em}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small ASTRO -- Game Design Document}
+\fancyhead[R]{\small NASA Space Apps Challenge 2026}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+\newcommand{\code}[1]{\texttt{#1}}
+\newcommand{\game}[1]{\textit{#1}}
+
+\newcommand{\figplaceholder}[3]{%
+  \begin{figure}[H]
+    \centering
+    \IfFileExists{../assets/figures/#1}{%
+      \includegraphics[width=0.92\linewidth]{../assets/figures/#1}%
+    }{%
+      \fbox{\begin{minipage}[c][0.26\textheight][c]{0.88\linewidth}
+        \centering
+        \color{astrogray}\textbf{Image placeholder}\\[6pt]
+        Add \code{assets/figures/#1}\\[6pt]
+        \small #2
+      \end{minipage}}%
+    }
+    \caption{#2}
+    \label{#3}
+  \end{figure}
+}
+
+\begin{document}
+
+\begin{titlepage}
+  \centering
+  \vspace*{1.2cm}
+  {\color{astroblue}\rule{\linewidth}{2pt}}\\[0.8cm]
+  {\Huge\bfseries ASTRO\par}
+  \vspace{0.3cm}
+  {\LARGE Your Little Big Commander\par}
+  \vspace{1.0cm}
+  {\Large Game Design Document\par}
+  \vspace{0.4cm}
+  {\large A four-day lunar outpost simulation for ages 7--12\par}
+  \vspace{1.2cm}
+  {\color{astroblue}\rule{\linewidth}{0.8pt}}\\[1.0cm]
+
+  \begin{tabular}{@{}ll@{}}
+    \textbf{Game name:} & ASTRO -- Your Little Big Commander\\
+    \textbf{Tag line:} & Small commander. Big responsibility.\\
+    \textbf{Challenge:} & Build a Junior Astronaut Mission Trainer\\
+    \textbf{Programme:} & NASA Space Apps Challenge 2026\\
+    \textbf{Repository:} & \url{https://github.com/ibanezbot-dev/NSAC-ASTRO}\\
+    \textbf{Playable build:} & \url{https://astro.edu.us}\\
+    \textbf{Document date:} & 16 November 2026\\
+    \textbf{Companion document:} & Technical Report (\code{documentation/technical\_report.tex})\\
+  \end{tabular}
+
+  \vspace{0.9cm}
+  {\color{astroblue}\rule{0.8\linewidth}{0.4pt}}\\[0.4cm]
+  {\large\bfseries Team ASTRO\par}
+  \vspace{0.3cm}
+  {\small
+  \begin{tabular}{@{}p{4.8cm}p{9.0cm}@{}}
+    Santiago Navarro Pulido & Interface design and game mechanics\\
+    Mitul Rebolledo Gallardo & Pitch and pedagogy research\\
+    Ahmed Yamil Garc\'ia Ib\'a\~nez & Pitch, pedagogy research, prototype construction, and ML model training\\
+    Lina Ayel\'en Salazar Rend\'on & Slide presentation, visual design, and data research\\
+    German Uriel Marcial Carrasco & Slide presentation, data research, and documentation\\
+    Jos\'e Guillermo Hern\'andez Calder\'on & Prototype construction, mentoring, and pitch\\
+  \end{tabular}\par}
+
+  \vfill
+  {\small This is a student project. It is not endorsed by NASA. NASA data is used as a reference; the game is an educational simplification, and every simplified value is labelled as such in the product and in the documentation.}
+\end{titlepage}
+
+\tableofcontents
+\newpage
+
+% =====================================================================
+\section{Game overview}
+% =====================================================================
+
+\subsection{Purpose}
+
+ASTRO is an educational simulation for children aged 7--12, built for the NASA Space Apps Challenge 2026 challenge \emph{Build a Junior Astronaut Mission Trainer} \cite{spaceapps2026}. Its pedagogical purpose is to develop \emph{systems thinking and constrained decision-making} through the concrete experience of running a lunar outpost. The player does not memorise facts about the Moon; they discover, by playing, that energy, oxygen, radiation, food, and science are coupled, and that every choice has a cost.
+
+The game also addresses a specific content problem: most space content for children is either too simplified to teach anything real or too technical to hold their attention. ASTRO aims to be the bridge -- a game that is genuinely playable and scientifically honest.
+
+\subsection{Intended use}
+
+ASTRO is a \emph{stand-alone classroom activity} for a 20--30 minute session, usable by a teacher with no prior space-science background. It can also be played at home. It is not a full curriculum and does not replace instruction; it is a shared experience that creates a common reference point for a discussion about energy, life support, radiation, and trade-offs.
+
+The teacher guide provides the learning objectives, the standards addressed, the source of every number, three discussion questions, and a local telemetry summary.
+
+\subsection{Justification}
+
+The design is grounded in three findings. First, digital games can produce measurable learning gains, especially when the design adds scaffolds such as prediction, feedback, and explanation \cite{clark2016}. Second, novices struggle with complex systems because the causal behaviours are invisible, not because they cannot name the parts \cite{hmelo2007}. Third, elementary-school students can develop system-thinking skills when the system is concrete, local, and supported by knowledge-integration activities \cite{benzvi2010}.
+
+ASTRO turns those findings into mechanics: a small concrete base, visible causal chains, a prediction step, and a short mission that can be discussed in one class.
+
+\subsection{Target audience}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}p{1.6cm}p{2.6cm}p{3.4cm}p{6.6cm}@{}}
+\toprule
+\textbf{Band} & \textbf{Mode name} & \textbf{Reading level} & \textbf{What they need}\\
+\midrule
+7--9 & Explorers & Emerging readers & Icons, voice, short text, two options, immediate visible consequences.\\
+10--12 & Engineers & Fluent readers & Numbers with units, three options, a prediction step, charts, source details.\\
+\bottomrule
+\end{tabular}
+\caption{Age bands and modes.}
+\label{tab:audience}
+\end{table}
+
+The modes are not locked by age. A younger fluent reader can play Engineers; an older student who wants less reading can play Explorers. The game does not ask for a birth date or a real name.
+
+\subsection{Genre}
+
+\begin{itemize}
+  \item Educational simulation.
+  \item Turn-based resource management.
+  \item Light narrative adventure.
+  \item Single-player, browser-based.
+\end{itemize}
+
+\subsection{Platform and session}
+
+\begin{itemize}
+  \item HTML5, CSS, JavaScript.
+  \item Desktop, laptop, tablet; keyboard, mouse, or touch.
+  \item One mission: 10--15 minutes for the younger mode, 15--20 minutes for the older mode.
+  \item No installation, no account, no network required.
+\end{itemize}
+
+% =====================================================================
+\section{Gameplay}
+% =====================================================================
+
+\subsection{Objectives}
+
+The player's mission is to finish four days on the lunar outpost and return with:
+
+\begin{enumerate}
+  \item \textbf{Everyone safe} -- the crew never runs out of oxygen.
+  \item \textbf{Enough science} -- at least 30 science points.
+  \item \textbf{A low radiation dose} -- below 6 mSv.
+\end{enumerate}
+
+These three conditions produce the three stars on the end screen. The stars are not a pass/fail grade; they are a conversation starter. A mission can end with one or two stars and still be a successful learning experience.
+
+\subsection{Game progression and play flow}
+
+The game is a linear sequence of four decision days plus a return screen. Each day has the same rhythm:
+
+\begin{enumerate}
+  \item \textbf{Mission briefing.} A crew member explains the situation.
+  \item \textbf{Choose a machine.} The player taps one of the glowing options on the base.
+  \item \textbf{Read the trade-off.} The option card shows gains (green) and costs (red).
+  \item \textbf{Predict (10--12).} The player chooses up, same, or down for the day's key resource.
+  \item \textbf{Run the day.} The base animates the consequences.
+  \item \textbf{Read the result.} A causal chain, numerical deltas, a real NASA fact, and a source.
+  \item \textbf{Continue.} The next day starts with the updated state.
+\end{enumerate}
+
+The flow is deliberately short. There is no inventory management, no map traversal, and no combat. The complexity lives in the relationships between the resources, not in the interface.
+
+\subsection{Mission structure}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}p{0.8cm}p{4.0cm}p{4.8cm}p{4.8cm}@{}}
+\toprule
+\textbf{Day} & \textbf{Narrative beat} & \textbf{Player question} & \textbf{Key resource}\\
+\midrule
+1 & The last sunlight before the long night & Save energy or finish the sample? & Battery\\
+2 & The long night & Air for everyone, or light for the plants? & Oxygen\\
+3 & A solar flare is detected & Shelter, keep working, or measure the particles? & Radiation dose\\
+4 & Dawn and a chance to explore & Send one astronaut, two, or the robot? & Oxygen / science\\
+5 & Return & Read the report and replay & --\\
+\bottomrule
+\end{tabular}
+\caption{The four-day mission.}
+\label{tab:mission}
+\end{table}
+
+The mission is a \emph{vertical slice} of the larger design. It teaches one complete systems lesson: energy is saved before the night, air is produced continuously, radiation accumulates, and plants are an investment.
+
+\subsection{Difficulty and replay}
+
+Difficulty is represented by the mode, not by a hidden multiplier:
+
+\begin{itemize}
+  \item Explorers: two options, no prediction, words instead of numbers.
+  \item Engineers: three options, prediction, numbers, charts.
+\end{itemize}
+
+Replay is encouraged. The end screen shows the day-by-day decisions and the final state, and the player can try a different strategy. The game never punishes replay; it is the main learning mechanism.
+
+\subsection{Win, pause, and failure}
+
+\begin{itemize}
+  \item \textbf{Win:} the mission reaches day 5 with the crew alive.
+  \item \textbf{Stars:} safe crew, science goal, low dose.
+  \item \textbf{Pause:} if oxygen reaches zero, the mission pauses. The game explains the causal chain and offers a return to a day from which the mission can still be completed.
+  \item \textbf{No game over:} there is no permanent loss, no lives, and no score that blocks replay.
+\end{itemize}
+
+The pause screen is a teaching moment, not a punishment. It names the decision that caused the failure and shows the smallest change that could have prevented it.
+
+% =====================================================================
+\section{Mechanics}
+% =====================================================================
+
+\subsection{Rules}
+
+\subsubsection*{Explicit rules}
+
+\begin{enumerate}
+  \item Each day the player chooses exactly one option.
+  \item The battery has a maximum of 9 cells and starts at 3.
+  \item A sunny day adds 5 cells; a night adds 0.
+  \item Life support consumes up to 3 cells and produces 1.2 kg of O$_2$ per cell.
+  \item The crew of four breathes 3.36 kg of O$_2$ per day ($4 \times 0.84$ kg, NASA BVAD \cite{bvad}).
+  \item An EVA consumes 0.086 kg of O$_2$ per person per hour; the game uses 4-hour EVAs \cite{bvad}.
+  \item The oxygen tank has a maximum of 8 kg; a reserve warning appears below 2 kg.
+  \item Radiation dose accumulates and never decreases.
+  \item The background lunar dose is 1.369 mSv/day \cite{zhang2020}.
+  \item Inside the base, the dose is multiplied by 0.5; in the shelter, by 0.2.
+  \item A solar particle event adds 12 mSv if the crew keeps working, or 1 mSv in the shelter.
+  \item If the accumulated dose exceeds 10 mSv, the doctor allows only one astronaut on the next EVA.
+  \item NASA-STD-3001 sets a 600 mSv career limit and a 250 mSv per-event limit \cite{nasa3001}.
+  \item The workshop produces science only if the crew is not in the shelter.
+  \item Plants need one cell on day 2 to be harvested on day 4.
+  \item The science goal is 30 points.
+\end{enumerate}
+
+\subsubsection*{Implicit rules}
+
+\begin{itemize}
+  \item Every option has an opportunity cost.
+  \item The player cannot see the future with certainty; the day-3 flare may or may not send particles.
+  \item The base's state persists; there is no reset between days.
+  \item The crew's advice is reliable about the rules but not about the future.
+\end{itemize}
+
+\subsection{Model of the game universe}
+
+The game universe is a small, closed lunar outpost. It has five state variables:
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}p{2.4cm}p{1.6cm}p{1.8cm}p{8.4cm}@{}}
+\toprule
+\textbf{Variable} & \textbf{Unit} & \textbf{Range} & \textbf{Behaviour}\\
+\midrule
+Battery & cells & 0--9 & Gains 5 on sunny days, spends on actions and life support.\\
+Oxygen & kg & 0--8 & Gains from life support, loses to breathing and EVAs.\\
+Dose & mSv & 0+ & Always increases; background + storm + EVA.\\
+Science & points & 0+ & Gains from the workshop, EVA, robot, and harvest.\\
+Plants & state & 0/1 & 0 = no light, 1 = growing; harvested on day 4.\\
+\bottomrule
+\end{tabular}
+\caption{State variables.}
+\label{tab:state}
+\end{table}
+
+The universe is a \emph{mass-balance model with a narrative layer}. The narrative layer explains the numbers; the numbers make the narrative playable.
+
+\subsubsection*{Physics}
+
+There is no Newtonian physics, no projectile motion, and no real-time simulation. The ``physics'' is the resource accounting: energy conservation (cells are spent, not created), oxygen mass balance (production minus consumption), radiation accumulation (dose is monotonic), and plant growth as a delayed return on an energy investment. This is the correct level of abstraction for the learning goal. Adding a physical flight model would increase cognitive load without teaching the target concept.
+
+\subsubsection*{Economy}
+
+The economy is a \emph{shared energy budget}. The player has a small number of cells and several competing uses: life support (mandatory, 3 cells for full production), workshop (science), plants (future food), detector (information), and robot (safe exploration). The player cannot fund everything. The game's central question is: \emph{what is worth funding today, given what happens tomorrow?}
+
+\subsection{Character actions}
+
+The player does not move an avatar. The player acts through the base:
+
+\begin{itemize}
+  \item \textbf{Tap a machine} to open its option card.
+  \item \textbf{Choose an option} to see its gain/cost chips.
+  \item \textbf{Predict} (10--12) to commit to an expectation.
+  \item \textbf{Run the day} to execute.
+  \item \textbf{Read the result} and continue.
+  \item \textbf{Open the glossary} to look up a term.
+  \item \textbf{Open the teacher guide} to see the sources and telemetry.
+  \item \textbf{Change settings} for voice, sound, and language.
+\end{itemize}
+
+There is no inventory, no crafting, and no combat. The ``conflict'' is the tension between safety and productivity.
+
+\subsection{Screen flow}
+
+\begin{verbatim}
+Start screen
+  |-- Mode selection (Explorers / Engineers)
+  |-- Nickname (optional)
+  |-- Resume saved mission
+  |-- Teacher guide
+  `-- Play
+        |
+  Day 1: Sunset
+        |
+  Day 2: Night
+        |
+  Day 3: Solar alert
+        |
+  Day 4: Dawn
+        |
+  Day 5: Return / end screen
+        |-- Play again
+        |-- Home
+        `-- Teacher guide
+\end{verbatim}
+
+Modals: mission briefing, result / ``Why did it happen?'', glossary, help / guided tour, settings, teacher guide, exit confirmation, and mission pause (oxygen failure).
+
+\subsection{Game options}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}p{4.2cm}p{10.2cm}@{}}
+\toprule
+\textbf{Option} & \textbf{Effect}\\
+\midrule
+Mode: Explorers / Engineers & Changes the number of options, representation, and prediction step.\\
+Voice on/off & Enables or disables text-to-speech.\\
+Sound effects on/off & Enables or disables Web Audio beeps.\\
+Language: English / Espa\~nol & Reloads the UI in the selected language.\\
+Guided tour & Replays the coach-mark tutorial.\\
+Resume & Restores the saved mission from \code{localStorage}.\\
+Teacher guide & Opens the standards, sources, telemetry, and discussion questions.\\
+\bottomrule
+\end{tabular}
+\caption{Game options.}
+\label{tab:options}
+\end{table}
+
+\subsection{Saving and replaying}
+
+\begin{itemize}
+  \item The game saves at the start of each day and after each result.
+  \item The save contains the state, the checkpoints, and the mode.
+  \item The save is local to the browser.
+  \item The start screen shows ``Continue my mission (day N)'' when a save exists.
+  \item Starting a new mission deletes the old save.
+  \item Replay is always available from the end screen.
+\end{itemize}
+
+\subsection{Cheats and easter eggs}
+
+There are no cheats. The only hidden content is the guided tour's ``try it'' step, which invites the player to tap a machine before the first decision. This is a tutorial, not an easter egg.
+
+% =====================================================================
+\section{Story and narrative}
+% =====================================================================
+
+\subsection{Backstory}
+
+The year is not specified. The player is the new commander of a small international lunar outpost at the south polar region, where sunlight is scarce and ice may be present in permanently shadowed craters. The outpost has four crew members and a small greenhouse. A solar monitor detects activity on the Sun. The mission is to keep the crew alive through the lunar night and the solar event, collect science, and return to Earth with a report.
+
+The backstory is deliberately light. It gives the player a role and a stake without requiring a long cutscene. The science is the story.
+
+\subsection{Plot elements}
+
+The mission follows a four-act structure:
+
+\begin{enumerate}
+  \item \textbf{Act 1 -- Sunset.} The sun is going down. The player must decide what to do with the last hours of solar power.
+  \item \textbf{Act 2 -- Night.} The base is in darkness. The player must keep the air running and decide whether to invest in the plants.
+  \item \textbf{Act 3 -- Alert.} The Sun emits a flare. The player must decide whether to shelter, keep working, or spend energy on the particle detector.
+  \item \textbf{Act 4 -- Dawn.} The Sun returns. The player must decide how to use the first hours of light and whether to send people or the robot outside.
+\end{enumerate}
+
+The fifth screen is the return: the mission report and the stars.
+
+\subsection{Story progression}
+
+The story is delivered through a short briefing from a crew member at the start of each day, the option cards, the animated consequences, the result dialogue, the real-fact card, and the end-screen summary. There are no cutscenes. The player is never pulled out of the base for a long exposition. The narrative is diegetic: the crew talks to the commander while the base is on screen.
+
+\subsection{Tone}
+
+The tone is warm, curious, and serious without being frightening. The crew is competent and supportive. Failure is treated as a mission pause, not a disaster. The game never talks down to the child and never uses fake urgency to create difficulty.
+
+% =====================================================================
+\section{Game world}
+% =====================================================================
+
+\subsection{Look and feel}
+
+The world is a stylised lunar base at sunset, rendered as a single illustrated scene with SVG hot spots. The palette is the Okabe--Ito colour-blind-safe set: yellow for energy and science, sky blue for air and water, vermilion for radiation, green for plants and success, orange for food and warnings, purple for the workshop, and dark navy for the sky.
+
+The art style is flat, friendly, and readable at a distance. The base is a collection of recognisable modules: solar panels, battery, air machine, water tank, shelter, greenhouse, workshop, detector, rover, and airlock. Each module is a large tap target.
+
+\figplaceholder{start-screen.jpeg}{Start screen: the visual style, the two age modes, and the language controls.}{fig:base}
+
+\subsection{World structure}
+
+The world is one screen. There are no separate levels or maps. The ``areas'' are the modules of the base, connected by the shared resource system rather than by physical movement.
+
+The scene changes with the mission:
+
+\begin{itemize}
+  \item \textbf{Day 1:} dusk sky, long shadows, panels charging.
+  \item \textbf{Day 2:} night sky, no sunlight, base lights on.
+  \item \textbf{Day 3:} storm overlay, particle streaks, alert callout.
+  \item \textbf{Day 4:} dawn sky, panels charging again.
+  \item \textbf{Day 5:} end screen, no base scene.
+\end{itemize}
+
+\subsection{Relationship to levels}
+
+The ``levels'' are the four days. They are not separate maps; they are four states of the same base. This keeps the player oriented and makes the cumulative state visible. The base is the level.
+
+% =====================================================================
+\section{Characters and opponents}
+% =====================================================================
+
+\subsection{Player avatar}
+
+The player is the commander. There is no visible avatar and no avatar customisation. The player's identity is expressed through the optional nickname and through the decisions they make. This is a deliberate choice: the child should feel like the commander, not like a character they are watching.
+
+\subsection{Crew}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}p{2.2cm}p{2.2cm}p{2.0cm}p{7.4cm}@{}}
+\toprule
+\textbf{Character} & \textbf{Role} & \textbf{Colour} & \textbf{Narrative function}\\
+\midrule
+Ximena & Commander & Yellow & Introduces the mission, frames the day's question, and speaks for the base.\\
+Tomas & Engineer & Sky blue & Explains energy, battery, and life support.\\
+Lu & Scientist & Green & Explains the samples, the ice, the detector, and the science goal.\\
+Beto & Doctor & Purple & Explains radiation, dose limits, and the EVA restriction.\\
+\bottomrule
+\end{tabular}
+\caption{The crew.}
+\label{tab:crew}
+\end{table}
+
+The crew members are not playable. They are the player's advisors and the emotional interface to the system. Each one has a distinct voice and a distinct area of expertise, so the player learns which expert to listen to.
+
+\figplaceholder{character-sheet.jpeg}{Character sheet. Suggested content: front views, colour palettes, and expression variants for Ximena, Tomas, Lu, and Beto.}{fig:characters}
+
+\subsection{Opponents}
+
+There is no villain. The ``opponent'' is the environment: the lunar night, which removes solar power; the solar flare, which may or may not send particles; the accumulated radiation dose, which never decreases; and the limited energy budget, which forces choices. This is intentional. The challenge is to survive a system, not to defeat an enemy. The absence of a villain keeps the focus on the science and avoids framing the crew as combatants.
+
+\subsection{Character AI}
+
+The crew does not use AI. The dialogue is scripted and state-dependent. The only adaptive system is the hint mechanism, which responds to the player's hesitation and to repeated conceptual errors.
+
+% =====================================================================
+\section{Levels}
+% =====================================================================
+
+\subsection{General approach}
+
+Each day is a level with a narrative briefing, two or three options, a key resource, a consequence animation, a causal explanation, a real NASA fact, and a state change that carries into the next day. The days are crafted, not procedurally generated. The sequence is fixed so that the learning progression is reliable in a classroom. Replayability comes from the player's choices, not from random level generation.
+
+\subsection{Day 1 -- Sunset}
+
+\textbf{Learning goal:} energy is finite; the night has no solar input.
+
+\textbf{Situation:} the last sunlight is fading. The panels will produce 5 cells today, then nothing for two nights. The crew needs 3 cells per night for life support.
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}p{4.2cm}p{4.6cm}p{5.6cm}@{}}
+\toprule
+\textbf{Option} & \textbf{Gain} & \textbf{Cost}\\
+\midrule
+Charge the battery & More energy for the night & Less science today\\
+Finish the sample & Lots of science & The battery ends almost empty\\
+Half and half (10--12) & Some science, some energy & Neither is fully funded\\
+\bottomrule
+\end{tabular}
+\caption{Day 1 options.}
+\label{tab:day1}
+\end{table}
+
+\textbf{State change:} battery, science.
+
+\textbf{Assessment:} the end screen checks whether the player saved energy (charge or half) or spent it on the sample.
+
+\textbf{Teacher note:} this is the clearest example of opportunity cost in the mission. Ask: ``What did you give up to get what you wanted?''
+
+\figplaceholder{day1.jpeg}{Day 1 screenshot. Suggested content: sunset base, battery meter, and the two option cards.}{fig:day1}
+
+\subsection{Day 2 -- Night}
+
+\textbf{Learning goal:} oxygen is produced continuously; plants are a delayed investment.
+
+\textbf{Situation:} the panels produce nothing. The crew breathes 3.36 kg of O$_2$ per day. Life support can make 1.2 kg per cell. The greenhouse needs one cell today to produce food on day 4.
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}p{4.2cm}p{4.6cm}p{5.6cm}@{}}
+\toprule
+\textbf{Option} & \textbf{Gain} & \textbf{Cost}\\
+\midrule
+All cells to air & The air holds steady & The plants do not grow\\
+One cell for the plants & The plants grow & Less air is made\\
+Two cells to the workshop (10--12) & Science & Much less air\\
+\bottomrule
+\end{tabular}
+\caption{Day 2 options.}
+\label{tab:day2}
+\end{table}
+
+\textbf{State change:} battery, oxygen, plants, science.
+
+\textbf{Assessment:} the result screen shows the oxygen balance: production minus breathing. If production is lower, the tank drops.
+
+\textbf{Teacher note:} this is the ``invest now or pay later'' lesson. Ask: ``Why would a base grow plants if they cost energy today?''
+
+\subsection{Day 3 -- Solar alert}
+
+\textbf{Learning goal:} a flare is not the same as a particle event; protection has a cost; evidence can change a decision.
+
+\textbf{Situation:} NASA DONKI reports an X-class flare \cite{donki}. The crew does not know whether solar energetic particles will arrive. If they arrive and the crew is working, the dose is +12 mSv. In the shelter, it is +1 mSv. The detector costs one cell and reveals the truth. The radiation-biology context comes from NASA OSDR/RadLab \cite{osdr}.
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}p{4.2cm}p{4.6cm}p{5.6cm}@{}}
+\toprule
+\textbf{Option} & \textbf{Gain} & \textbf{Cost}\\
+\midrule
+Everyone to the shelter & Little radiation & No science today\\
+Keep working & More science & More radiation if particles arrive\\
+Check the particle detector (10--12) & You learn whether particles arrive & One cell; you still have to decide\\
+\bottomrule
+\end{tabular}
+\caption{Day 3 options.}
+\label{tab:day3}
+\end{table}
+
+\textbf{State change:} dose, science, battery, \code{sepKnown}.
+
+\textbf{Assessment:} the result screen distinguishes a true event from a false alarm. If the player sheltered during a false alarm, the game validates the decision: with the information available, sheltering was the safe choice.
+
+\textbf{Teacher note:} this is the scientific-literacy centre of the game. Ask: ``What would you need to know to make a better decision? What would it cost to know it?''
+
+\subsection{Day 4 -- Dawn}
+
+\textbf{Learning goal:} EVAs have a measurable cost; robots are safer but less productive; the previous day's dose constrains today's choices.
+
+\textbf{Situation:} the Sun is back. Lu has spotted ice in a crater. A 4-hour EVA uses 0.086 kg of O$_2$ per person per hour. If the accumulated dose is above 10 mSv, the doctor allows only one astronaut.
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}p{4.2cm}p{4.6cm}p{5.6cm}@{}}
+\toprule
+\textbf{Option} & \textbf{Gain} & \textbf{Cost}\\
+\midrule
+One astronaut goes out & Some science & A little air\\
+Two astronauts go out & Lots of science & More air, more radiation\\
+Send the robot (10--12) & Safe science & One cell, less science\\
+\bottomrule
+\end{tabular}
+\caption{Day 4 options.}
+\label{tab:day4}
+\end{table}
+
+\textbf{State change:} oxygen, dose, science, \code{evaCap}.
+
+\textbf{Assessment:} the result screen shows the EVA oxygen cost and the dose. If the player wanted two astronauts but the doctor allowed one, the game explains that yesterday's dose cost today's science.
+
+\textbf{Teacher note:} this is the ``long-term consequence'' lesson. Ask: ``How did yesterday's decision change what you could do today?''
+
+\subsection{Day 5 -- Return}
+
+\textbf{Learning goal:} reflect on the system and the decisions.
+
+\textbf{Situation:} the mission is over. The end screen shows the three stars, the day-by-day decision log, the final battery, oxygen, dose, and science, the ``What you learned'' list, the model summary (peak cell damage, average crew efficiency, final crop health), and the teacher guide link.
+
+\textbf{Assessment:} the stars are a formative summary, not a grade. The teacher guide provides the discussion questions.
+
+\figplaceholder{end-screen.jpeg}{End screen. Suggested content: stars, decision log, final state, and the ``What you learned'' list.}{fig:end}
+
+\subsection{Tutorial}
+
+The first mission starts with a guided tour: who is speaking, the battery meter, the oxygen meter, the radiation meter, the science goal, the base (``Try it! Tap a machine or a crew member''), the dialogue bar and the Listen button, and the glowing machines and the Do it button. The tour can be skipped and is replayable from Settings.
+
+\subsection{Replay and progression}
+
+There is no level unlocking. All four days are available in one mission. Replay is the progression: the player tries a different strategy and sees a different outcome. The end screen keeps the decision log so the player can compare runs.
+
+% =====================================================================
+\section{User interface}
+% =====================================================================
+
+\subsection{Visual system}
+
+The interface has three layers:
+
+\begin{enumerate}
+  \item \textbf{The base scene.} A single illustrated lunar base with SVG hot spots. Each module is a large, glowing tap target. The scene changes with the day and the storm.
+  \item \textbf{The meters.} A strip above the scene shows the current state. Explorers see battery cells, air words, and a radiation zone. Engineers see battery cells, oxygen kg, dose mSv, science points, and plant state.
+  \item \textbf{The action dock.} A dialogue card at the bottom with the crew member's message, a Listen button, the current status, and the main action button.
+\end{enumerate}
+
+The HUD is intentionally minimal. There is no minimap, no inventory bar, no quest log, and no timer. The player's attention is on the base and the current decision.
+
+\subsection{HUD contents}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}p{3.0cm}p{5.6cm}p{5.8cm}@{}}
+\toprule
+\textbf{Element} & \textbf{Explorers} & \textbf{Engineers}\\
+\midrule
+Battery & 9 cell icons, filled/empty & 9 cell icons + \code{N/9}\\
+Air & Blue bar + word (``good'', ``medium'', ``very low'') & Blue bar + kg + reserve warning\\
+Radiation & Colour zone + word (``low'', ``careful'', ``high'') & Bar + mSv + zone\\
+Science & Star badge \code{N of 30} & Bar \code{N/30} + plant state\\
+Mission track & Day icons 1--4 + Return & Same\\
+Storm & Particle overlay + ``Solar flare!'' & Same\\
+\bottomrule
+\end{tabular}
+\caption{HUD contents.}
+\label{tab:hud}
+\end{table}
+
+\subsection{Menus}
+
+\begin{itemize}
+  \item \textbf{Start screen:} title, mode selection, nickname, Play, Resume, Teacher guide, language, voice, sound.
+  \item \textbf{Mission briefing:} day number, crew message, Listen, Go ahead.
+  \item \textbf{Option card:} machine name, option buttons with gain/cost chips, prediction (10--12), Do it.
+  \item \textbf{Result modal:} crew message, deltas, prediction feedback, causal chain, model gauges, real fact, source, next day.
+  \item \textbf{Glossary:} term, definition at the current reading level, Listen.
+  \item \textbf{Help:} How to play, Mission words.
+  \item \textbf{Settings:} voice, language, sound, replay tour, teacher guide.
+  \item \textbf{Teacher guide:} standards, age design, discussion questions, telemetry, decision log, source table, export/delete.
+  \item \textbf{Mission pause:} causal chain, hint, retry buttons.
+\end{itemize}
+
+\subsection{Camera model}
+
+There is no camera. The scene is a fixed 16:9 illustration scaled to the available viewport. The game avoids scrolling during play by fitting the scene, meters, and action bar to the screen. On small screens, a friendly landscape hint appears.
+
+\subsection{Control system}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}p{4.0cm}p{5.2cm}p{5.2cm}@{}}
+\toprule
+\textbf{Action} & \textbf{Mouse / touch} & \textbf{Keyboard}\\
+\midrule
+Open a machine & Click/tap the module & Tab to the module, Enter/Space\\
+Choose an option & Click/tap the option & Tab, Enter/Space\\
+Predict (10--12) & Click/tap up/same/down & Tab, Enter/Space\\
+Run the day & Click/tap Do it & Tab, Enter/Space\\
+Close a modal & Click the X or the backdrop & Escape\\
+Read aloud & Click Listen & Tab, Enter/Space\\
+Navigate modals & Click & Tab/Shift+Tab, focus trap\\
+\bottomrule
+\end{tabular}
+\caption{Control system.}
+\label{tab:controls}
+\end{table}
+
+All interactive controls have a minimum target of $64 \times 64$ px. Focus is visible with a 4 px yellow outline.
+
+\subsection{Audio}
+
+\begin{itemize}
+  \item \textbf{Voice:} browser \code{speechSynthesis}, with a female English or Spanish voice when available. The voice reads the crew dialogue and the result explanation. Every important text has a Listen button.
+  \item \textbf{Sound effects:} Web Audio API tones for tap, pick, good, bad, alarm, and blip. No external audio files.
+  \item \textbf{Music:} none. The game relies on voice and short effects to avoid distracting from the science.
+  \item \textbf{Mute:} separate toggles for voice and effects.
+\end{itemize}
+
+\subsection{Game art}
+
+\begin{itemize}
+  \item Flat vector illustration, soft gradients, rounded shapes.
+  \item Okabe--Ito palette.
+  \item No photorealistic imagery.
+  \item No emoji on screen: emoji in the source are converted to custom SVG icons at runtime, so the visual language is consistent across devices.
+  \item The base is readable in silhouette: solar panels, domes, tanks, greenhouse, workshop, airlock.
+\end{itemize}
+
+\subsection{Help system}
+
+\begin{itemize}
+  \item Guided tour on first play.
+  \item Persistent Help button with ``How to play'' and ``Mission words''.
+  \item Inline glossary terms with dotted underlines.
+  \item Hints after 10--14 seconds of inactivity.
+  \item Result explanation with a cause-and-effect chain.
+\end{itemize}
+
+\subsection{Settings}
+
+Voice on/off, language English/Espa\~nol, sound effects on/off, replay the guided tour, and open the teacher guide.
+
+% =====================================================================
+\section{Content additions}
+% =====================================================================
+
+The game has a fixed four-day mission. The content model is designed to grow:
+
+\begin{itemize}
+  \item \textbf{New days:} add a \code{DAYS} entry and a \code{SCENES} entry. The engine resolves the day from the option's \code{ctx}.
+  \item \textbf{New options:} add an option with \code{id}, \code{ages}, \code{e}, \code{t}, \code{g7}, \code{c7}, and \code{ctx}. The preview and result screens derive the numbers automatically.
+  \item \textbf{New resources:} add a state field, a meter, and a resolution step. This is a code change, not a content change.
+  \item \textbf{New scenarios:} a scenario pack is a set of day definitions, data constants, and text. The engine can support a Mars pack with a different \code{DATA} and \code{GAME} configuration.
+  \item \textbf{New languages:} the UI is built from language-specific boot functions. A new language requires a translation of the static strings and the day text.
+\end{itemize}
+
+The long-term content plan is a set of classroom packs: the lunar-night mission, Mars conjunction (communication delay), solar maximum (a sequence of real DONKI events), and greenhouse (a deeper food-production scenario).
+
+% =====================================================================
+\section{Feedback for the player}
+% =====================================================================
+
+The player can tell how they are doing through the meters (battery, air, dose, science), the mission track (which day they are on), the option chips (what a choice gains and costs), the animated consequences (the base reacts), the result deltas (exact changes), the prediction feedback (right/wrong, and why), the causal chain (what caused what), the real fact and source (why it matters), and the end-screen stars and ``What you learned'' list.
+
+The feedback is \emph{formative}, not punitive. A wrong prediction is framed as ``that is how we learn.'' A mission pause is framed as ``in a real mission, the crew returns safely and plans again.''
+
+% =====================================================================
+\section{Data collection for the administrator}
+% =====================================================================
+
+The teacher guide shows a local telemetry summary:
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}p{5.4cm}p{9.0cm}@{}}
+\toprule
+\textbf{Metric} & \textbf{Meaning}\\
+\midrule
+Missions finished / with science goal & Completion and success rate.\\
+Missions paused (ran out of air) & Failure rate and the most common cause.\\
+Day 1: saved energy (charge or half) & Whether the player understood the night constraint.\\
+Day 3: sheltered or measured first & Whether the player prioritised safety or evidence.\\
+Correct predictions (10--12) & Whether the player's mental model matches the simulation.\\
+Average time to decide & Engagement and hesitation.\\
+Decisions that needed a hint & Usability and conceptual difficulty.\\
+Decision log (last 10) & A concrete record for discussion.\\
+\bottomrule
+\end{tabular}
+\caption{Telemetry metrics.}
+\label{tab:telemetry}
+\end{table}
+
+The data is stored in \code{localStorage} and can be exported as JSON. It contains no personal data. The teacher can delete it from the device. The telemetry is not sent to a server. This is a privacy and COPPA-friendly design choice, and it also makes the game usable in schools with strict network policies.
+
+% =====================================================================
+\section{Deployment}
+% =====================================================================
+
+\subsection{Where it is deployed}
+
+\begin{itemize}
+  \item \textbf{Public URL:} \url{https://astro.edu.us}
+  \item \textbf{Repository:} \url{https://github.com/ibanezbot-dev/NSAC-ASTRO}
+  \item \textbf{Build:} the repository root \code{index.html} is the deployable artifact.
+\end{itemize}
+
+\subsection{How to run it}
+
+Download or clone the repository, then open \code{index.html} in a modern browser. No server, build step, or installation is required. For a local web server (optional):
+
+\begin{verbatim}
+python -m http.server 8000
+# open http://localhost:8000
+\end{verbatim}
+
+\subsection{System requirements}
+
+\begin{itemize}
+  \item A modern browser with JavaScript enabled: Chrome, Edge, Firefox, or Safari.
+  \item A screen at least 320 px wide; a tablet or laptop is recommended.
+  \item Audio output for voice and sound effects (optional).
+  \item No internet connection after the file is downloaded.
+\end{itemize}
+
+\subsection{Configuration}
+
+Language: default English; can be changed in Settings. Voice: on by default for Explorers, off by default for Engineers; can be changed. Sound: on by default; can be changed. Save data: stored in the browser's \code{localStorage} under the \code{astroLuna.} prefix.
+
+\subsection{Rebuilding the model}
+
+The model is exported from scikit-learn with \code{m2cgen} and embedded in the \code{modelo} script. The training notebook is \code{ml/ml-training-code.ipynb}; it generates the dataset, trains the model, and exports both the JavaScript and ONNX formats. The exported function must keep the \code{predecirEventoEspacial} contract described in the technical report.
+
+% =====================================================================
+\section{Development}
+% =====================================================================
+
+\subsection{Platform}
+
+HTML5, CSS3 (custom properties, grid, flexbox, animations), JavaScript (ES2020+, no framework), Python 3 and scikit-learn for the offline model training, and \code{m2cgen} for the model export.
+
+\subsection{Source code and assets}
+
+\begin{itemize}
+  \item \code{index.html} -- the complete game.
+  \item \code{documentation/} -- the technical report.
+  \item \code{gdd/} -- this Game Design Document.
+  \item \code{ml/} -- the training notebook and model export.
+  \item \code{resources/} -- research papers, design notes, and the design template.
+  \item \code{assets/figures/} -- images used in the documentation.
+\end{itemize}
+
+The shipped build embeds images as base64 and the model as JavaScript. This makes the file large but guarantees that the game works offline and has no broken asset paths.
+
+\subsection{Key elements}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}p{4.0cm}p{10.4cm}@{}}
+\toprule
+\textbf{Element} & \textbf{Where to look}\\
+\midrule
+Data constants & \code{DATA}, \code{GAME}, \code{SOURCES} in the \code{engine} script.\\
+Day definitions & \code{DAYS}, \code{SCENES} in the \code{engine} script.\\
+Day resolution & \code{resolveDay} in the \code{engine} script.\\
+Star scoring & \code{stars} in the \code{engine} script.\\
+Model & \code{modelo} script, \code{predecirEventoEspacial}.\\
+UI (Spanish) & \code{bootES}.\\
+UI (English) & \code{bootEN}.\\
+Teacher guide & \code{teacherHTML}.\\
+Telemetry & \code{tele} object and \code{teacherHTML}.\\
+Accessibility & \code{speak}, \code{iconize}, \code{bindLang}, modal focus trap.\\
+\bottomrule
+\end{tabular}
+\caption{Source code map.}
+\label{tab:sourcemap}
+\end{table}
+
+\subsection{Key problems solved}
+
+\begin{enumerate}
+  \item \textbf{Offline model inference.} The Random Forest was exported to plain JavaScript so the game does not need a server or an API. The exported code is large but deterministic and fast.
+  \item \textbf{Two ages, one engine.} The same \code{resolveDay} function drives both modes; the difference is the representation and the prediction step.
+  \item \textbf{Safe-to-fail checkpoints.} The game saves a checkpoint at the start of each day and only offers retries that can still reach the goal. This required a \code{canFinish} search over the remaining days.
+  \item \textbf{Honest data.} The game separates measured NASA values from game-tuned values, and the teacher guide shows the source of each number.
+  \item \textbf{Accessibility without a framework.} The game implements focus trapping, keyboard activation, voice narration, glossary pop-ups, and reduced-motion support in plain JavaScript.
+\end{enumerate}
+
+% =====================================================================
+\appendix
+% =====================================================================
+
+\section{Game constants}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}p{4.2cm}p{2.4cm}p{8.2cm}@{}}
+\toprule
+\textbf{Constant} & \textbf{Value} & \textbf{Meaning}\\
+\midrule
+\code{crew} & 4 & Number of astronauts.\\
+\code{o2PerPersonDay} & 0.84 kg & BVAD oxygen consumption per person per day.\\
+\code{evaO2PerHour} & 0.086 kg & BVAD EVA oxygen consumption per person per hour.\\
+\code{lunarDoseDay} & 1.369 mSv & Lunar surface background dose per day.\\
+\code{careerLimit} & 600 mSv & NASA-STD-3001 career limit.\\
+\code{spePerEventLimit} & 250 mSv & NASA-STD-3001 per-event limit.\\
+\code{earthYear} & 3.6 mSv & Earth background dose per year.\\
+\code{startBattery} & 3 & Starting battery cells.\\
+\code{maxBattery} & 9 & Maximum battery cells.\\
+\code{panelPerSunDay} & 5 & Cells added on a sunny day.\\
+\code{lsWant} & 3 & Cells requested by life support.\\
+\code{o2PerCell} & 1.2 kg & Oxygen produced per life-support cell.\\
+\code{startO2} & 5 kg & Starting oxygen.\\
+\code{maxO2} & 8 kg & Maximum oxygen.\\
+\code{reserveO2} & 2 kg & Reserve warning threshold.\\
+\code{insideFactor} & 0.5 & Dose multiplier inside the base.\\
+\code{shelterFactor} & 0.2 & Dose multiplier in the shelter.\\
+\code{stormDoseWorking} & 12 mSv & Storm dose if working.\\
+\code{stormDoseShelter} & 1 mSv & Storm dose if sheltered.\\
+\code{baseScience} & 5 & Science per day if not sheltered.\\
+\code{scienceGoal} & 30 & Science target.\\
+\code{doseGreen} & 6 mSv & Green dose threshold.\\
+\code{doseEvaRule} & 10 mSv & Dose above which only one EVA is allowed.\\
+\code{evaHours} & 4 h & Duration of an EVA.\\
+\bottomrule
+\end{tabular}
+\caption{Game constants.}
+\label{tab:constants}
+\end{table}
+
+\section{Model input mapping}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}p{3.2cm}p{1.8cm}p{1.8cm}p{1.8cm}p{2.0cm}p{3.6cm}@{}}
+\toprule
+\textbf{Situation} & \textbf{Intensity} & \textbf{Shield} & \textbf{Activity} & \textbf{Counter.} & \textbf{Greenhouse}\\
+\midrule
+Quiet day & 1 & 2 (inside) & 1 (indoor) & 0 & \% of cells to plants\\
+Day 3, particles arrive & 8.5 & 3 (shelter) or 2 (inside) & 0 (shelter) or 1 (indoor) & 0 & \% of cells to plants\\
+Day 3, false alarm & 3 & 3 or 2 & 0 or 1 & 0 & \% of cells to plants\\
+EVA day & 1 & 1 (outside) & 2 (EVA) & 1 if harvest & \% of cells to plants\\
+\bottomrule
+\end{tabular}
+\caption{Model input mapping.}
+\label{tab:modelmap}
+\end{table}
+
+The dose input is the dose calculated by the engine for that day, not a raw DONKI value. The model is a response surface, not a space-weather detector.
+
+% =====================================================================
+\begin{thebibliography}{99}
+
+\bibitem{clark2016}
+Clark, D. B., Tanner-Smith, E. E., and Killingsworth, S. S. (2016).
+\newblock Digital games, design, and learning: A systematic review and meta-analysis.
+\newblock \emph{Review of Educational Research}, 86(1), 79--122.
+
+\bibitem{hmelo2007}
+Hmelo-Silver, C. E., Marathe, S., and Liu, L. (2007).
+\newblock Fish swim, rocks sit, and lungs breathe: Expert--novice understanding of complex systems.
+\newblock \emph{Journal of the Learning Sciences}, 16(3), 307--331.
+
+\bibitem{benzvi2010}
+Ben-Zvi Assaraf, O., and Orion, N. (2010).
+\newblock System thinking skills at the elementary school level.
+\newblock \emph{Journal of Research in Science Teaching}, 47(5), 540--563.
+
+\bibitem{zhang2020}
+Zhang, S., Wimmer-Schweingruber, R. F., Yu, J., Wang, C., Fu, Q., Zou, Y., et al. (2020).
+\newblock First measurements of the radiation dose on the lunar surface.
+\newblock \emph{Science Advances}, 6(39), eaaz1334.
+
+\bibitem{bvad}
+NASA. (2022).
+\newblock \emph{Life Support Baseline Values and Assumptions Document} (NASA/TP-2015-218570/REV2).
+
+\bibitem{nasa3001}
+NASA. (2022).
+\newblock \emph{NASA Space Flight Human-System Standard, Volume 2: Human Factors, Habitability, and Environmental Health} (NASA-STD-3001, Vol. 2, Rev. C).
+
+\bibitem{donki}
+NASA. (n.d.).
+\newblock \emph{DONKI: Database Of Notifications, Knowledge, Information}.
+\newblock \url{https://ccmc.gsfc.nasa.gov/tools/DONKI/}
+
+\bibitem{osdr}
+NASA. (n.d.).
+\newblock \emph{Open Science Data Repository (OSDR)}.
+\newblock \url{https://science.nasa.gov/biological-physical/data/osdr/}
+
+\bibitem{spaceapps2026}
+NASA Space Apps Challenge. (2026).
+\newblock \emph{Build a Junior Astronaut Mission Trainer}.
+\newblock \url{https://www.spaceappschallenge.org/2026/challenges/junior-astronaut-mission-trainer/}
+
+\end{thebibliography}
+
+\end{document}

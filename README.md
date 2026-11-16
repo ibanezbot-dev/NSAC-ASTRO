@@ -1,61 +1,140 @@
-# ASTRO - Your Little Big Commander
-## Summary
-ASTRO: "Your Little Big Commander" is an accessible, browser-based educational simulation game designed for K-12 learners (ages 7–12) to experience the real engineering and biological trade-offs of running a lunar outpost. Grounded in real NASA open datasets, space weather events from DONKI and space radiation biology from OSDR; ASTRO uses an embedded, lightweight Random Forest machine learning model compiled directly to JavaScript to simulate how solar storms, shielding levels, and crew decisions dynamically impact cellular radiation damage, crew efficiency, and greenhouse crop health in real time.
-## Project Demonstration
-https://canva.link/yuusyo08yvjo0jy
-## Project
-https://github.com/ibanezbot-dev/NSAC-ASTRO
-## Project Details
-### WHAT
-Space games for kids often oversimplify survival or rely on walls of text. ASTRO turns real lunar mission challenges into simple, visual choices. Across simulated lunar days and nights, players decide how to spend limited energy and protect their crew. Before locking in an action, like going on a spacewalk, taking shelter behind water walls, or using medical treatments, players guess what will happen next and immediately see the results on their base and astronauts.
+# ASTRO -- Your Little Big Commander
 
-### HOW WE USED NASA DATA & MACHINE LEARNING 
-We wanted the game to be scientifically accurate without needing an internet connection or heavy servers, so we built the simulation in two steps:
+## A lunar mission in your hands
 
-- Training the model: We combined historical solar storm records from NASA's DONKI database with radiation risk data from OSDR. Using Python, we trained a small Random Forest model (30 decision trees) to calculate how solar storms, shielding levels, crew activities, medical countermeasures, and greenhouse power impact astronaut health, work efficiency, and crop growth.
-- Running it in the browser: We converted those trained decision trees directly into plain JavaScript. This lets the game calculate realistic outcomes instantly on any school computer or tablet without external APIs or loading delays.
-### BENEFITS & ACCESSIBILITY
-Real trade-offs: Every choice has a cost. Saving power today might leave the crew exposed to a solar storm tomorrow.
-Made for kids (ages 7 to 12): We designed the game around curiosity and replayability so kids learn through trial and error rather than harsh game-over screens.
-Accessible for everyone: Includes simple pop-up definitions for science words, built-in voice narration, a guided tutorial, keyboard navigation, and reduced-motion settings.
-### IMPACT
-ASTRO helps kids connect space weather with real human survival on the Moon. By pairing real NASA science with an approachable game, it encourages students, teachers, and parents to think like mission planners.
+ASTRO is an interactive educational game where children become commanders of a
+lunar base. Across four mission days, players balance energy, oxygen,
+radiation, food, and science while making the decisions that keep their crew
+safe and their mission moving forward.
 
-### TOOLS
-- Develop: HTML5, JavaScript, Python, Claude.
-- Design: Balsamiq, Canva, Whiteboard, Adobe Illustrator.
-- Investigation: Google Academic, NASA resources, NASA API's.
-- Hosting: GitHub, GoDaddy.
-- Extra: Google Docs, OneDrive, Google Cloud.
-### CREATIVE
-When we started brainstorming, we asked ourselves a simple question: how do we make space radiation and life support fun for a 9-year-old without dumbing down the science?
+Designed for learners ages 7--12, ASTRO turns space science into an experience
+of discovery. There is no single obvious answer: every decision creates a new
+challenge, and every consequence helps players understand how a lunar base
+works as a system.
 
-Many educational games give kids simplified, watered-down choices where one answer is obviously "good" and the other is "bad." We decided to go the opposite direction. Kids love strategy and real responsibility when they can see how things work. Instead of hiding the complexity of a lunar base, we turned it into clear cause-and-effect puzzles.
+ASTRO was created for the NASA Space Apps Challenge 2026 challenge
+[Build a Junior Astronaut Mission Trainer](https://www.spaceappschallenge.org/2026/challenges/junior-astronaut-mission-trainer/).
 
-To design the experience, we used an inverted MDA framework (Mechanics, Dynamics, Aesthetics):
+The challenge asks teams to turn the realities of operating a lunar or Martian
+outpost into an interactive mission experience. ASTRO answers that challenge
+by making life support, radiation protection, energy management, food
+production, and scientific work part of one connected system.
 
-- Aesthetics (How it should feel): We started with the emotion we wanted to spark: curiosity, empathy for the crew, and the excitement of being a real commander. We wanted kids to feel like they were in charge, not taking a school quiz.
-- Dynamics (How players interact): We built a loop of prediction and discovery. Before committing to a choice, the player guesses what will happen. When a solar storm hits, they immediately see how their preparation paid off or where the base struggled, encouraging them to replay and test new strategies.
-- Mechanics (The rules behind the scenes): Finally, we connected those visual choices to our NASA-trained model. Moving energy to the greenhouse, reinforcing water shielding, or sending astronauts on a spacewalk directly changes the numbers under the hood.
-Visually, we kept the interface clean, colorful, and low on text. Every icon, meter, and sound effect is there to help young players read the state of their base at a glance, turning real space engineering into an intuitive adventure.
+## Play ASTRO
 
-ASTRO is the combination between Real Data, Education, Curiosity Fun and Engagement.
+**[Launch the game at astro.edu.us](https://astro.edu.us)**
 
-[VideoGame Link](https://astro.edu.us)
+ASTRO runs directly in the browser and is designed for classroom sessions,
+team activities, and independent play.
 
-## Use of Super Intelligence (SI)
-Research or Information Gathering  
-Building SI/ML Into the Project
-## NASA Data
-[DONKI](https://ccmc.gsfc.nasa.gov/DONKI/)  
-[OSDR](https://science.nasa.gov/biological-physical/data/osdr/)
-## Space Agency Partner & Other Data
-[Videogames Genres](https://repositorio.unraf.edu.ar/items/c4294fad-5890-4eda-9de5-9754926a779d)  
-[Videogames Design Model](https://ludology.usek.cl/wp-content/uploads/2019/09/LUDOLOGYN1-2019-77-82.pdf)  
-[Game Design Course](https://gamedesignla.com/game-design/)  
-[K-12 Game on Competition Page](https://www.k12.com/k12-community/meet-the-winners-of-the-2024-k12-game-on-competition/)  
-[Educational Game Design](https://ieeexplore.ieee.org/document/7516346)  
-[Games STEM education](https://cadrek12.org/spotlight/games-stem-education)  
-[Thinking Skills](https://www.researchgate.net/publication/229570529_System_thinking_skills_at_the_elementary_school)  
-[Understanding of complex systems](https://www.researchgate.net/publication/230726725_Fish_swim_rocks_sit_and_lungs_breathe_Expert-novice_understanding_of_complex_systems_and_designs_for_learning)  
-[Design, Digital Games, Educational](https://www.researchgate.net/publication/277630332_Digital_Games_Design_and_Learning_A_Systematic_Review_and_Meta-Analysis)
+## Our challenge submission
+
+ASTRO is the project submitted by the team
+[Guardians of the Software Space Hawks](https://www.spaceappschallenge.org/2026/find-a-team/guardians-of-the-software-space-hawks/?tab=project).
+
+- [Official challenge](https://www.spaceappschallenge.org/2026/challenges/junior-astronaut-mission-trainer/)
+- [Team submission](https://www.spaceappschallenge.org/2026/find-a-team/guardians-of-the-software-space-hawks/?tab=project)
+- [ASTRO on GitHub](https://github.com/ibanezbot-dev/NSAC-ASTRO)
+
+## The ASTRO experience
+
+The player leads a four-person crew through simulated lunar days and nights.
+Before committing to an action, they consider its trade-offs, predict what will
+happen, and then watch the base and astronauts respond. A player may send
+astronauts on a spacewalk, shelter the crew behind water shielding, invest
+energy in the greenhouse, use medical countermeasures, or save power for a
+later emergency.
+
+The game is built around a simple loop:
+
+1. Understand the mission situation.
+2. Choose how to use limited resources.
+3. Predict the consequence.
+4. See the result and the cause-and-effect explanation.
+5. Try a new strategy on the next playthrough.
+
+This makes ASTRO more than a space-themed quiz. It is a visual, replayable
+simulation where every choice has a cost and every consequence teaches
+something about the lunar environment.
+
+## Why ASTRO?
+
+- **Learn by deciding:** players discover the relationship between resources
+  through meaningful choices and immediate feedback.
+- **Think like a mission planner:** energy, life support, radiation protection,
+  greenhouse production, and exploration are connected.
+- **Built for young explorers:** two age modes, guided play, voice narration,
+  simple explanations, a glossary, keyboard support, and reduced-motion
+  settings.
+- **Science with a story:** a four-person crew, a lunar outpost, and a mission
+  that makes the stakes easy to understand.
+- **Ready to replay:** each strategy reveals different trade-offs and
+  encourages players to try again.
+
+ASTRO was designed to spark curiosity, empathy for the crew, and the feeling
+of being a real commander. Its experience follows an inverted
+**Mechanics--Dynamics--Aesthetics** approach: first define the feeling we want
+players to have, then the prediction-and-discovery loop that creates it, and
+finally the game rules that connect visual decisions to the simulation.
+
+## NASA science and intelligent simulation
+
+ASTRO brings real space-science context into an approachable game. Its design
+draws on NASA's open resources, including
+[DONKI](https://ccmc.gsfc.nasa.gov/DONKI/) for space-weather events and
+[OSDR](https://science.nasa.gov/biological-physical/data/osdr/) for
+space-biology research.
+
+The project combines real NASA reference data with an embedded, lightweight
+Random Forest model. The model translates solar storms, shielding levels, crew
+activities, medical countermeasures, and greenhouse power into changes in
+cellular damage, crew efficiency, and crop health. It was trained on 6,000
+NASA-anchored scenarios and exported to plain JavaScript so the experience can
+respond instantly on a school computer or tablet, without external APIs or
+loading delays.
+
+## Education and impact
+
+ASTRO helps children connect space weather with real human survival on the
+Moon. It is designed for ages 7--12 and supports learning through trial and
+error rather than harsh game-over screens. Voice narration, a guided tutorial,
+science definitions, keyboard navigation, and reduced-motion support make the
+experience approachable for different learners.
+
+The goal is to help children, teachers, and families ask better mission-planning
+questions: What does this decision cost? What does it protect? What becomes
+possible because of it?
+
+## Project tools
+
+- **Development:** HTML5, JavaScript, and Python.
+- **Simulation:** scikit-learn, Random Forest, `m2cgen`, and NASA open data.
+- **Design:** Balsamiq, Canva, whiteboarding, and Adobe Illustrator.
+- **Research:** NASA resources, NASA APIs, and educational game-design research.
+- **Hosting and collaboration:** GitHub and GoDaddy.
+
+## Project resources
+
+- [Technical report](documentation/technical_report.pdf)
+- [Game Design Document](gdd/GDD.pdf)
+- [Technical report source](documentation/technical_report.tex)
+- [Game Design Document source](gdd/GDD.tex)
+- [ML training notebook](ml/ml-training-code.ipynb)
+- [Project presentation](https://canva.link/yuusyo08yvjo0jy)
+- [GitHub repository](https://github.com/ibanezbot-dev/NSAC-ASTRO)
+
+## Team ASTRO
+
+- Santiago Navarro Pulido -- interface design and game mechanics
+- Mitul Rebolledo Gallardo -- pitch and pedagogy research
+- Ahmed Yamil García Ibáñez -- pitch, pedagogy research, prototype construction,
+  and ML model training
+- Lina Ayelén Salazar Rendón -- slide presentation, visual design, and data
+  research
+- German Uriel Marcial Carrasco -- slide presentation, data research, and
+  documentation
+- José Guillermo Hernández Calderón -- prototype construction, mentoring, and
+  pitch
+
+Created for the **NASA Space Apps Challenge 2026**:
+**Build a Junior Astronaut Mission Trainer**.
