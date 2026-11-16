@@ -73243,6 +73243,7 @@ const voiceIsOn = () => voiceOn ?? (mode === 7);
 /* Voz: los navegadores no traen voces de niño; se elige una voz en español (de preferencia femenina, de México) y se sube el tono. */
 let speakBtn = null, speakTimer = 0;
 function pickVoice() {
+  if (LANG === 'en') { const g = speechSynthesis.getVoices().find((x) => x.name === 'Google US English'); if (g) return g; }
   const vs = speechSynthesis.getVoices().filter((x) => x.lang?.toLowerCase().startsWith(LANG));
   const fem = LANG === 'en' ? /samantha|zira|aria|jenny|ava|susan|karen|female|google us english/i : /paulina|sabina|dalia|m[oó]nica|helena|elvira|laura|marisol|paloma|female|mujer|google espa/i;
   const reg = LANG === 'en' ? /us|gb/i : /mx|419|us/i;
@@ -73273,7 +73274,7 @@ function speak(text, force = false, btn = null) {
       const u = new SpeechSynthesisUtterance(p);
       const q = /\?$/.test(p), ex = /!$/.test(p), intro = /[:;]$/.test(p);
       u.lang = LANG === 'en' ? 'en-US' : 'es-MX';
-      u.pitch = Math.min(2, 1.6 + (q ? 0.25 : ex ? 0.16 : intro ? 0.08 : i % 2 ? -0.07 : 0.03));
+      u.pitch = 1.15
       u.rate = base * (ex ? 1.08 : q ? 0.96 : intro ? 0.98 : i === parts.length - 1 ? 0.97 : 1);
       if (v) u.voice = v;
       return u;
