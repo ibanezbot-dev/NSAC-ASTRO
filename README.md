@@ -1,188 +1,61 @@
-# 🚀 Project Summary
-
-## Project Name
-**Guardians of the Software (Space Hawks)**
-
+# ASTRO - Your Little Big Commander
 ## Summary
-Provide a concise summary of your project (50–200 words).
-
-Consider answering:
-- What did your team develop?
-- How does it address the challenge?
-- Why is it important?
-- What problem does it solve?
-- Who benefits from it?
-
----
-
-# 🔗 Project Links
-
+ASTRO: "Your Little Big Commander" is an accessible, browser-based educational simulation game designed for K-12 learners (ages 7–12) to experience the real engineering and biological trade-offs of running a lunar outpost. Grounded in real NASA open datasets, space weather events from DONKI and space radiation biology from OSDR; ASTRO uses an embedded, lightweight Random Forest machine learning model compiled directly to JavaScript to simulate how solar storms, shielding levels, and crew decisions dynamically impact cellular radiation damage, crew efficiency, and greenhouse crop health in real time.
 ## Project Demonstration
-Provide a public link to a short demonstration of your project:
-
-- A slide presentation (maximum 7 slides, including title and introduction), **or**
-- A video (maximum 30 seconds)
-
-Accepted hosting platforms include:
-- YouTube
-- Google Drive
-- GitHub
-- OneDrive
-- Dropbox
-
-The link must:
-- Be publicly accessible
-- Not require registration
-- Not require permissions or passwords
-
-### Global Award Requirement
-The demonstration must be publicly accessible and comply with the maximum length requirements.
-
-### Demo URL
-[Project Demo](https://your-demo-link.com)
-
----
-
-## Project Repository / Website
-Provide a public link to your complete project.
-
-Examples:
-- Project website
-- GitHub repository
-- Cloud-hosted application
-- Google Drive folder
-- OneDrive folder
-- YouTube project page
-
-The link must:
-- Be publicly accessible
-- Not require registration
-- Not require permissions or passwords
-
-### Project URL
-[Project Repository](https://your-project-link.com)
-
----
-
-# 📋 Project Information
-
+https://canva.link/yuusyo08yvjo0jy
+## Project
+https://github.com/ibanezbot-dev/NSAC-ASTRO
 ## Project Details
+### WHAT
+Space games for kids often oversimplify survival or rely on walls of text. ASTRO turns real lunar mission challenges into simple, visual choices. Across simulated lunar days and nights, players decide how to spend limited energy and protect their crew. Before locking in an action, like going on a spacewalk, taking shelter behind water walls, or using medical treatments, players guess what will happen next and immediately see the results on their base and astronauts.
 
-Describe your project in detail.
+### HOW WE USED NASA DATA & MACHINE LEARNING 
+We wanted the game to be scientifically accurate without needing an internet connection or heavy servers, so we built the simulation in two steps:
 
-### Functionality
-- What does the project do?
-- How does it work?
+- Training the model: We combined historical solar storm records from NASA's DONKI database with radiation risk data from OSDR. Using Python, we trained a small Random Forest model (30 decision trees) to calculate how solar storms, shielding levels, crew activities, medical countermeasures, and greenhouse power impact astronaut health, work efficiency, and crop growth.
+- Running it in the browser: We converted those trained decision trees directly into plain JavaScript. This lets the game calculate realistic outcomes instantly on any school computer or tablet without external APIs or loading delays.
+### BENEFITS & ACCESSIBILITY
+Real trade-offs: Every choice has a cost. Saving power today might leave the crew exposed to a solar storm tomorrow.
+Made for kids (ages 7 to 12): We designed the game around curiosity and replayability so kids learn through trial and error rather than harsh game-over screens.
+Accessible for everyone: Includes simple pop-up definitions for science words, built-in voice narration, a guided tutorial, keyboard navigation, and reduced-motion settings.
+### IMPACT
+ASTRO helps kids connect space weather with real human survival on the Moon. By pairing real NASA science with an approachable game, it encourages students, teachers, and parents to think like mission planners.
 
-### Benefits
-- What advantages does it provide?
-- What problem does it help solve?
+### TOOLS
+- Develop: HTML5, JavaScript, Python, Claude.
+- Design: Balsamiq, Canva, Whiteboard, Adobe Illustrator.
+- Investigation: Google Academic, NASA resources, NASA API's.
+- Hosting: GitHub, GoDaddy.
+- Extra: Google Docs, OneDrive, Google Cloud.
+### CREATIVE
+When we started brainstorming, we asked ourselves a simple question: how do we make space radiation and life support fun for a 9-year-old without dumbing down the science?
 
-### Intended Impact
-- What positive effects could it have on users, education, research, or society?
+Many educational games give kids simplified, watered-down choices where one answer is obviously "good" and the other is "bad." We decided to go the opposite direction. Kids love strategy and real responsibility when they can see how things work. Instead of hiding the complexity of a lunar base, we turned it into clear cause-and-effect puzzles.
 
-### Technologies Used
+To design the experience, we used an inverted MDA framework (Mechanics, Dynamics, Aesthetics):
 
-List the tools, frameworks, languages, software, hardware, and services used during development.
+- Aesthetics (How it should feel): We started with the emotion we wanted to spark: curiosity, empathy for the crew, and the excitement of being a real commander. We wanted kids to feel like they were in charge, not taking a school quiz.
+- Dynamics (How players interact): We built a loop of prediction and discovery. Before committing to a choice, the player guesses what will happen. When a solar storm hits, they immediately see how their preparation paid off or where the base struggled, encouraging them to replay and test new strategies.
+- Mechanics (The rules behind the scenes): Finally, we connected those visual choices to our NASA-trained model. Moving energy to the greenhouse, reinforcing water shielding, or sending astronauts on a spacewalk directly changes the numbers under the hood.
+Visually, we kept the interface clean, colorful, and low on text. Every icon, meter, and sound effect is there to help young players read the state of their base at a glance, turning real space engineering into an intuitive adventure.
 
-**Examples:**
-- Python
-- JavaScript
-- React
-- Flask
-- Unity
-- TensorFlow
-- GitHub
-- NASA APIs
+ASTRO is the combination between Real Data, Education, Curiosity Fun and Engagement.
 
-### Innovation & Creativity
+[VideoGame Link](https://astro.edu.us)
 
-Explain what makes your project unique or innovative.
-
-### Design Considerations
-
-Describe the main factors your team considered during development, such as:
-
-- Accessibility
-- Usability
-- Scalability
-- Performance
-- Data reliability
-- Educational value
-- User experience
-
----
-
-# 🤖 Use of Super Intelligence (SI)
-
-The NASA Space Apps Challenge allows the use of Super Intelligence (SI) tools, including:
-
-- Large Language Models (LLMs)
-- AI Chatbots
-- Foundation Models
-- Image Generation Tools
-- Code Generation Tools
-
-## Disclosure Requirements
-
-If SI tools were used, clearly indicate where and how they were utilized.
-
-### Images and Videos
-Must contain a visible indication that they were generated or assisted by SI.
-
-### Audio
-Must acknowledge SI generation in descriptions and metadata.
-
-### Code and Data
-Must acknowledge SI assistance in descriptions and metadata.
-
-### Important Note
-
-This information is used for data collection purposes only and will not be visible to judges. However, judges will evaluate any AI-assisted content included in the final project.
-
-Select all applicable SI-use options. If no SI tools were used, select:
-
-- [ ] I did not use SI
-
----
-
-# 🛰 NASA Data and Resources
-
-To be eligible for a Global Award, your project must every NASA dataset, API, platform, portal, or resource used.
-
-| Resource Name | URL |
-|--------------|-----|
-| NASA DONKI API | https://ccmc.gsfc.nasa.gov/DONKI/ |
-| NASA Earth Observatory | https://earthobservatory.nasa.gov/ |
-
-Add additional resources as needed.
-
----
-
-# 🌍 Space Agency Partner & Other Resources
-
-List all non-NASA resources used during development.
-
-This includes:
-
-- APIs
-- Datasets
-- Open-source libraries
-- Research papers
-- Educational content
-- Images
-- Text resources
-- Code repositories
-- Development tools
-
-All resources must be publicly accessible.
-
-| Resource Name | URL |
-|--------------|-----|
-| GitHub | https://github.com/ |
-| Google Gemini | https://gemini.google.com/ |
-| Microsoft Copilot | https://copilot.microsoft.com/ |
-
-Add additional resources as needed.
-
----
+## Use of Super Intelligence (SI)
+Research or Information Gathering  
+Building SI/ML Into the Project
+## NASA Data
+[DONKI](https://ccmc.gsfc.nasa.gov/DONKI/)  
+[OSDR](https://science.nasa.gov/biological-physical/data/osdr/)
+## Space Agency Partner & Other Data
+[Videogames Genres](https://repositorio.unraf.edu.ar/items/c4294fad-5890-4eda-9de5-9754926a779d)  
+[Videogames Design Model](https://ludology.usek.cl/wp-content/uploads/2019/09/LUDOLOGYN1-2019-77-82.pdf)  
+[Game Design Course](https://gamedesignla.com/game-design/)  
+[K-12 Game on Competition Page](https://www.k12.com/k12-community/meet-the-winners-of-the-2024-k12-game-on-competition/)  
+[Educational Game Design](https://ieeexplore.ieee.org/document/7516346)  
+[Games STEM education](https://cadrek12.org/spotlight/games-stem-education)  
+[Thinking Skills](https://www.researchgate.net/publication/229570529_System_thinking_skills_at_the_elementary_school)  
+[Understanding of complex systems](https://www.researchgate.net/publication/230726725_Fish_swim_rocks_sit_and_lungs_breathe_Expert-novice_understanding_of_complex_systems_and_designs_for_learning)  
+[Design, Digital Games, Educational](https://www.researchgate.net/publication/277630332_Digital_Games_Design_and_Learning_A_Systematic_Review_and_Meta-Analysis)
