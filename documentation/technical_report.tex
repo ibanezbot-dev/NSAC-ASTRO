@@ -1,0 +1,885 @@
+% =====================================================================
+% ASTRO -- Technical Report
+% NASA Space Apps Challenge 2026
+% Build a Junior Astronaut Mission Trainer
+%
+% Compile with pdfLaTeX (Overleaf: pdfLaTeX, TeX Live 2023+).
+% Images: place files in ../assets/figures/ using the names referenced below.
+% The document compiles without images; placeholders are shown instead.
+% =====================================================================
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{xcolor}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{enumitem}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{fancyhdr}
+\usepackage{microtype}
+\usepackage{float}
+\usepackage[hidelinks]{hyperref}
+
+\definecolor{astroblue}{HTML}{0B1026}
+\definecolor{astroyellow}{HTML}{F0E442}
+\definecolor{astroteal}{HTML}{009E73}
+\definecolor{astrogray}{HTML}{666666}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.55em}
+\setlist[itemize]{topsep=0.3em,itemsep=0.15em}
+\setlist[enumerate]{topsep=0.3em,itemsep=0.15em}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small ASTRO -- Technical Report}
+\fancyhead[R]{\small NASA Space Apps Challenge 2026}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+\newcommand{\code}[1]{\texttt{#1}}
+\newcommand{\game}[1]{\textit{#1}}
+
+% Figure placeholder: shows the image if present, otherwise a framed note.
+\newcommand{\figplaceholder}[3]{%
+  \begin{figure}[H]
+    \centering
+    \IfFileExists{../assets/figures/#1}{%
+      \includegraphics[width=0.92\linewidth]{../assets/figures/#1}%
+    }{%
+      \fbox{\begin{minipage}[c][0.26\textheight][c]{0.88\linewidth}
+        \centering
+        \color{astrogray}\textbf{Image placeholder}\\[6pt]
+        Add \code{assets/figures/#1}\\[6pt]
+        \small #2
+      \end{minipage}}%
+    }
+    \caption{#2}
+    \label{#3}
+  \end{figure}
+}
+
+\begin{document}
+
+\begin{titlepage}
+  \centering
+  \vspace*{1.2cm}
+  {\color{astroblue}\rule{\linewidth}{2pt}}\\[0.8cm]
+  {\Huge\bfseries ASTRO\par}
+  \vspace{0.3cm}
+  {\LARGE Your Little Big Commander\par}
+  \vspace{1.0cm}
+  {\Large Technical Report\par}
+  \vspace{0.4cm}
+  {\large A browser-based educational simulation of a lunar outpost\par}
+  \vspace{1.2cm}
+  {\color{astroblue}\rule{\linewidth}{0.8pt}}\\[1.0cm]
+
+  \begin{tabular}{@{}ll@{}}
+    \textbf{Challenge:} & Build a Junior Astronaut Mission Trainer\\
+    \textbf{Programme:} & NASA Space Apps Challenge 2026\\
+    \textbf{Repository:} & \url{https://github.com/ibanezbot-dev/NSAC-ASTRO}\\
+    \textbf{Playable build:} & \url{https://astro.edu.us}\\
+    \textbf{Document date:} & 16 November 2026\\
+    \textbf{Companion document:} & Game Design Document (\code{gdd/GDD.tex})\\
+  \end{tabular}
+
+  \vspace{0.9cm}
+  {\color{astroblue}\rule{0.8\linewidth}{0.4pt}}\\[0.4cm]
+  {\large\bfseries Team ASTRO\par}
+  \vspace{0.3cm}
+  {\small
+  \begin{tabular}{@{}p{4.8cm}p{9.0cm}@{}}
+    Santiago Navarro Pulido & Interface design and game mechanics\\
+    Mitul Rebolledo Gallardo & Pitch and pedagogy research\\
+    Ahmed Yamil Garc\'ia Ib\'a\~nez & Pitch, pedagogy research, prototype construction, and ML model training\\
+    Lina Ayel\'en Salazar Rend\'on & Slide presentation, visual design, and data research\\
+    German Uriel Marcial Carrasco & Slide presentation, data research, and documentation\\
+    Jos\'e Guillermo Hern\'andez Calder\'on & Prototype construction, mentoring, and pitch\\
+  \end{tabular}\par}
+
+  \vfill
+  {\small This report describes a student project. It is not endorsed by NASA. NASA data is used as a reference; the game is an educational simplification, and every simplified value is labelled as such in the product and in this document.}
+\end{titlepage}
+
+\begin{abstract}
+ASTRO is a browser-based educational simulation for children aged 7--12. The player commands a four-person lunar outpost and must balance energy, oxygen, radiation, food, and science across four mission days. Every choice has a cost, and every consequence is explained with a real NASA fact and its source. The simulation combines NASA reference values (BVAD consumables, Chang'e-4 surface dose, NASA-STD-3001 limits, DONKI event structure, OSDR/RadLab context) with a compact Random Forest surrogate trained on 6,000 synthetic scenarios and exported to plain JavaScript. The entire experience runs offline in a single HTML file, with two age modes, text-to-speech, a glossary, keyboard navigation, reduced-motion support, and a teacher guide. This report documents the problem, the design, the scientific and pedagogical foundations, the machine-learning pipeline, the architecture, the evaluation plan, and the limitations of the prototype.
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+% =====================================================================
+\section{Introduction}
+% =====================================================================
+
+\subsection{The challenge}
+
+The 2026 NASA Space Apps challenge \emph{Build a Junior Astronaut Mission Trainer} asks teams to design an interactive game or app in which students run a lunar or Martian outpost \cite{spaceapps2026}. Players must balance life support, radiation shielding, power budgeting, food production, and communication delay. The challenge is explicit that the result must be a \emph{living simulation}, not a quiz or a slideshow: every choice must cost something, and the consequences must be visible. It also asks teams to connect the game to real NASA data, show players which data drives each event, and label embedded data as archived rather than live when it is not fetched in real time.
+
+\subsection{The problem}
+
+Space-themed content for children usually fails in one of two ways. It either oversimplifies the engineering trade-offs (``press the shield button to survive'') or it over-technicalises them (dozens of variables, real units, spreadsheet-like controls). The first teaches a vocabulary word without a system; the second overloads working memory before the child can build a mental model. The gap is a design gap, not a data gap: NASA already publishes the reference numbers. What is missing is a small, playable model of the dependencies that a nine-year-old can hold in working memory.
+
+\subsection{Objectives}
+
+The project has four objectives:
+
+\begin{enumerate}
+  \item Build a playable lunar-outpost simulation for children aged 7--12 in which every decision has a visible cost.
+  \item Anchor the simulation in real NASA reference values and label measured, derived, and game-tuned values honestly.
+  \item Use a compact machine-learning surrogate to make the biological and operational outcomes consistent, fast, and offline.
+  \item Make the experience usable in a real classroom: accessible, bilingual, private, and installable as a single file.
+\end{enumerate}
+
+\subsection{Contributions}
+
+\begin{itemize}
+  \item A four-day lunar mission that compresses a lunar day/night cycle and a solar particle event into a 10--20 minute classroom activity.
+  \item Two age modes that share one engine but differ in representation, number of options, and the presence of a prediction step.
+  \item A NASA-anchored data layer with an explicit provenance table and a clear separation between measured values and game-tuned values.
+  \item A 6,000-scenario Random Forest surrogate (30 trees per output, maximum depth 8) exported to dependency-free JavaScript with \code{m2cgen}, plus an ONNX export.
+  \item A safe-to-fail mission loop that pauses on failure, explains the causal chain, and offers only retries that can still succeed.
+  \item An accessibility and privacy model designed for schools: voice, glossary, keyboard, reduced motion, colour-blind-safe palette, no accounts, local-only data.
+\end{itemize}
+
+\subsection{Scope and non-goals}
+
+The prototype is a \emph{vertical slice}, not a complete curriculum. It implements a lunar mission, not a Mars mission; it uses a fixed scenario, not a live DONKI feed; it models four core resources plus science, not a full bioregenerative life-support system; and it uses a surrogate model, not a validated clinical dosimetry model. The report states these boundaries explicitly and describes the future work needed to close them.
+
+% =====================================================================
+\section{Background and related work}
+% =====================================================================
+
+\subsection{Lunar outpost systems}
+
+A lunar outpost is a coupled system \cite{heiken1991,anderson2018}. Energy powers life support, thermal control, communications, and greenhouse lighting. Life support produces oxygen and cleans the atmosphere. Water is used for drinking, food production, thermal control, and radiation shielding \cite{wilson1997}. Plants depend on light, water, and carbon dioxide, and they return oxygen and food \cite{wheeler2017}. Radiation shielding depends on mass, and hydrogen-rich materials such as water are effective because they slow heavy ions without producing excessive secondary radiation.
+
+The design reduces this complexity to four visible resources plus science: energy, oxygen, radiation dose, food, and science points. The reduction is deliberate. The learning goal is the \emph{relationship} between the resources, not the full engineering fidelity of a real outpost.
+
+\subsection{Space weather and radiation}
+
+The Moon has no global magnetic field and no dense atmosphere, so its surface is exposed to galactic cosmic rays and solar energetic particles. The background dose measured by the Chang'e-4 lander is about 1.369 mSv per day \cite{zhang2020}. NASA's human-system standard sets a career limit of 600 mSv and a per-event limit of 250 mSv \cite{nasa3001}. A large solar flare does not always send energetic particles toward the Moon; the flare class and the particle event are related but not identical. This distinction is the scientific core of the game's third day.
+
+NASA's DONKI database provides event records for flares, coronal mass ejections, and solar energetic particles \cite{donki}. NASA's OSDR provides spaceflight biology data and radiation-relevant context \cite{osdr}. The prototype uses these sources to structure the scenario and the model's response surface; it does not claim to predict actual space weather.
+
+\subsection{Educational games and systems thinking}
+
+The design is grounded in three findings. First, digital games can produce measurable learning gains, especially when the design adds scaffolds such as prediction, feedback, and explanation; Clark, Tanner-Smith, and Killingsworth \cite{clark2016} found a significant advantage for augmented game designs over standard game designs. Second, novices struggle with complex systems because the causal behaviours are invisible, not because they cannot name the parts \cite{hmelo2007}. Third, elementary-school students can develop system-thinking skills when the system is concrete, local, and supported by knowledge-integration activities \cite{benzvi2010}.
+
+ASTRO turns those findings into mechanics: a small concrete base, visible causal chains, a prediction step, and a short mission that can be discussed in one class.
+
+\subsection{Age-appropriate design}
+
+The two age modes follow developmental and instructional constraints. Children in the concrete-operational stage benefit from visible, immediate consequences rather than abstract rules \cite{piaget1952}. Reading stages differ widely between ages 7 and 12, so voice narration and short text reduce the reading barrier for younger players \cite{chall1983}. Working memory develops through childhood, so the younger mode presents one decision and three meters, while the older mode adds a prediction step and a fourth meter \cite{gathercole2004}. Prediction followed by feedback supports deeper processing than feedback alone \cite{wouters2008}.
+
+% =====================================================================
+\section{Solution overview}
+% =====================================================================
+
+\subsection{Concept}
+
+The player is the commander of a four-person lunar outpost. The crew is not a set of anonymous statistics: Ximena (commander), Tomas (engineer), Lu (scientist), and Beto (doctor) speak to the player, react to decisions, and explain the consequences. The player's job is to make the daily call, not to operate every subsystem. The title \emph{Your Little Big Commander} captures the intended feeling: the child is small, the responsibility is big, and the base is a system that responds to their decisions.
+
+\figplaceholder{start-screen.jpeg}{Start screen: mode selection, nickname field, and the language and voice controls.}{fig:base}
+
+\subsection{The four-day arc}
+
+The prototype compresses a lunar day/night cycle into a four-day mission plus a return screen. A real lunar night lasts about 14 Earth days, which is too long for a classroom session; the game states this simplification openly.
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}p{0.7cm}p{2.2cm}p{5.4cm}p{5.2cm}@{}}
+\toprule
+\textbf{Day} & \textbf{Phase} & \textbf{Decision} & \textbf{Learning focus}\\
+\midrule
+1 & Sunset & Charge the battery, finish the rock sample, or split the energy (10--12 only) & Energy is finite; tonight the panels will not charge.\\
+2 & Night & Send all energy to life support, give one cell to the plants, or fund the workshop (10--12 only) & Air is produced continuously; plants are an investment.\\
+3 & Solar alert & Shelter the crew, keep working, or spend one cell on the particle detector (10--12 only) & A flare is not the same as a particle event; protection has a cost.\\
+4 & Dawn & Send one astronaut, two astronauts, or the robot & Every hour outside uses oxygen and adds dose; robots are safer but less productive.\\
+5 & Return & Read the report and replay & The mission is a system; decisions compound.\\
+\bottomrule
+\end{tabular}
+\caption{The four-day mission arc.}
+\label{tab:arc}
+\end{table}
+
+\subsection{Core loop}
+
+\begin{enumerate}
+  \item \textbf{Briefing.} A crew member describes the situation in one or two sentences.
+  \item \textbf{Choose.} The player taps a glowing machine on the base. The option card shows what the choice gains and what it costs.
+  \item \textbf{Predict (ages 10--12).} Before running the day, the player predicts whether the key resource will go up, stay the same, or go down.
+  \item \textbf{Run.} The base animates the consequences: sunlight, energy spending, oxygen production, radiation, science.
+  \item \textbf{Explain.} A cause-and-effect chain shows why the numbers changed, followed by a real NASA fact and its source.
+  \item \textbf{Continue.} The next day begins; the state persists.
+\end{enumerate}
+
+\figplaceholder{day1-gameplay.jpeg}{Day 1 in the playable build: resource meters, mission dialog, and the action dock.}{fig:flow}
+
+\subsection{Two age modes}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}p{3.2cm}p{5.6cm}p{5.6cm}@{}}
+\toprule
+ & \textbf{Explorers (7--9)} & \textbf{Engineers (10--12)}\\
+\midrule
+Options per day & Two & Three\\
+Resource display & Icons, colours, words & Numbers with units (cells, kg O$_2$, mSv)\\
+Text & Short, read aloud by default & Longer, with data and units\\
+Prediction & No & Yes: up / same / down before running the day\\
+Explanation & Visual cause-and-effect chain & Chain plus numerical deltas and a source panel\\
+End screen & Day-by-day mission strip & Line charts of battery, oxygen, and dose\\
+\bottomrule
+\end{tabular}
+\caption{Age-mode comparison. The same engine and the same scientific model drive both modes.}
+\label{tab:modes}
+\end{table}
+
+\subsection{Safe-to-fail design}
+
+A child who runs out of oxygen does not lose the game. The mission pauses, the game shows the causal chain that led to the failure, and it offers a return to a day from which the mission can still be completed. The message is explicit: in a real mission, a failed attempt is followed by a safe return and a new plan. This is both a pedagogical choice and a design choice: it keeps the child experimenting instead of protecting a score.
+
+% =====================================================================
+\section{Scientific model and data}
+% =====================================================================
+
+\subsection{The outpost as a coupled system}
+
+The game state has five variables: battery cells, oxygen mass, accumulated radiation dose, science points, and plant state. The daily resolution is a mass-balance model with a narrative layer:
+
+\begin{align}
+E_{t+1} &= \min(E_t + S_t - C_t,\ E_{\max}),\\
+O_{t+1} &= \min(O_t + \alpha L_t - \beta N - \gamma H_t,\ O_{\max}),\\
+D_{t+1} &= D_t + \delta_{\mathrm{bg}} + \delta_{\mathrm{storm}} + \delta_{\mathrm{EVA}},\\
+S_{t+1} &= S_t + \sigma_{\mathrm{workshop}} + \sigma_{\mathrm{EVA}} + \sigma_{\mathrm{harvest}}.
+\end{align}
+
+Here $E$ is battery energy in cells, $S_t$ is solar input (5 cells on a sunny day, 0 at night), $C_t$ is the day's energy cost, $O$ is oxygen mass, $L_t$ is the number of life-support cells, $\alpha=1.2$ kg per cell, $\beta=0.84$ kg per person per day, $N=4$ crew, $\gamma=0.086$ kg per person per hour, $H_t$ is EVA hours, and $D$ is the accumulated dose. The dose terms are the lunar background, the storm contribution, and the EVA contribution. The model is deliberately small enough to reason about and large enough to create real shortages.
+
+\subsection{Data provenance}
+
+\begin{longtable}{@{}p{3.7cm}p{3.2cm}p{5.6cm}p{3.0cm}@{}}
+\caption{Data provenance.}\label{tab:data}\\
+\toprule
+\textbf{Quantity} & \textbf{Value used} & \textbf{Source} & \textbf{Status}\\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Quantity} & \textbf{Value used} & \textbf{Source} & \textbf{Status}\\
+\midrule
+\endhead
+Oxygen per person & 0.84 kg/day & NASA BVAD, NASA/TP-2015-218570 Rev2 (2022), tables 3-23 and 4-70 \cite{bvad} & Measured/reference\\
+EVA oxygen & 0.086 kg/hour/person & NASA BVAD, table 4-70 \cite{bvad} & Measured/reference\\
+Lunar surface dose & 1.369 mSv/day & Zhang et al. (2020), Chang'e-4 \cite{zhang2020} & Measured\\
+Career dose limit & 600 mSv & NASA-STD-3001 \cite{nasa3001} & Regulatory limit\\
+Solar event limit & 250 mSv/event & NASA-STD-3001 \cite{nasa3001} & Regulatory limit\\
+Earth background & $\sim$3.6 mSv/year & NASA data via Space.com \cite{earth} & Comparison\\
+Flare/SEP structure & Event-based & NASA DONKI \cite{donki} & Scenario structure\\
+Radiation biology & Cell damage, efficiency, crop health & NASA OSDR/RadLab \cite{osdr} and training data & Model output\\
+Battery/tank/storm/science & Game units & Project calibration & Game-tuned\\
+\bottomrule
+\end{longtable}
+
+\subsection{Radiation model}
+
+Radiation is the clearest example of a trade-off that children can understand. The Moon has no global magnetic field and no dense atmosphere, so the surface is exposed to galactic cosmic rays and solar energetic particles. The game represents this with a dose meter that only increases. The player can accept the background dose, shelter behind water-rich walls, keep working, or spend one cell on a particle detector.
+
+The detector is the most important option for scientific literacy. A large flare does not automatically mean a large particle event. The detector turns a guess into evidence, at the cost of one energy cell. That is a real mission-planning lesson compressed into one button.
+
+\subsection{Energy, oxygen, and food}
+
+The energy budget is intentionally tiny. The battery holds at most nine cells; a sunny day adds five; life support wants three; the workshop, plants, detector, and robot each cost one. The player cannot do everything. Oxygen is a mass balance: life support produces $1.2$ kg per cell, the crew breathes $4 \times 0.84 = 3.36$ kg/day, and each EVA hour adds $0.086$ kg per person. Food is represented through the greenhouse: one cell on day 2 produces a lettuce harvest on day 4, worth +5 science and fresh food \cite{douglas2020,khodadad2020}. The investment is visible: the player loses air production today and gains food later.
+
+\subsection{Simplifications and honest labelling}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}p{4.2cm}p{4.0cm}p{5.8cm}@{}}
+\toprule
+\textbf{Simplification} & \textbf{Reason} & \textbf{How it is communicated}\\
+\midrule
+Four-day mission instead of a 29.5-day lunar cycle & Classroom session length & The glossary states the real cycle; the teacher guide explains the compression.\\
+Battery cells instead of joules/kWh & Cognitive load & The teacher guide labels cells as game units.\\
+One greenhouse crop instead of a full bioregenerative system & Scope & The game presents lettuce as an example, not a complete diet.\\
+Fixed scenario instead of live space weather & Offline reliability & Sources are labelled; live DONKI is future work.\\
+Random Forest surrogate instead of a physics simulation & Browser performance and interpretability & The model card explains inputs, outputs, and limits.\\
+\bottomrule
+\end{tabular}
+\caption{Design simplifications and how they are disclosed.}
+\label{tab:simplifications}
+\end{table}
+
+% =====================================================================
+\section{Machine learning}
+% =====================================================================
+
+\subsection{Role of the model}
+
+A conventional game would use a hand-written formula for each outcome. ASTRO uses a small machine-learning surrogate for three reasons. First, the effect of radiation on the crew depends on shielding, activity, countermeasures, and greenhouse energy at the same time; a tree ensemble captures interactions that a single linear formula would miss. Second, the same model produces cell damage, crew efficiency, and crop health for every decision, so the player cannot find a combination that the designer forgot. Third, a trained Random Forest can be exported to plain JavaScript and evaluated in microseconds, with no server and no network.
+
+\subsection{Data generation}
+
+The model was trained on a synthetic scenario dataset of $N=6{,}000$ records. The dataset was built by crossing physical variables (radiation, storm intensity, shielding) with the strategic decisions a player can make (activity level, medical countermeasures, greenhouse energy). The labels were generated by domain equations that encode the intended response surface: cellular damage increases with dose and activity, decreases with shielding and countermeasures; crew efficiency decreases with damage and with excessive sheltering; crop health depends on greenhouse energy and on radiation damage.
+
+NASA data was used to anchor the distributions. The team connected to NASA DONKI for space-weather events and to NASA OSDR/RadLab for radiation and biological context. A scientific fallback generated log-normal and gamma distributions when the NASA services were unavailable, so training could proceed reproducibly. This is an important distinction: the model is \emph{trained on a synthetic, NASA-anchored scenario dataset}, not on a cohort of astronauts. The high $R^2$ reported below measures fidelity to the generator, not predictive validity for human biology.
+
+\subsection{Features and targets}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}p{5.2cm}p{2.0cm}p{6.4cm}@{}}
+\toprule
+\textbf{Input} & \textbf{Range} & \textbf{Meaning}\\
+\midrule
+Storm intensity & 0--10 & Scenario intensity derived from the DONKI event structure.\\
+Base dose & mSv/day & Dose calculated by the game engine for the day.\\
+Shielding level & 1--3 & 1 = basic aluminium, 2 = standard polyethylene, 3 = water shelter.\\
+Crew activity & 0--2 & 0 = shelter, 1 = indoor work, 2 = EVA.\\
+Medical countermeasures & 0/1 & Antioxidants or fresh-food support.\\
+Greenhouse energy & 0--100 & Percentage of the day's energy assigned to the plants.\\
+\bottomrule
+\end{tabular}
+\caption{Model inputs.}
+\label{tab:model-inputs}
+\end{table}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}p{4.8cm}p{1.6cm}p{7.2cm}@{}}
+\toprule
+\textbf{Output} & \textbf{Range} & \textbf{Meaning}\\
+\midrule
+\code{danoCelular} & 0--100 & Cellular damage from radiation; lower is better.\\
+\code{eficienciaTripulacion} & 0--100 & Crew efficiency and ability to work; higher is better.\\
+\code{saludCultivos} & 0--100 & Crop health; higher is better.\\
+\bottomrule
+\end{tabular}
+\caption{Model outputs.}
+\label{tab:model-outputs}
+\end{table}
+
+\subsection{Training configuration}
+
+\begin{itemize}
+  \item \textbf{Algorithm:} Random Forest regressor, multi-output.
+  \item \textbf{Ensemble size:} 30 decision trees per output.
+  \item \textbf{Maximum depth:} 8.
+  \item \textbf{Train/validation split:} 80\% / 20\%.
+  \item \textbf{Environment:} Python with pandas, NumPy, matplotlib, scikit-learn, m2cgen, skl2onnx, and onnxruntime.
+  \item \textbf{Why this configuration:} a Random Forest handles non-linear interactions and reduces overfitting; limiting the number of trees and the depth keeps the exported file small and fast enough for modest laptops, tablets, and phones.
+\end{itemize}
+
+\subsection{Evaluation}
+
+The model reached an $R^2$ of $0.9894$, $0.9800$, and $0.9928$ for cellular damage, crew efficiency, and crop health respectively on the held-out 20\% split, with mean absolute errors of $1.34\%$, $1.94\%$, and $1.69\%$. This is a strong result for the surrogate's purpose: it shows that the exported trees reproduce the response surface of the scenario generator with high fidelity. It does \emph{not} show that the model predicts real astronaut health, because the labels are generated by the same domain equations that define the game's design. The correct interpretation is:
+
+\begin{quote}
+The model is a compact, high-fidelity surrogate of the game's intended biological response surface. It is not a validated medical or operational radiation-risk model.
+\end{quote}
+
+The training notebook reports the per-output metrics and exports both model formats. The evaluation figure below summarises the predicted-versus-actual behaviour of the three outputs.
+
+\subsection{Export and deployment}
+
+The trained model is exported in two formats:
+
+\begin{enumerate}
+  \item \textbf{Native JavaScript with \code{m2cgen}.} Each tree becomes a sequence of \code{if/else} conditions. The result is dependency-free and runs directly in the browser. This is the format used by the shipped game.
+  \item \textbf{ONNX with \code{skl2onnx}.} The standard interchange format, ready for accelerated inference in the browser or on a server. This is an alternative deployment path, not the path used by the game.
+\end{enumerate}
+
+The JavaScript export exposes one function:
+
+\begin{verbatim}
+predecirEventoEspacial(
+  intensidadTormenta,   // 0-10
+  dosisBase,            // mSv/day
+  blindaje,             // 1 low, 2 standard, 3 water shelter
+  actividad,            // 0 shelter, 1 indoor, 2 EVA
+  contramedidas,        // 0/1
+  energiaInvernadero    // 0-100
+)
+\end{verbatim}
+
+It returns \code{\{danoCelular, eficienciaTripulacion, saludCultivos\}} as percentages. The game's engine calculates the physical dose and resource balance; the model calculates the biological and operational response. The separation keeps the model's role clear and makes the game's numbers auditable.
+
+\subsection{Model card and limitations}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}p{4.2cm}p{10.2cm}@{}}
+\toprule
+\textbf{Item} & \textbf{Description}\\
+\midrule
+Intended use & Educational game; consistent biological/operational response for player decisions.\\
+Out-of-scope use & Clinical advice, mission operations, radiation protection decisions, real astronaut health prediction.\\
+Training data & 6,000 synthetic scenarios anchored to NASA reference values and domain equations.\\
+Labels & Generated by the game's domain equations, not measured from astronauts.\\
+Metrics & $R^2$ of 0.9894, 0.9800, and 0.9928 on a held-out 20\% split.\\
+Limitations & Synthetic labels; small ensemble; no external validation; percentages are gameplay units.\\
+Ethical note & The model must not be presented as a NASA-validated model of human radiation risk.\\
+\bottomrule
+\end{tabular}
+\caption{Model card.}
+\label{tab:model-card}
+\end{table}
+
+\subsection{Reproducibility}
+
+The training notebook is \code{ml/ml-training-code.ipynb}. It generates the 6,000-scenario dataset, trains the Random Forest with \code{random\_state=42} and a fixed NumPy seed, evaluates the three outputs, and exports the JavaScript and ONNX models. To reproduce the results, run the notebook from top to bottom in an environment with pandas, NumPy, scikit-learn, m2cgen, skl2onnx, and onnxruntime. The exported model and the input/output contract in this report describe the artefact embedded in the game.
+
+% =====================================================================
+\section{System architecture}
+% =====================================================================
+
+\subsection{Single-file, offline-first build}
+
+The shipped prototype is a single \code{index.html} file of about 2.4 MB. It contains the HTML structure, the CSS, the game engine, the English and Spanish UI, the embedded illustration assets as base64, the exported Random Forest model, the audio synthesis and speech logic, the telemetry, and the teacher guide. There is no build step, no package manager, no backend, and no database. A teacher can copy the file to a USB stick, open it in a browser, and play. This is a deliberate response to the reality of classrooms with unreliable connectivity and locked-down devices.
+
+\subsection{Main components}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}p{4.0cm}p{10.4cm}@{}}
+\toprule
+\textbf{Component} & \textbf{Responsibility}\\
+\midrule
+\code{engine} script & Data constants, day definitions, state, \code{resolveDay}, star scoring, previews.\\
+\code{modelo} script & Exported Random Forest functions and the \code{predecirEventoEspacial} wrapper.\\
+\code{bootES} / \code{bootEN} & Language-specific UI, translations, voice selection, screen rendering, event binding.\\
+Scene layer & SVG hot spots, base illustration, meters, tags, animations, storm effect.\\
+Dialog and result layer & Crew messages, cause-and-effect chain, real-fact card, source details.\\
+Teacher layer & Standards, age design, telemetry table, decision log, JSON export, source table.\\
+Persistence & \code{localStorage} for nickname, mode, language, sound, voice, save state, telemetry.\\
+Accessibility layer & TTS, glossary pop-ups, focus management, keyboard handlers, reduced-motion checks.\\
+\bottomrule
+\end{tabular}
+\caption{Main software components.}
+\label{tab:components}
+\end{table}
+
+\subsection{State model}
+
+The game state is a small JSON object:
+
+\begin{verbatim}
+{
+  mode, day, battery, o2, dose, science, plants,
+  sepArrives, sepKnown, evaCap, minO2, history, done
+}
+\end{verbatim}
+
+A checkpoint is saved at the start of each day. If the mission runs out of oxygen, the game can restore a viable checkpoint instead of restarting the whole mission. The save is stored locally and can be resumed from the start screen.
+
+\subsection{Internationalisation}
+
+The game ships with English and Spanish. The default language is English; a stored preference or the settings toggle overrides it. The two language builds share the engine and the model; only the UI strings, voice selection, and a few text variants differ. This avoids maintaining two separate games.
+
+\subsection{Telemetry and privacy}
+
+The teacher guide shows a local telemetry summary: missions finished, missions paused, day-1 energy decisions, day-3 safety decisions, correct predictions, average decision time, hint usage, and the last ten decisions. The data is stored in \code{localStorage} and can be exported as JSON. It contains no personal data. The teacher can delete it from the device. The telemetry is not sent to a server. This is a privacy and COPPA-friendly design choice, and it also makes the game usable in schools with strict network policies.
+
+\subsection{Performance and safety}
+
+The model is plain JavaScript arithmetic; inference is effectively instantaneous. The base illustration and assets are embedded, so there are no network requests and no layout shift from missing images. The scene is scaled to the available viewport; the game avoids scrolling during play. Animations respect \code{prefers-reduced-motion}. The game uses CSS and SVG rather than a game engine, so it runs on low-end school devices.
+
+The privacy model is intentionally simple: no accounts, no email, no real names, no server, no analytics. The optional nickname is explicitly not the child's real name. All progress and telemetry stay in the browser.
+
+% =====================================================================
+\section{Accessibility and inclusion}
+% =====================================================================
+
+Accessibility is not a checklist added at the end; it shapes the interaction model.
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}p{3.6cm}p{10.8cm}@{}}
+\toprule
+\textbf{Feature} & \textbf{Implementation}\\
+\midrule
+Voice narration & Browser \code{speechSynthesis}, with a visible Listen button on every important text.\\
+Glossary & Inline dotted-underline terms open a short definition at the right reading level.\\
+Keyboard & All controls reachable by Tab; focus visible; modals trap focus; Escape closes.\\
+Colour & Okabe--Ito palette, designed to remain distinguishable for common colour-vision deficiencies.\\
+Non-colour cues & Icons, labels, shapes, and text accompany every colour-coded state.\\
+Target size & Minimum $64 \times 64$ px for interactive controls.\\
+Motion & \code{prefers-reduced-motion} disables the consequence animation sequence.\\
+Reading load & One decision per day; short sentences; optional voice; no wall of text.\\
+Language & English and Spanish, with the same content and the same scientific model.\\
+Device & Responsive layout; a friendly landscape hint; works on tablets and laptops.\\
+\bottomrule
+\end{tabular}
+\caption{Accessibility features.}
+\label{tab:accessibility}
+\end{table}
+
+The game does not require reading to play in the younger mode. A child can tap a machine, hear the option, see the gain/cost chips, and run the day.
+
+% =====================================================================
+\section{Evaluation plan}
+% =====================================================================
+
+\subsection{Research questions}
+
+\begin{enumerate}
+  \item Do children understand that the base's resources are coupled?
+  \item Do they improve their predictions after seeing a consequence?
+  \item Can they explain why a decision had a cost?
+  \item Does the younger mode remain playable without reading?
+  \item Does the teacher guide provide enough support for a 20-minute classroom activity?
+\end{enumerate}
+
+\subsection{Protocol}
+
+The next step is a structured classroom playtest:
+
+\begin{itemize}
+  \item 8--12 children per age band,
+  \item 20--30 minute session,
+  \item pre/post concept questions on energy, oxygen, radiation, and trade-offs,
+  \item observation of hesitation points and hint use,
+  \item short interview with the teacher.
+\end{itemize}
+
+\subsection{Measures}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}p{4.0cm}p{10.4cm}@{}}
+\toprule
+\textbf{Measure} & \textbf{Method}\\
+\midrule
+Conceptual understanding & Pre/post short interview or picture-based questions.\\
+Prediction accuracy & In-game telemetry: correct up/same/down predictions.\\
+Decision quality & Percentage of decisions that keep the crew safe and reach the science goal.\\
+Engagement & Time on task, missions completed, replay rate.\\
+Usability & Observation notes, hint use, teacher interview.\\
+Accessibility & Keyboard-only run, screen-reader run, reduced-motion run.\\
+\bottomrule
+\end{tabular}
+\caption{Evaluation measures.}
+\label{tab:evaluation}
+\end{table}
+
+\subsection{Ethics}
+
+The evaluation uses no personal data, no accounts, and no video. Participation is voluntary, with parental/guardian consent. The telemetry is anonymous and local. The team will not publish any data that could identify a child.
+
+% =====================================================================
+\section{Process and project management}
+% =====================================================================
+
+\subsection{Phases}
+
+\begin{enumerate}
+  \item \textbf{Research and framing.} Challenge brief, literature review, NASA data inventory, and a first statement of the learning objectives.
+  \item \textbf{Paper prototype.} A larger station-management design with five skill levels, four modules, action points, breakdowns, a rescue drone, and a sandbox mode. It established the core ideas: energy allocation, module coupling, a model-driven outcome, and a safe-to-fail loop.
+  \item \textbf{Vertical slice.} The team reduced the design to a four-day lunar mission with one decision per day. The reduction preserved the learning objectives while making the game readable in a single sitting.
+  \item \textbf{Data and model.} NASA reference values, scenario generation, Random Forest training, \code{m2cgen} export, and integration into the game.
+  \item \textbf{Interface and accessibility.} From a dashboard of modules to a single illustrated base; from text-heavy lists to glowing machines with gain/cost chips; from mouse-only to keyboard and screen-reader support.
+  \item \textbf{Testing and documentation.} Manual desktop/tablet tests in both languages, this report, the GDD, and the classroom pilot plan.
+\end{enumerate}
+
+\subsection{Design decisions and trade-offs}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}p{4.0cm}p{4.2cm}p{6.2cm}@{}}
+\toprule
+\textbf{Decision} & \textbf{Alternative considered} & \textbf{Why we chose this}\\
+\midrule
+Four-day mission & Full 16-sol campaign & A classroom session must finish in 10--20 minutes; the four days still teach the full system lesson.\\
+One decision per day & Multi-action energy allocation & Younger players need one clear choice; the older mode adds prediction instead of more actions.\\
+Single illustrated base & 2D map or 3D base & Lower cognitive load, lower asset cost, and better performance on school devices.\\
+Fixed scenario & Live DONKI feed & Reliability and offline use; live data is future work with an explicit archived/live badge.\\
+Random Forest surrogate & Hand-written formulas & Non-linear interactions and consistency; the model is small and fast enough for the browser.\\
+Safe-to-fail pause & Game-over screen & Keeps the child experimenting and matches the real mission practice of returning safely and replanning.\\
+\bottomrule
+\end{tabular}
+\caption{Key design decisions.}
+\label{tab:decisions}
+\end{table}
+
+\subsection{Risks and mitigations}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}p{4.0cm}p{4.2cm}p{6.2cm}@{}}
+\toprule
+\textbf{Risk} & \textbf{Why it matters} & \textbf{Mitigation}\\
+\midrule
+The model is mistaken for a validated radiation-risk model & It would overstate the science & Explicit model card, limitation section, and UI wording.\\
+Game values are mistaken for NASA measurements & It would damage trust & Every value is labelled measured, derived, or game-tuned.\\
+The fixed scenario is mistaken for live data & The challenge asks for honesty & The UI and documentation state that the prototype uses a fixed/archived scenario.\\
+The game is too simple for ages 10--12 & Older players may disengage & Prediction, units, deltas, charts, and source panel.\\
+The game is too complex for ages 7--9 & Younger players may fail before learning & Two options, voice, icons, words, safe-to-fail pause.\\
+The single file is hard to maintain & Future developers may struggle & The GDD documents the architecture; modular source and build step are next.\\
+Accessibility is tested only manually & Regressions are possible & Add automated checks and a screen-reader test to the release checklist.\\
+\bottomrule
+\end{tabular}
+\caption{Risks and mitigations.}
+\label{tab:risks}
+\end{table}
+
+% =====================================================================
+\section{Impact and future work}
+% =====================================================================
+
+ASTRO is designed to have impact at three levels. For the child, it is a first experience of thinking like a mission planner: not ``what is the right answer?'' but ``what does this choice cost, and what does it make possible?'' For the teacher, it is a short, reliable, offline activity that connects space science, engineering design, and systems thinking, with a source table and discussion questions. For the public, it is a demonstration that real NASA data can be made playful without being dumbed down.
+
+Future work follows three directions:
+
+\begin{enumerate}
+  \item \textbf{Classroom pilot}: structured playtest, pre/post concept questions, teacher interview, accessibility audit.
+  \item \textbf{Mars and communication delay}: one-way delay of 3--22 minutes, solar conjunction, and a ``message to Earth'' action whose answer arrives one or more sols later.
+  \item \textbf{Live data and content packs}: optional DONKI fetch with an archived/live badge, real solar events, more crops and failures, and a local classroom dashboard.
+\end{enumerate}
+
+The lunar mission intentionally omits communication delay: the Earth--Moon one-way light time is about 1.3 seconds, which is not a meaningful decision cost for a child. The Martian scenario is the right place to teach that constraint, because the delay is long enough to change the decision.
+
+% =====================================================================
+\section{Conclusion}
+% =====================================================================
+
+ASTRO turns a real mission-planning problem into a small, playable system. The player feels the cost of energy, the fragility of air, the accumulation of radiation, and the delayed return of an investment in plants. The game is honest about what it measures and what it simplifies. It runs offline, respects the child's privacy, and gives the teacher the sources and the questions needed to turn a 15-minute game into a science discussion.
+
+The prototype is a vertical slice. The next steps are to run the classroom pilot, add the Martian communication-delay scenario, and make the source easier to maintain without losing the single-file offline build.
+
+% =====================================================================
+\appendix
+% =====================================================================
+
+\section{Game constants}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}p{4.2cm}p{2.4cm}p{8.2cm}@{}}
+\toprule
+\textbf{Constant} & \textbf{Value} & \textbf{Meaning}\\
+\midrule
+\code{crew} & 4 & Number of astronauts.\\
+\code{o2PerPersonDay} & 0.84 kg & BVAD oxygen consumption per person per day.\\
+\code{evaO2PerHour} & 0.086 kg & BVAD EVA oxygen consumption per person per hour.\\
+\code{lunarDoseDay} & 1.369 mSv & Lunar surface background dose per day.\\
+\code{careerLimit} & 600 mSv & NASA-STD-3001 career limit.\\
+\code{spePerEventLimit} & 250 mSv & NASA-STD-3001 per-event limit.\\
+\code{earthYear} & 3.6 mSv & Earth background dose per year.\\
+\code{startBattery} & 3 & Starting battery cells.\\
+\code{maxBattery} & 9 & Maximum battery cells.\\
+\code{panelPerSunDay} & 5 & Cells added on a sunny day.\\
+\code{lsWant} & 3 & Cells requested by life support.\\
+\code{o2PerCell} & 1.2 kg & Oxygen produced per life-support cell.\\
+\code{startO2} & 5 kg & Starting oxygen.\\
+\code{maxO2} & 8 kg & Maximum oxygen.\\
+\code{reserveO2} & 2 kg & Reserve warning threshold.\\
+\code{insideFactor} & 0.5 & Dose multiplier inside the base.\\
+\code{shelterFactor} & 0.2 & Dose multiplier in the shelter.\\
+\code{stormDoseWorking} & 12 mSv & Storm dose if working.\\
+\code{stormDoseShelter} & 1 mSv & Storm dose if sheltered.\\
+\code{baseScience} & 5 & Science per day if not sheltered.\\
+\code{scienceGoal} & 30 & Science target.\\
+\code{doseGreen} & 6 mSv & Green dose threshold.\\
+\code{doseEvaRule} & 10 mSv & Dose above which only one EVA is allowed.\\
+\code{evaHours} & 4 h & Duration of an EVA.\\
+\bottomrule
+\end{tabular}
+\caption{Game constants.}
+\label{tab:constants}
+\end{table}
+
+\section{Model contract}
+
+\begin{verbatim}
+predecirEventoEspacial(
+  intensidadTormenta,   // 0-10
+  dosisBase,            // mSv/day
+  blindaje,             // 1 low, 2 standard, 3 water shelter
+  actividad,            // 0 shelter, 1 indoor, 2 EVA
+  contramedidas,        // 0/1
+  energiaInvernadero    // 0-100
+)
+
+returns {
+  danoCelular,            // 0-100
+  eficienciaTripulacion,  // 0-100
+  saludCultivos           // 0-100
+}
+\end{verbatim}
+
+\section{Data dictionary}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}p{3.6cm}p{3.0cm}p{7.8cm}@{}}
+\toprule
+\textbf{Field} & \textbf{Type} & \textbf{Description}\\
+\midrule
+\code{mode} & integer & 7 = Explorers, 10 = Engineers.\\
+\code{day} & integer & Current mission day (1--5).\\
+\code{battery} & integer & Battery cells (0--9).\\
+\code{o2} & number & Oxygen mass in kg (0--8).\\
+\code{dose} & number & Accumulated dose in mSv.\\
+\code{science} & integer & Science points.\\
+\code{plants} & integer & 0 = no light, 1 = growing.\\
+\code{sepArrives} & boolean & Whether solar energetic particles arrive on day 3.\\
+\code{sepKnown} & boolean & Whether the detector revealed the truth.\\
+\code{evaCap} & integer & Maximum number of astronauts allowed on the next EVA.\\
+\code{minO2} & number & Lowest oxygen level reached.\\
+\code{history} & array & Per-day decision and outcome records.\\
+\code{done} & boolean & Whether the mission is finished.\\
+\bottomrule
+\end{tabular}
+\caption{State data dictionary.}
+\label{tab:state}
+\end{table}
+
+\section{Source code map}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}p{4.2cm}p{10.2cm}@{}}
+\toprule
+\textbf{Element} & \textbf{Where to look}\\
+\midrule
+Data constants & \code{DATA}, \code{GAME}, \code{SOURCES} in the \code{engine} script.\\
+Day definitions & \code{DAYS}, \code{SCENES} in the \code{engine} script.\\
+Day resolution & \code{resolveDay} in the \code{engine} script.\\
+Star scoring & \code{stars} in the \code{engine} script.\\
+Model & \code{modelo} script, \code{predecirEventoEspacial}.\\
+UI (Spanish) & \code{bootES}.\\
+UI (English) & \code{bootEN}.\\
+Teacher guide & \code{teacherHTML}.\\
+Telemetry & \code{tele} object and \code{teacherHTML}.\\
+Accessibility & \code{speak}, \code{iconize}, \code{bindLang}, modal focus trap.\\
+\bottomrule
+\end{tabular}
+\caption{Source code map.}
+\label{tab:sourcemap}
+\end{table}
+
+% =====================================================================
+\begin{thebibliography}{99}
+
+\bibitem{clark2016}
+Clark, D. B., Tanner-Smith, E. E., and Killingsworth, S. S. (2016).
+\newblock Digital games, design, and learning: A systematic review and meta-analysis.
+\newblock \emph{Review of Educational Research}, 86(1), 79--122.
+\newblock \url{https://doi.org/10.3102/0034654315582065}
+
+\bibitem{hmelo2007}
+Hmelo-Silver, C. E., Marathe, S., and Liu, L. (2007).
+\newblock Fish swim, rocks sit, and lungs breathe: Expert--novice understanding of complex systems.
+\newblock \emph{Journal of the Learning Sciences}, 16(3), 307--331.
+
+\bibitem{benzvi2010}
+Ben-Zvi Assaraf, O., and Orion, N. (2010).
+\newblock System thinking skills at the elementary school level.
+\newblock \emph{Journal of Research in Science Teaching}, 47(5), 540--563.
+\newblock \url{https://doi.org/10.1002/tea.20351}
+
+\bibitem{zhang2020}
+Zhang, S., Wimmer-Schweingruber, R. F., Yu, J., Wang, C., Fu, Q., Zou, Y., et al. (2020).
+\newblock First measurements of the radiation dose on the lunar surface.
+\newblock \emph{Science Advances}, 6(39), eaaz1334.
+\newblock \url{https://doi.org/10.1126/sciadv.aaz1334}
+
+\bibitem{bvad}
+NASA. (2022).
+\newblock \emph{Life Support Baseline Values and Assumptions Document} (NASA/TP-2015-218570/REV2).
+
+\bibitem{nasa3001}
+NASA. (2022).
+\newblock \emph{NASA Space Flight Human-System Standard, Volume 2: Human Factors, Habitability, and Environmental Health} (NASA-STD-3001, Vol. 2, Rev. C).
+
+\bibitem{donki}
+NASA. (n.d.).
+\newblock \emph{DONKI: Database Of Notifications, Knowledge, Information}.
+\newblock \url{https://ccmc.gsfc.nasa.gov/tools/DONKI/}
+
+\bibitem{osdr}
+NASA. (n.d.).
+\newblock \emph{Open Science Data Repository (OSDR)}.
+\newblock \url{https://science.nasa.gov/biological-physical/data/osdr/}
+
+\bibitem{earth}
+NASA data via Space.com. (n.d.).
+\newblock Yearly radiation dose on Earth.
+\newblock \url{https://www.space.com/why-astronauts-radiation-levels}
+
+\bibitem{piaget1952}
+Piaget, J. (1952).
+\newblock \emph{The Origins of Intelligence in Children}. International Universities Press.
+
+\bibitem{chall1983}
+Chall, J. S. (1983).
+\newblock \emph{Stages of Reading Development}. McGraw-Hill.
+
+\bibitem{gathercole2004}
+Gathercole, S. E., Pickering, S. J., Ambridge, B., and Wearing, H. (2004).
+\newblock The structure of working memory from 4 to 15 years of age.
+\newblock \emph{Developmental Psychology}, 40(2), 177--190.
+
+\bibitem{wouters2008}
+Wouters, P., van der Spek, E. D., and van Oostendorp, H. (2008).
+\newblock Current practices in serious game research: A review from a learning outcomes perspective.
+\newblock \emph{ECGBL 2008}.
+
+\bibitem{heiken1991}
+Heiken, G. H., Vaniman, D. T., and French, B. M. (1991).
+\newblock \emph{Lunar Sourcebook: A User's Guide to the Moon}. Cambridge University Press.
+
+\bibitem{anderson2018}
+Anderson, M. S., Ewert, M. K., and Keener, J. F. (2018).
+\newblock \emph{Life support baseline values and assumptions document} (NASA/TP-2015-218570/REV1).
+
+\bibitem{douglas2020}
+Douglas, G. L., Zwart, S. R., and Smith, S. M. (2020).
+\newblock Space food for thought: Challenges and considerations for food and nutrition on exploration missions.
+\newblock \emph{The Journal of Nutrition}, 150(9), 2242--2244.
+
+\bibitem{wheeler2017}
+Wheeler, R. M. (2017).
+\newblock Agriculture for space: People and places paving the way.
+\newblock \emph{Open Agriculture}, 2(1), 14--32.
+
+\bibitem{wilson1997}
+Wilson, J. W., Miller, J., Konradi, A., and Cucinotta, F. A. (Eds.). (1997).
+\newblock \emph{Shielding strategies for human space exploration} (NASA CP-3360).
+
+\bibitem{khodadad2020}
+Khodadad, C. L. M., Hummerick, M. E., Spencer, L. E., Dixit, A. R., Richards, J. T., Strayer, R. F., et al. (2020).
+\newblock Microbiological and nutritional analysis of lettuce crops grown on the International Space Station.
+\newblock \emph{Frontiers in Plant Science}, 11, 199.
+
+\bibitem{spaceapps2026}
+NASA Space Apps Challenge. (2026).
+\newblock \emph{Build a Junior Astronaut Mission Trainer}.
+\newblock \url{https://www.spaceappschallenge.org/2026/challenges/junior-astronaut-mission-trainer/}
+
+\end{thebibliography}
+
+\end{document}
