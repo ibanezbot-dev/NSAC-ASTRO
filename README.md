@@ -22,7 +22,7 @@ production, and scientific work part of one connected system.
 
 ## Play ASTRO
 
-**[Launch the game at astro.edu.us](https://astro.edu.us)**
+**[Launch the game at astro-edu.us](https://astro-edu.us)**
 
 ASTRO runs directly in the browser and is designed for classroom sessions,
 team activities, and independent play.
